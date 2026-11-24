@@ -876,7 +876,7 @@
               </div>
               <div class="locked-foot" style="margin-top:14px;"><span>Teman bergabung</span><span><b id="friendCount" style="color:var(--ink);">0</b> teman</span></div>
               <div class="ref-box">
-                <span id="refLink">https://dandi156.github.io/cuanmu/?ref=…</span>
+                <span id="refLink">https://t.me/CuanmuAppBot?start=ref_…</span>
                 <button id="copyRef" type="button">Salin</button>
               </div>
               <button class="btn-emerald" id="simInvite" type="button" style="margin-top:12px;">Simulasikan Teman Bergabung · +2.000</button>
@@ -1224,7 +1224,7 @@
 
       /* ---------------- server mode ---------------- */
       var API_BASE = "https://cuanmu-api.dandikurniawan152.workers.dev";
-      var REF_BASE = "https://dandi156.github.io/cuanmu/";
+      var REF_BASE = "https://t.me/CuanmuAppBot?start=ref_";
       var serverMode = false;
       var authToken = null;   // token sesi pengguna (di memori saja)
       var adminToken = null;  // token sesi admin (di memori saja)
@@ -1328,7 +1328,7 @@
         G.broadcast = st.broadcast || "";
       }
       function serverRefLink(){
-        return REF_BASE + "?ref=" + (serverState ? serverState.refCode : "");
+        return REF_BASE + (serverState ? serverState.refCode : "");
       }
       function syncServerCheckinBtn(){
         if(!serverMode || !serverState) return;
@@ -1623,7 +1623,7 @@
         } else {
           var code = S.name.replace(/[^a-zA-Z]/g, "").slice(0,4).toUpperCase() || "CUAN";
           var num = 1000 + Math.floor(Math.random() * 9000);
-          $("refLink").textContent = REF_BASE + "?ref=" + code + num;
+          $("refLink").textContent = REF_BASE + code + num;
         }
         displayedBal = 0;
         showView("home");
