@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
       button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
     </style>
@@ -399,6 +400,39 @@
       #giftBtn{ margin-top:11px; }
       #giftBtn:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
       @media (prefers-reduced-motion: reduce){ #giftBtn:not(:disabled){ animation:none; } }
+
+      /* ---------- iklan berhadiah (AdsGram) ---------- */
+      .ad-card{
+        display:flex; gap:15px; align-items:center; margin-top:16px; position:relative; overflow:hidden;
+        border-color:rgba(11,79,108,.35);
+      }
+      .ad-stage{ width:98px; flex:none; display:flex; align-items:center; justify-content:center; }
+      .ad-screen{
+        width:92px; height:64px; border-radius:14px; position:relative; display:grid; place-items:center;
+        background:linear-gradient(155deg,#0b3049,#0b4f6c 60%,#1273a5);
+        box-shadow:0 10px 20px rgba(11,63,92,.32), inset 0 1px 0 rgba(255,255,255,.28);
+      }
+      .ad-screen::after{
+        content:"IKLAN"; position:absolute; top:6px; right:8px; font-size:8.5px; font-weight:800; letter-spacing:1.2px;
+        color:#3a2a00; background:linear-gradient(180deg,#ffe27d,#f2c230); border-radius:5px; padding:2px 5px;
+      }
+      .ad-play{
+        width:38px; height:38px; border-radius:50%; display:grid; place-items:center; color:#3a2a00;
+        background:linear-gradient(180deg,#ffe27d,#f2c230 60%,#eda208);
+        box-shadow:0 6px 14px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.8);
+      }
+      .ad-card.ready .ad-play{ animation:adPulse 2.6s ease-in-out infinite; }
+      @keyframes adPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.09); } }
+      @media (prefers-reduced-motion: reduce){ .ad-card.ready .ad-play{ animation:none; } }
+      .ad-info{ flex:1; min-width:0; position:relative; z-index:1; }
+      .ad-info h3{ font-size:16.5px; font-weight:800; }
+      .ad-info p{ font-size:12.5px; color:var(--ink-2); margin-top:3px; line-height:1.55; }
+      .ad-left{
+        margin-top:10px; font-size:12.5px; font-weight:700; color:var(--ink-2);
+        background:var(--surface-2); border:1.5px dashed rgba(11,79,108,.4); border-radius:12px; padding:8px 12px; text-align:center;
+      }
+      .ad-left b{ color:var(--ink); font-variant-numeric:tabular-nums; }
+      #adBtn{ margin-top:11px; }
 
       /* history */
       .hist-item{ display:flex; gap:12px; padding:13px 2px; border-bottom:1px solid var(--line); align-items:flex-start; }
@@ -857,6 +891,20 @@
                 <div class="gift-prize hidden" id="giftPrize"></div>
                 <button class="btn-gold" id="giftBtn" type="button">Buka Kotak</button>
                 <div class="gift-count hidden" id="giftCount">Kotak berikutnya: <b id="giftTimer">--:--:--</b></div>
+              </div>
+            </div>
+
+            <div class="card ad-card" id="adCard">
+              <div class="ad-stage" aria-hidden="true">
+                <div class="ad-screen">
+                  <span class="ad-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+                </div>
+              </div>
+              <div class="ad-info">
+                <h3>🎬 Iklan Berhadiah</h3>
+                <p>Tonton iklan sampai selesai, dapat +5 poin. Maks 5x sehari.</p>
+                <div class="ad-left hidden" id="adLeftBox">Sisa kuota hari ini: <b><span id="adLeftNum">5</span> dari 5</b></div>
+                <button class="btn-emerald" id="adBtn" type="button">▶️ Putar Iklan</button>
               </div>
             </div>
 
@@ -1461,6 +1509,7 @@
       function iconForText(text){
         var s = String(text || "").toLowerCase();
         if(s.indexOf("kotak") >= 0) return "gift";
+        if(s.indexOf("iklan") >= 0) return "game";
         if(s.indexOf("check-in") >= 0 || s.indexOf("checkin") >= 0) return "check";
         if(s.indexOf("spin") >= 0 || s.indexOf("jackpot") >= 0) return "game";
         if(s.indexOf("mining") >= 0) return "pick";
@@ -1485,6 +1534,7 @@
           friends: st.invited || 0, milestoneClaimed: !!st.milestoneDone,
           wdSmallUsed: !!st.wd100UsedToday, wdBigReady: !!st.wdBigReady,
           banned: !!st.banned, checkedToday: !!st.checkedToday,
+          adLeft: (st.adLeft !== undefined && st.adLeft !== null) ? st.adLeft : null,
           mining: st.mining || null,
           history: (st.history || []).map(function(h){
             return { icon: iconForText(h.text), title: h.text || "", amount: h.delta || 0, status: "", time: fmtHistTime(h.t), wdId: "" };
@@ -1694,6 +1744,7 @@
         syncServerCheckinBtn();
         renderMining();
         renderGift();
+        renderAd();
       }
       function renderBroadcast(){
         var b = $("broadcastBanner");
@@ -2362,6 +2413,97 @@
         }
         if(!giftIsReady()) updateGiftTimer();
       }, 1000);
+
+      /* ---------------- iklan berhadiah (AdsGram) ----------------
+         Poin HANYA dikreditkan server lewat POST /ad/claim setelah
+         iklan terbukti selesai ditonton (result.done dari SDK).
+         Klien tidak pernah menambah poin iklan sendiri. */
+      var AD_BLOCK_ID = "61523";
+      var AD_DAILY_MAX = 5;
+      var adBusy = false;
+      function renderAd(){
+        var card = $("adCard");
+        if(!card) return;
+        var left = (serverMode && S && typeof S.adLeft === "number") ? S.adLeft : null;
+        var box = $("adLeftBox");
+        if(left === null){ box.classList.add("hidden"); }
+        else {
+          box.classList.remove("hidden");
+          $("adLeftNum").textContent = left;
+        }
+        card.classList.toggle("ready", !adBusy && left !== 0);
+        if(adBusy) return;
+        var btn = $("adBtn");
+        if(left === 0){
+          btn.disabled = true;
+          btn.textContent = "Kuota Habis — Balik Besok Ya";
+        } else {
+          btn.disabled = false;
+          btn.textContent = "▶️ Putar Iklan";
+        }
+      }
+      function refreshAdState(){
+        if(!authToken) return;
+        apiCall("GET", "/me", null, authToken).then(function(r){
+          if(r && r.ok && r.state){ applyServerState(r.state); renderWallet(); }
+          else renderAd();
+        });
+      }
+      $("adBtn").addEventListener("click", function(){
+        if(adBusy) return;
+        if(!serverMode){
+          toast("Iklan cuma tersedia di mode server/Telegram");
+          return;
+        }
+        if(S && typeof S.adLeft === "number" && S.adLeft <= 0){
+          toast("Kuota iklan hari ini sudah habis — balik lagi besok ya.");
+          return;
+        }
+        if(!window.Adsgram){
+          toast("Iklan belum tersedia, coba lagi nanti");
+          return;
+        }
+        var btn = $("adBtn");
+        adBusy = true;
+        renderAd();
+        setBtnBusy(btn, true, "Memutar Iklan…");
+        var ctrl = null;
+        try { ctrl = window.Adsgram.init({ blockId: AD_BLOCK_ID }); } catch(e) { ctrl = null; }
+        if(!ctrl || typeof ctrl.show !== "function"){
+          adBusy = false;
+          setBtnBusy(btn, false);
+          renderAd();
+          toast("Iklan belum tersedia, coba lagi nanti");
+          return;
+        }
+        ctrl.show().then(function(result){
+          if(result && result.done){
+            setBtnBusy(btn, true, "Mengklaim Poin…");
+            apiCall("POST", "/ad/claim", {}, authToken).then(function(res){
+              adBusy = false;
+              setBtnBusy(btn, false);
+              if(res && res.ok){
+                if(res.state) applyServerState(res.state);
+                renderWallet();
+                toast("🎬 +" + fmt(res.reward || 5) + " poin dari iklan — langsung masuk saldo bebas!");
+              } else {
+                toast((res && res.error) ? res.error : "Klaim iklan gagal — coba lagi ya.");
+                refreshAdState();
+              }
+            });
+          } else {
+            adBusy = false;
+            setBtnBusy(btn, false);
+            renderAd();
+            toast("Iklan harus ditonton sampai selesai buat dapat poin ya.");
+          }
+        }).catch(function(){
+          adBusy = false;
+          setBtnBusy(btn, false);
+          renderAd();
+          toast("Iklan belum tersedia, coba lagi nanti");
+        });
+      });
 
       /* ---------------- spin game ---------------- */
       var SYMBOLS = ["🍒","🍒","🍒","🍋","🍋","🍋","🔔","🔔","⭐","⭐","💎","7"];
