@@ -619,15 +619,76 @@
         max-width:88vw; text-align:center; line-height:1.45;
       }
       #toast.show{ opacity:1; transform:translate(-50%, 0) scale(1); }
-      /* ---------- broadcast ---------- */
-      .broadcast{
-        margin-top:16px; border-radius:18px; padding:14px 16px; display:flex; gap:11px; align-items:flex-start;
+      /* ---------- pengumuman: strip ramping 1 baris, ketuk buat expand ---------- */
+      .bc-strip{
+        width:100%; display:flex; align-items:center; gap:9px; text-align:left;
+        margin-bottom:14px; padding:11px 13px; border-radius:14px;
         background:linear-gradient(140deg,#fdf3d7,#fbe9ae); border:1px solid rgba(201,147,10,.4); color:#4d3600;
+        box-shadow:var(--shadow-sm);
       }
-      @media (prefers-color-scheme: dark){ .broadcast{ background:linear-gradient(140deg,#2c2410,#3a2f10); color:#ffe08a; } }
-      .broadcast svg{ flex:none; margin-top:1px; }
-      .broadcast b{ font-size:13.5px; }
-      .broadcast p{ font-size:13px; line-height:1.55; margin-top:2px; }
+      @media (prefers-color-scheme: dark){ .bc-strip{ background:linear-gradient(140deg,#2c2410,#3a2f10); color:#ffe08a; } }
+      .bc-strip svg{ flex:none; }
+      .bc-strip .bs-tag{ font-size:11px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; flex:none; }
+      .bc-strip .bs-text{ flex:1; min-width:0; font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .bc-strip.expanded .bs-text{ white-space:normal; overflow:visible; }
+      .bc-strip .bs-chev{ transition:transform .3s ease; }
+      .bc-strip.expanded .bs-chev{ transform:rotate(180deg); }
+      @media (prefers-reduced-motion: reduce){ .bc-strip .bs-chev{ transition:none; } }
+
+      /* ---------- beranda ringkas ---------- */
+      #view-home .content > .card{ margin-top:14px; }
+      .section-title.compact{ margin:18px 2px 10px; }
+
+      /* ---------- akordeon kartu sekunder ---------- */
+      .acc{
+        background:var(--surface); border:1px solid var(--line); border-radius:20px;
+        box-shadow:var(--shadow-sm), inset 0 1px 0 var(--card-hi);
+        margin-top:12px; overflow:hidden;
+      }
+      .acc-head{
+        width:100%; display:flex; align-items:center; gap:11px; padding:12px 15px;
+        text-align:left; min-height:3.4rem;
+      }
+      .acc-head:active{ background:var(--surface-2); }
+      .acc-ic{
+        width:38px; height:38px; border-radius:12px; display:grid; place-items:center; flex:none;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 10px rgba(3,44,28,.08);
+      }
+      .acc-tt{ flex:1; min-width:0; }
+      .acc-tt b{ display:block; font-size:14.5px; font-weight:800; line-height:1.25; }
+      .acc-tt span{
+        display:block; font-size:11.5px; color:var(--ink-3); font-weight:600; margin-top:1px;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      }
+      .acc-chev{ flex:none; color:var(--ink-3); transition:transform .3s ease; }
+      .acc.open .acc-chev{ transform:rotate(180deg); }
+      .acc-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s cubic-bezier(.22,.8,.28,1); }
+      .acc.open .acc-body{ grid-template-rows:1fr; }
+      .acc-inner{ overflow:hidden; min-height:0; }
+      .acc-pad{ padding:2px 15px 15px; }
+      .acc-inner .card{ border:none; box-shadow:none; background:transparent; padding:2px 0 0; border-radius:0; }
+      .acc-inner .promo{ margin-top:2px; }
+      @media (prefers-reduced-motion: reduce){ .acc-body, .acc-chev{ transition:none; } }
+
+      /* leaderboard */
+      .lb-row{ display:flex; align-items:center; gap:11px; padding:10px 2px; border-bottom:1px solid var(--line); }
+      .lb-row:last-child{ border-bottom:none; }
+      .lb-rank{
+        width:28px; height:28px; border-radius:50%; background:var(--surface-2); border:1px solid var(--line);
+        display:grid; place-items:center; font-size:12.5px; font-weight:800; flex:none;
+      }
+      .lb-row:first-child .lb-rank{ background:linear-gradient(180deg,#ffe27d,#f2c230); color:#3a2a00; border-color:rgba(201,147,10,.5); }
+      .lb-name{ flex:1; min-width:0; font-size:13.5px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .lb-you{ font-size:10.5px; font-weight:800; background:#e2f4ec; color:#057a55; padding:2px 7px; border-radius:99px; margin-left:5px; vertical-align:1px; }
+      @media (prefers-color-scheme: dark){ .lb-you{ background:#123626; color:#5fd6a8; } }
+      .lb-pts{ font-size:13px; font-weight:800; color:var(--emerald); font-variant-numeric:tabular-nums; flex:none; }
+
+      /* cara dapat poin */
+      .earn-row{ display:flex; gap:11px; align-items:flex-start; padding:10px 2px; border-bottom:1px solid var(--line); }
+      .earn-row:last-child{ border-bottom:none; }
+      .earn-row h4{ margin:0; font-size:13.5px; font-weight:800; }
+      .earn-row p{ font-size:12.5px; color:var(--ink-2); line-height:1.5; margin-top:2px; }
+      .earn-row .reward-badge{ margin-top:6px; }
 
       /* ---------- admin ---------- */
       #adminView{ flex:1; display:flex; flex-direction:column; }
@@ -871,6 +932,12 @@
             </div>
           </div>
           <div class="content">
+            <button class="bc-strip hidden" id="broadcastBanner" type="button" aria-expanded="false">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+              <span class="bs-tag">Pengumuman</span>
+              <span class="bs-text" id="broadcastText"></span>
+              <svg class="bs-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
             <div class="balance-card">
               <div class="bal-lbl">Saldo Poin Bebas</div>
               <div class="bal-amt">Rp <span id="balAmt">0</span></div>
@@ -918,52 +985,7 @@
               </div>
             </div>
 
-            <div class="broadcast hidden" id="broadcastBanner">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              <div><b>Pengumuman</b><p id="broadcastText"></p></div>
-            </div>
-
-            <div class="shortcut-grid">
-              <button class="shortcut" data-go="transfer" type="button">
-                <span class="ic ic-em"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 3 4 4-4 4"/><path d="M21 7H9"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12"/></svg></span>
-                <span>Transfer</span>
-              </button>
-              <button class="shortcut" id="checkinShortcut" type="button">
-                <span class="ic ic-gold"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
-                <span>Check-in</span>
-              </button>
-              <button class="shortcut" data-go="misi" type="button">
-                <span class="ic ic-rose"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
-                <span>Misi</span>
-              </button>
-              <button class="shortcut" data-go="game" type="button">
-                <span class="ic ic-sky"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
-                <span>Game</span>
-              </button>
-            </div>
-
-            <div class="promo">
-              <div class="promo-track" id="promoTrack">
-                <div class="promo-slide" style="background:linear-gradient(130deg,#04503a,#0aa873 72%,#12bd8a);">
-                  <h3>Bonus Daftar 5.000 Poin</h3>
-                  <p>Check-in tiap hari, bonus terkunci terbuka 2.000 per hari. 3 hari langsung lunas!</p>
-                  <span class="big">5rb</span>
-                </div>
-                <div class="promo-slide" style="background:linear-gradient(130deg,#7c5800,#c9930a 58%,#eebd3a);">
-                  <h3>Undang Teman, Cuan Bareng</h3>
-                  <p>+500 poin tiap teman yang daftar. Kumpulkan 5 teman, bonus ekstra +10.000!</p>
-                  <span class="big">+500</span>
-                </div>
-                <div class="promo-slide" style="background:linear-gradient(130deg,#083f57,#1273a5 62%,#1d9bc4);">
-                  <h3>Spin Harian, Jackpot 10.000</h3>
-                  <p>3x spin gratis tiap hari. Dapatkan 777 dan bawa pulang jackpot 10.000 poin.</p>
-                  <span class="big">777</span>
-                </div>
-              </div>
-              <div class="promo-dots" id="promoDots"><i class="on"></i><i></i><i></i></div>
-            </div>
-
-            <h3 class="section-title">Bonus Pendaftaran</h3>
+            <h3 class="section-title compact">Bonus Pendaftaran</h3>
             <div class="card">
               <div class="locked-head">
                 <span class="lock-ic">
@@ -984,43 +1006,197 @@
               <button class="btn-gold" id="checkinBtn" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
             </div>
 
-            <h3 class="section-title">Mining Poin</h3>
-            <div class="card mining-card" id="miningCard">
-              <div class="mining-top">
-                <span class="mining-ic">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/></svg>
-                </span>
-                <div>
-                  <h3>Mesin Mining</h3>
-                  <p id="miningRateText">5 poin/jam · siklus 24 jam</p>
+            <!-- ===== Kartu sekunder: akordeon, tertutup secara default ===== -->
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-rose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
+                <span class="acc-tt"><b>Misi Undang Teman</b><span>+500 poin tiap teman yang daftar</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <div class="card misi-card">
+                  <div class="misi-top">
+                    <span class="misi-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
+                    <div>
+                      <h3>Undang Teman</h3>
+                      <p>Ajak teman daftar pakai link kamu.</p>
+                      <span class="reward-badge js-ref-badge">+500 poin / teman</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="locked-amt">
-                  <div class="a" id="miningAccrued">0</div>
-                  <div class="b">poin terkumpul</div>
-                </div>
-              </div>
-              <div class="progress"><i id="miningBar" style="width:0%"></i></div>
-              <div class="locked-foot"><span id="miningTimeText">Mining belum jalan — mulai siklus pertamamu.</span><span id="miningPct">0%</span></div>
-              <div class="mining-full hidden" id="miningFullNote">Mining penuh — poin berhenti nambah. Klaim sekarang, terus mulai siklus baru.</div>
-              <button class="btn-emerald" id="miningStartBtn" type="button" style="margin-top:14px;">Mulai Mining</button>
-              <button class="btn-gold hidden" id="miningClaimBtn" type="button" style="margin-top:14px;" disabled>Klaim Poin</button>
-              <p style="font-size:12.5px; color:var(--ink-3); margin-top:11px; line-height:1.55;">Poin ngalir otomatis selama mining jalan. Kamu yang pencet Klaim sendiri — hasil klaim langsung masuk ke saldo bebas.</p>
+                <button class="btn-ghost" data-go="misi" type="button" style="margin-top:12px;">Lihat Semua Misi &amp; Link Undangan</button>
+              </div></div></div>
             </div>
 
-            <h3 class="section-title">Misi Hari Ini <button class="more" data-go="misi" type="button">Lihat Semua</button></h3>
-            <div class="card misi-card">
-              <div class="misi-top">
-                <span class="misi-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
-                <div>
-                  <h3>Undang Teman</h3>
-                  <p>Ajak teman daftar pakai link kamu.</p>
-                  <span class="reward-badge js-ref-badge">+500 poin / teman</span>
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/></svg></span>
+                <span class="acc-tt"><b>Mining Poin</b><span>Poin ngalir otomatis, klaim manual</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <div class="card mining-card" id="miningCard">
+                  <div class="mining-top">
+                    <span class="mining-ic">
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/></svg>
+                    </span>
+                    <div>
+                      <h3>Mesin Mining</h3>
+                      <p id="miningRateText">5 poin/jam · siklus 24 jam</p>
+                    </div>
+                    <div class="locked-amt">
+                      <div class="a" id="miningAccrued">0</div>
+                      <div class="b">poin terkumpul</div>
+                    </div>
+                  </div>
+                  <div class="progress"><i id="miningBar" style="width:0%"></i></div>
+                  <div class="locked-foot"><span id="miningTimeText">Mining belum jalan — mulai siklus pertamamu.</span><span id="miningPct">0%</span></div>
+                  <div class="mining-full hidden" id="miningFullNote">Mining penuh — poin berhenti nambah. Klaim sekarang, terus mulai siklus baru.</div>
+                  <button class="btn-emerald" id="miningStartBtn" type="button" style="margin-top:14px;">Mulai Mining</button>
+                  <button class="btn-gold hidden" id="miningClaimBtn" type="button" style="margin-top:14px;" disabled>Klaim Poin</button>
+                  <p style="font-size:12.5px; color:var(--ink-3); margin-top:11px; line-height:1.55;">Poin ngalir otomatis selama mining jalan. Kamu yang pencet Klaim sendiri — hasil klaim langsung masuk ke saldo bebas.</p>
                 </div>
-              </div>
+              </div></div></div>
             </div>
 
-            <h3 class="section-title">Aktivitas Terakhir <button class="more" data-go="riwayat" type="button">Lihat Semua</button></h3>
-            <div class="card" id="homeHistory"></div>
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
+                <span class="acc-tt"><b>Leaderboard</b><span>Pengumpul poin terbanyak</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <div id="leaderboardList"></div>
+                <p style="font-size:12px; color:var(--ink-3); line-height:1.55; margin-top:10px;">Peringkat dihitung dari total poin yang sudah terkumpul (saldo bebas + bonus terbuka).</p>
+              </div></div></div>
+            </div>
+
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></span>
+                <span class="acc-tt"><b>Cara Dapat Poin</b><span>Semua jalan ngumpulin poin di Cuanmu</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <div class="earn-row">
+                  <div>
+                    <h4>Check-in Harian</h4>
+                    <p>Check-in tiap hari dapat poin, sekaligus membuka bonus pendaftaranmu 2.000 poin per hari.</p>
+                    <span class="reward-badge js-ci-badge">+20 poin / hari</span>
+                  </div>
+                </div>
+                <div class="earn-row">
+                  <div>
+                    <h4>Kotak Hadiah</h4>
+                    <p>Buka kotak yang muncul tiap jam 12 malam — hadiah acak, 1x per hari.</p>
+                    <span class="reward-badge">500 – 100.000 poin</span>
+                  </div>
+                </div>
+                <div class="earn-row">
+                  <div>
+                    <h4>Iklan Berhadiah</h4>
+                    <p>Tonton iklan sampai selesai, poin langsung masuk ke saldo bebas.</p>
+                    <span class="reward-badge">+5 poin / iklan · maks 5x sehari</span>
+                  </div>
+                </div>
+                <div class="earn-row">
+                  <div>
+                    <h4>Undang Teman</h4>
+                    <p>Bagikan link undanganmu — tiap teman yang daftar, kamu dapat poin. Kumpulkan 5 teman buat bonus milestone +10.000.</p>
+                    <span class="reward-badge js-ref-badge">+500 poin / teman</span>
+                  </div>
+                </div>
+                <div class="earn-row">
+                  <div>
+                    <h4>Mining Poin</h4>
+                    <p>Jalankan mesin mining dan poin terkumpul otomatis selama siklus berjalan — kamu klaim sendiri hasilnya.</p>
+                    <span class="reward-badge">Klaim manual</span>
+                  </div>
+                </div>
+                <div class="earn-row">
+                  <div>
+                    <h4>Spin Harian</h4>
+                    <p>3x spin gratis tiap hari di tab Game. Dapat 777, jackpotnya 10.000 poin.</p>
+                    <span class="reward-badge">Jackpot 10.000 poin</span>
+                  </div>
+                </div>
+                <button class="btn-ghost" data-go="game" type="button" style="margin-top:12px;">Main Spin Sekarang</button>
+              </div></div></div>
+            </div>
+
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>
+                <span class="acc-tt"><b>Promo &amp; Bonus</b><span>Info bonus dan promo yang lagi jalan</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <div class="promo">
+                  <div class="promo-track" id="promoTrack">
+                    <div class="promo-slide" style="background:linear-gradient(130deg,#04503a,#0aa873 72%,#12bd8a);">
+                      <h3>Bonus Daftar 5.000 Poin</h3>
+                      <p>Check-in tiap hari, bonus terkunci terbuka 2.000 per hari. 3 hari langsung lunas!</p>
+                      <span class="big">5rb</span>
+                    </div>
+                    <div class="promo-slide" style="background:linear-gradient(130deg,#7c5800,#c9930a 58%,#eebd3a);">
+                      <h3>Undang Teman, Cuan Bareng</h3>
+                      <p>+500 poin tiap teman yang daftar. Kumpulkan 5 teman, bonus ekstra +10.000!</p>
+                      <span class="big">+500</span>
+                    </div>
+                    <div class="promo-slide" style="background:linear-gradient(130deg,#083f57,#1273a5 62%,#1d9bc4);">
+                      <h3>Spin Harian, Jackpot 10.000</h3>
+                      <p>3x spin gratis tiap hari. Dapatkan 777 dan bawa pulang jackpot 10.000 poin.</p>
+                      <span class="big">777</span>
+                    </div>
+                  </div>
+                  <div class="promo-dots" id="promoDots"><i class="on"></i><i></i><i></i></div>
+                </div>
+              </div></div></div>
+            </div>
+
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-sky"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></span>
+                <span class="acc-tt"><b>CS Admin</b><span>Tanya soal poin, penarikan, atau akun</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <p style="font-size:13px; color:var(--ink-2); line-height:1.6;">Ada kendala soal poin, penarikan, atau akun kamu? Chat admin lewat bot Telegram resmi Cuanmu — sebutkan nama akun dan kendalanya ya.</p>
+                <a class="btn-emerald" href="https://t.me/CuanmuAppBot" target="_blank" rel="noopener" style="display:block; text-align:center; text-decoration:none; margin-top:12px;">Chat Admin via Telegram</a>
+                <p style="font-size:12px; color:var(--ink-3); line-height:1.55; margin-top:10px;">Penarikan diproses manual, biasanya di hari yang sama. Kalau belum masuk juga, tanya di sini aja.</p>
+              </div></div></div>
+            </div>
+
+            <div class="acc">
+              <button class="acc-head" type="button" aria-expanded="false">
+                <span class="acc-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8"/><path d="M8 12h8"/></svg></span>
+                <span class="acc-tt"><b>Aktivitas Terakhir</b><span>Riwayat poin dan saldo kamu</span></span>
+                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+                <div class="card" id="homeHistory"></div>
+                <button class="btn-ghost" data-go="riwayat" type="button" style="margin-top:12px;">Lihat Semua Riwayat</button>
+              </div></div></div>
+            </div>
+
+            <div class="shortcut-grid">
+              <button class="shortcut" data-go="transfer" type="button">
+                <span class="ic ic-em"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 3 4 4-4 4"/><path d="M21 7H9"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12"/></svg></span>
+                <span>Transfer</span>
+              </button>
+              <button class="shortcut" id="checkinShortcut" type="button">
+                <span class="ic ic-gold"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+                <span>Check-in</span>
+              </button>
+              <button class="shortcut" data-go="misi" type="button">
+                <span class="ic ic-rose"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+                <span>Misi</span>
+              </button>
+              <button class="shortcut" data-go="game" type="button">
+                <span class="ic ic-sky"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
+                <span>Game</span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -1761,6 +1937,7 @@
         }
         renderHistory();
         renderBroadcast();
+        renderLeaderboard();
         updateWdRules();
         syncServerCheckinBtn();
         renderMining();
@@ -1772,6 +1949,33 @@
         if(!b) return;
         if(G.broadcast){ $("broadcastText").textContent = G.broadcast; b.classList.remove("hidden"); }
         else b.classList.add("hidden");
+      }
+      /* Leaderboard dari data yang memang ada di aplikasi: pengguna lokal
+         (mode lokal) + akun yang sedang masuk. Mode server tidak punya
+         daftar pengguna publik, jadi isinya akun sendiri saja. */
+      function renderLeaderboard(){
+        var el = $("leaderboardList");
+        if(!el) return;
+        var rows = [];
+        (G.users || []).forEach(function(u){
+          rows.push({ name: u.name, pts: (u.free || 0) + (u.unlocked || 0), me: false });
+        });
+        if(S.name){
+          var mePts = (S.free || 0) + (S.unlocked || 0), found = false;
+          rows.forEach(function(r){ if(r.name === S.name){ r.pts = mePts; r.me = true; found = true; } });
+          if(!found) rows.push({ name: S.name, pts: mePts, me: true });
+        }
+        rows.sort(function(a, b){ return b.pts - a.pts; });
+        rows = rows.slice(0, 5);
+        if(!rows.length){
+          el.innerHTML = '<div class="empty">Belum ada data leaderboard.<br/>Kumpulin poin dan jadi yang teratas!</div>';
+          return;
+        }
+        el.innerHTML = rows.map(function(r, i){
+          return '<div class="lb-row"><span class="lb-rank">' + (i + 1) + '</span>' +
+            '<span class="lb-name">' + esc(r.name) + (r.me ? '<span class="lb-you">Kamu</span>' : "") + '</span>' +
+            '<span class="lb-pts">' + fmt(r.pts) + ' poin</span></div>';
+        }).join("");
       }
       function applySettingsUI(){
         var st = G.settings;
@@ -1805,6 +2009,20 @@
       });
       document.querySelectorAll("[data-go]").forEach(function(b){
         b.addEventListener("click", function(){ showView(b.getAttribute("data-go")); });
+      });
+      /* akordeon kartu sekunder di beranda — tiap kartu independen */
+      document.querySelectorAll(".acc-head").forEach(function(h){
+        h.addEventListener("click", function(){
+          var acc = h.parentElement;
+          var open = acc.classList.toggle("open");
+          h.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      });
+      /* strip pengumuman: ketuk buat expand / tutup */
+      var bcStrip = $("broadcastBanner");
+      if(bcStrip) bcStrip.addEventListener("click", function(){
+        var ex = bcStrip.classList.toggle("expanded");
+        bcStrip.setAttribute("aria-expanded", ex ? "true" : "false");
       });
       document.querySelectorAll("[data-back]").forEach(function(b){
         b.addEventListener("click", function(){ showView(b.getAttribute("data-back")); });
