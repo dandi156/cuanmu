@@ -560,6 +560,16 @@
       .wd-rules .st{ font-weight:800; flex:none; }
       .wd-rules .st.ok{ color:var(--emerald); }
       .wd-rules .st.no{ color:var(--gold-deep); }
+      .wd-lock{
+        border-radius:16px; padding:14px 15px; margin-bottom:14px; font-size:13px; line-height:1.55;
+        background:var(--gold-soft); border:1px solid rgba(201,147,10,.45); color:var(--ink);
+      }
+      .wd-lock.open{ background:#e2f4ec; border-color:rgba(5,150,105,.4); }
+      @media (prefers-color-scheme: dark){ .wd-lock.open{ background:#123626; } }
+      .wd-lock b.t{ font-size:14px; display:block; }
+      .wd-lock p{ color:var(--ink-2); margin-top:3px; }
+      .wd-lock .progress{ margin-top:11px; }
+      .wd-lock .srow{ display:flex; justify-content:space-between; gap:10px; font-size:12px; font-weight:700; color:var(--ink-2); margin-top:7px; }
       .summary{ border-radius:20px; overflow:hidden; border:1px solid var(--line); }
       .summary .row{ display:flex; justify-content:space-between; gap:14px; padding:13px 16px; background:var(--surface); font-size:13.5px; }
       .summary .row + .row{ border-top:1px solid var(--line); }
@@ -941,8 +951,8 @@
                 </div>
                 <div class="promo-slide" style="background:linear-gradient(130deg,#7c5800,#c9930a 58%,#eebd3a);">
                   <h3>Undang Teman, Cuan Bareng</h3>
-                  <p>+2.000 poin tiap teman yang daftar. Kumpulkan 5 teman, bonus ekstra +10.000!</p>
-                  <span class="big">+2rb</span>
+                  <p>+500 poin tiap teman yang daftar. Kumpulkan 5 teman, bonus ekstra +10.000!</p>
+                  <span class="big">+500</span>
                 </div>
                 <div class="promo-slide" style="background:linear-gradient(130deg,#083f57,#1273a5 62%,#1d9bc4);">
                   <h3>Spin Harian, Jackpot 10.000</h3>
@@ -1004,7 +1014,7 @@
                 <div>
                   <h3>Undang Teman</h3>
                   <p>Ajak teman daftar pakai link kamu.</p>
-                  <span class="reward-badge js-ref-badge">+2.000 poin / teman</span>
+                  <span class="reward-badge js-ref-badge">+500 poin / teman</span>
                 </div>
               </div>
             </div>
@@ -1027,7 +1037,7 @@
                 <div>
                   <h3>Undang Teman</h3>
                   <p>Ajak teman daftar pakai link kamu — tiap teman yang bergabung, kamu dapat poin.</p>
-                  <span class="reward-badge js-ref-badge">+2.000 poin / teman</span>
+                  <span class="reward-badge js-ref-badge">+500 poin / teman</span>
                 </div>
               </div>
               <div class="locked-foot" style="margin-top:14px;"><span>Teman bergabung</span><span><b id="friendCount" style="color:var(--ink);">0</b> teman</span></div>
@@ -1035,7 +1045,7 @@
                 <span id="refLink">https://t.me/CuanmuAppBot?start=ref_…</span>
                 <button id="copyRef" type="button">Salin</button>
               </div>
-              <button class="btn-emerald" id="simInvite" type="button" style="margin-top:12px;">Simulasikan Teman Bergabung · +2.000</button>
+              <button class="btn-emerald" id="simInvite" type="button" style="margin-top:12px;">Simulasikan Teman Bergabung · +500</button>
               <p class="hidden" id="serverRefNote" style="font-size:12.5px; color:var(--ink-2); line-height:1.6; margin-top:12px;">Bagikan link di atas ke temanmu — poin undangan masuk otomatis begitu dia selesai daftar lewat link itu.</p>
 
               <div class="milestone" id="milestoneBox">
@@ -1177,7 +1187,7 @@
         <section class="view" id="view-withdraw">
           <div class="flow-head">
             <button class="back-btn" data-back="home" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-            <div><h2>Tarik Saldo ke DANA</h2><p id="wdHeadNote">Rp100 bisa langsung ditarik 1x sehari. Rp500 ke atas butuh check-in di hari berikutnya.</p></div>
+            <div><h2>Tarik Saldo ke DANA</h2><p id="wdHeadNote">Semua penarikan butuh check-in 3 hari berturut-turut. Penarikan kecil maks 1x sehari.</p></div>
           </div>
           <div class="steps" id="wdSteps">
             <div class="step on" data-s="1"><div class="dot">1</div><span>Isi Data</span></div>
@@ -1188,6 +1198,12 @@
           </div>
           <div class="flow-body">
             <div id="wdStep1">
+              <div class="wd-lock" id="wdLockPanel">
+                <b class="t" id="wdLockTitle">🔒 Penarikan terkunci — check-in 3 hari berturut-turut buat membuka</b>
+                <p id="wdLockText">Check-in tiap hari tanpa bolong sampai streak 3 hari. Kalau bolong satu hari, streak mulai lagi dari awal.</p>
+                <div class="progress"><i id="wdStreakBar" style="width:0%;"></i></div>
+                <div class="srow"><span>Check-in beruntun: <b id="wdStreakNow" style="color:var(--ink);">0</b> dari 3 hari</span><span id="wdStreakLeft"></span></div>
+              </div>
               <div class="wd-dest">
                 <span class="brand-badge" style="background:linear-gradient(135deg,#1299f2,#0b6fd6);">DANA</span>
                 <div>
@@ -1217,8 +1233,8 @@
               </div>
               <p style="font-size:12.5px; color:var(--ink-3); margin-bottom:14px;">Saldo bebas kamu: <b style="color:var(--ink);">Rp <span class="balMirror">0</span></b> · Penarikan diproses manual, biasanya di hari yang sama.</p>
               <div class="wd-rules">
-                <div class="r"><span class="st ok" id="wdRuleSmallSt">●</span><span id="wdRuleSmall">Penarikan di bawah Rp500: bisa langsung, maksimal <b>1x sehari</b>.</span></div>
-                <div class="r"><span class="st no" id="wdRuleBigSt">●</span><span id="wdRuleBig">Penarikan <b>Rp500 ke atas</b>: harus check-in dulu di hari berikutnya.</span></div>
+                <div class="r"><span class="st no" id="wdRuleGateSt">●</span><span id="wdRuleGate">Semua penarikan: butuh check-in <b>3 hari berturut-turut</b>.</span></div>
+                <div class="r"><span class="st ok" id="wdRuleSmallSt">●</span><span id="wdRuleSmall">Penarikan di bawah Rp500: maksimal <b>1x sehari</b>.</span></div>
               </div>
               <div class="err" id="wdErr" style="display:none; color:var(--red); font-size:13px; font-weight:600; margin-bottom:12px;"></div>
               <button class="btn-emerald" id="wdNext" type="button">Lanjut ke Konfirmasi</button>
@@ -1395,13 +1411,18 @@
       var fmt = function(n){ return Number(n).toLocaleString("id-ID"); };
       var esc = function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
       var nowTime = function(){ return new Date().toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"}).replace(":", "."); };
+      var dayKey = function(offset){ var d = new Date(); d.setDate(d.getDate() + (offset || 0)); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
+      /* Satu gerbang penarikan untuk SEMUA nominal: streak check-in >= 3 hari
+         beruntun. Mode server: wdReady dari server (termasuk akun wdUnlock).
+         Mode lokal: dihitung dari streak check-in lokal. */
+      function wdGateOpen(){ return !!S.wdReady || (S.ciStreak || 0) >= 3; }
 
       /* ---------------- state ---------------- */
       var S = {
         registered:false, name:"", idLabel:"",
         free:0, locked:0, unlocked:0, checkins:0,
         spinsLeft:3, friends:0, milestoneClaimed:false,
-        wdSmallUsed:false, wdBigReady:false,
+        wdSmallUsed:false, wdReady:false, ciStreak:0, lastCiDay:"",
         history:[]
       };
       var pendingReg = null; // {name, phone, pass}
@@ -1532,7 +1553,7 @@
           checkins: st.checkins || 0,
           spinsLeft: (st.spinLeft !== undefined ? st.spinLeft : (st.spinsLeft || 0)),
           friends: st.invited || 0, milestoneClaimed: !!st.milestoneDone,
-          wdSmallUsed: !!st.wd100UsedToday, wdBigReady: !!st.wdBigReady,
+          wdSmallUsed: !!st.wd100UsedToday, wdReady: !!st.wdReady, ciStreak: st.ciStreak || 0,
           banned: !!st.banned, checkedToday: !!st.checkedToday,
           adLeft: (st.adLeft !== undefined && st.adLeft !== null) ? st.adLeft : null,
           mining: st.mining || null,
@@ -1602,7 +1623,7 @@
         return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
       }
       var G = {
-        settings: { signupBonus:5000, checkinReward:20, unlockPerCheckin:2000, referralReward:2000, milestoneTarget:5, milestoneBonus:10000, minWd:100, spinQuota:3, miningRate:5, miningHours:24 },
+        settings: { signupBonus:5000, checkinReward:20, unlockPerCheckin:2000, referralReward:500, milestoneTarget:5, milestoneBonus:10000, minWd:100, spinQuota:3, miningRate:5, miningHours:24 },
         broadcast: "",
         users: [], withdrawals: [], activity: [], seq: 100
       };
@@ -1612,7 +1633,7 @@
           registered: true, name: name, idLabel: idLabel, pass: pass ? hashPw(pass) : "",
           free: 0, locked: 0, unlocked: 0, checkins: 0,
           spinsLeft: G.settings.spinQuota, friends: 0, milestoneClaimed: false,
-          wdSmallUsed: false, wdBigReady: false, miningStart: 0, giftDay: "", giftPrize: 0, history: []
+          wdSmallUsed: false, ciStreak: 0, lastCiDay: "", miningStart: 0, giftDay: "", giftPrize: 0, history: []
         };
         if(extra) for(var k in extra) u[k] = extra[k];
         return u;
@@ -1635,9 +1656,9 @@
       }
       function seedData(){
         var seedLock = function(){ return "locked-" + Date.now() + "-" + Math.random(); };
-        var budi = mkUser("Budi Santoso", "budi.santoso@email.com", seedLock(), { free:12450, locked:1000, unlocked:4000, checkins:3, friends:2, spinsLeft:1 });
-        var sari = mkUser("Sari Wulandari", "sari.wulandari@email.com", seedLock(), { free:3200, locked:3000, unlocked:2000, checkins:1, friends:0 });
-        var rizky = mkUser("Rizky Pratama", "081234567890", seedLock(), { free:58750, locked:0, unlocked:5000, checkins:5, friends:6, milestoneClaimed:true, wdBigReady:true });
+        var budi = mkUser("Budi Santoso", "budi.santoso@email.com", seedLock(), { free:12450, locked:1000, unlocked:4000, checkins:3, ciStreak:2, lastCiDay: dayKey(0), friends:2, spinsLeft:1 });
+        var sari = mkUser("Sari Wulandari", "sari.wulandari@email.com", seedLock(), { free:3200, locked:3000, unlocked:2000, checkins:1, ciStreak:1, lastCiDay: dayKey(0), friends:0 });
+        var rizky = mkUser("Rizky Pratama", "081234567890", seedLock(), { free:58750, locked:0, unlocked:5000, checkins:5, ciStreak:3, lastCiDay: dayKey(0), friends:6, milestoneClaimed:true });
         var dewi = mkUser("Dewi Anggraini", "dewi.anggraini@email.com", seedLock(), { free:850, locked:5000, unlocked:0, checkins:0, friends:1 });
         G.users = [budi, sari, rizky, dewi];
         G.withdrawals = [
@@ -1645,12 +1666,12 @@
           { id:"wd-s2", userId:rizky.id, name:rizky.name, num:"081377889900", amt:50000, status:"pending", time:"10.17" },
           { id:"wd-s3", userId:sari.id, name:sari.name, num:"085712340987", amt:100, status:"lunas", time:"08.05" }
         ];
-        seedHist(rizky, "users", "Misi Undang Teman", 2000, "", "", "08.12");
+        seedHist(rizky, "users", "Misi Undang Teman", 500, "", "", "08.12");
         seedHist(budi, "check", "Check-in Harian ke-3", 20, "", "", "08.30");
         seedHist(rizky, "game", "Menang Spin Harian", 150, "", "", "08.47");
         seedHist(sari, "wallet", "Penarikan ke DANA •••0987", -100, "Lunas", "wd-s3", "08.05");
         seedHist(budi, "wallet", "Penarikan ke DANA •••5432", -500, "Diproses", "wd-s1", "09.41");
-        seedHist(dewi, "users", "Misi Undang Teman", 2000, "", "", "09.58");
+        seedHist(dewi, "users", "Misi Undang Teman", 500, "", "", "09.58");
         seedHist(rizky, "wallet", "Penarikan ke DANA •••9900", -50000, "Diproses", "wd-s2", "10.17");
         seedHist(budi, "lock", "Bonus Pendaftaran Terbuka", 2000, "", "", "10.22");
         G.users.forEach(function(u){ u.history.reverse(); });
@@ -1762,7 +1783,7 @@
         document.querySelectorAll(".js-ref-badge").forEach(function(el){ el.textContent = "+" + fmt(st.referralReward) + " poin / teman"; });
         $("simInvite").textContent = "Simulasikan Teman Bergabung · +" + fmt(st.referralReward);
         document.querySelectorAll(".js-ci-badge").forEach(function(el){ el.textContent = "+" + fmt(st.checkinReward) + " poin / hari"; });
-        $("wdHeadNote").textContent = "Rp" + fmt(st.minWd) + " bisa langsung ditarik 1x sehari. Rp500 ke atas butuh check-in di hari berikutnya.";
+        $("wdHeadNote").textContent = "Semua penarikan butuh check-in 3 hari berturut-turut. Penarikan kecil maks 1x sehari.";
         $("spinQuotaLbl").textContent = st.spinQuota;
         renderMining();
       }
@@ -2126,9 +2147,14 @@
         }
         S.spinsLeft = G.settings.spinQuota;
         S.wdSmallUsed = false;
-        /* Penarikan >= 500 baru kebuka setelah check-in di HARI BERIKUTNYA.
-           Check-in pertama = hari pendaftaran, jadi syaratnya total check-in >= 2 hari. */
-        S.wdBigReady = S.checkins >= 2;
+        /* Streak check-in beruntun: naik bila check-in terakhir kemarin,
+           mulai lagi dari 1 bila bolong satu hari. Gerbang penarikan
+           (semua nominal) kebuka bila streak >= 3. */
+        var ciToday = dayKey(0);
+        if(S.lastCiDay !== ciToday){
+          S.ciStreak = (S.lastCiDay === dayKey(-1)) ? (S.ciStreak || 0) + 1 : 1;
+          S.lastCiDay = ciToday;
+        }
         renderWallet();
       }
       $("checkinBtn").addEventListener("click", doCheckin);
@@ -2761,30 +2787,42 @@
       /* ---------------- withdraw ---------------- */
       var wdAmt = 0;
       function updateWdRules(){
-        var sSt = $("wdRuleSmallSt"), bSt = $("wdRuleBigSt");
-        if(!sSt || !bSt) return;
+        var gSt = $("wdRuleGateSt"), sSt = $("wdRuleSmallSt");
+        if(!gSt || !sSt) return;
+        var open = wdGateOpen();
+        var streak = Math.min(S.ciStreak || 0, 3);
+        var panel = $("wdLockPanel");
+        if(panel){
+          panel.classList.toggle("open", open);
+          $("wdLockTitle").textContent = open ? "🔓 Penarikan terbuka" : "🔒 Penarikan terkunci — check-in 3 hari berturut-turut buat membuka";
+          $("wdLockText").textContent = open
+            ? "Streak check-in kamu sudah 3 hari — semua nominal penarikan bisa dipakai."
+            : "Check-in tiap hari tanpa bolong sampai streak 3 hari. Kalau bolong satu hari, streak mulai lagi dari awal.";
+          $("wdStreakBar").style.width = (streak / 3 * 100) + "%";
+          $("wdStreakNow").textContent = streak;
+          $("wdStreakLeft").textContent = open ? "Siap ditarik ✓" : ("Kurang " + (3 - streak) + " hari lagi");
+        }
+        if(open){
+          gSt.className = "st ok";
+          $("wdRuleGate").innerHTML = "Semua penarikan: streak check-in 3 hari tercapai — <b>sudah terbuka</b>.";
+        } else {
+          gSt.className = "st no";
+          $("wdRuleGate").innerHTML = "Semua penarikan: butuh check-in <b>3 hari berturut-turut</b> — streak kamu sekarang " + (S.ciStreak || 0) + " hari.";
+        }
         if(S.wdSmallUsed){
           sSt.className = "st no";
-          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: <b>sudah dipakai hari ini</b> — bisa lagi setelah check-in hari berikutnya.";
+          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: <b>sudah dipakai hari ini</b> — bisa lagi besok.";
         } else {
           sSt.className = "st ok";
-          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: bisa langsung, maksimal <b>1x sehari</b>.";
-        }
-        if(S.wdBigReady){
-          bSt.className = "st ok";
-          $("wdRuleBig").innerHTML = "Penarikan <b>Rp500 ke atas</b>: check-in hari berikutnya sudah tercatat — <b>bisa ditarik sekarang</b>.";
-        } else if(S.checkins >= 1){
-          bSt.className = "st no";
-          $("wdRuleBig").innerHTML = "Penarikan <b>Rp500 ke atas</b>: check-in hari ini sudah tercatat — baru kebuka setelah <b>check-in lagi di hari berikutnya</b>.";
-        } else {
-          bSt.className = "st no";
-          $("wdRuleBig").innerHTML = "Penarikan <b>Rp500 ke atas</b>: harus check-in dulu di hari berikutnya.";
+          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: maksimal <b>1x sehari</b>.";
         }
         $("wdChips").querySelectorAll(".chip").forEach(function(c){
           var v = c.getAttribute("data-amt");
           var amt = v === "all" ? S.free : parseInt(v, 10);
-          c.disabled = (amt >= 500 && !S.wdBigReady) || (amt > 0 && amt < 500 && S.wdSmallUsed);
+          c.disabled = !open || (amt > 0 && amt < 500 && S.wdSmallUsed);
         });
+        var nb = $("wdNext");
+        if(nb) nb.disabled = !open;
       }
       function resetWithdraw(){
         wdAmt = 0;
@@ -2813,8 +2851,8 @@
         if(wdAmt <= 0){ err.textContent = "Pilih nominal penarikan dulu ya."; err.style.display = "block"; return; }
         if(wdAmt < G.settings.minWd){ err.textContent = "Minimum penarikan adalah Rp" + fmt(G.settings.minWd) + "."; err.style.display = "block"; return; }
         if(wdAmt > S.free){ err.textContent = "Saldo bebas kamu tidak cukup untuk nominal ini."; err.style.display = "block"; return; }
-        if(wdAmt >= 500 && !S.wdBigReady){ err.textContent = "Penarikan Rp500 ke atas harus check-in dulu di hari berikutnya. Check-in dulu, besoknya nominal ini baru bisa ditarik."; err.style.display = "block"; return; }
-        if(wdAmt < 500 && S.wdSmallUsed){ err.textContent = "Penarikan di bawah Rp500 cuma bisa 1x sehari — jatah hari ini sudah dipakai. Bisa tarik lagi setelah check-in hari berikutnya."; err.style.display = "block"; return; }
+        if(!wdGateOpen()){ err.textContent = "Penarikan masih terkunci — check-in 3 hari berturut-turut dulu buat membuka. Streak kamu sekarang " + (S.ciStreak || 0) + " dari 3 hari."; err.style.display = "block"; return; }
+        if(wdAmt < 500 && S.wdSmallUsed){ err.textContent = "Penarikan di bawah Rp500 cuma bisa 1x sehari — jatah hari ini sudah dipakai. Coba lagi besok ya."; err.style.display = "block"; return; }
         err.style.display = "none";
         if(!ok) return;
         $("wdSummary").innerHTML =
@@ -2865,7 +2903,7 @@
           });
           return;
         }
-        if(amt >= 500) S.wdBigReady = false; else S.wdSmallUsed = true;
+        if(amt < 500) S.wdSmallUsed = true;
         S.free -= amt;
         var wdId = "wd-" + (++G.seq);
         var heldLocal = G.withdrawals.some(function(w){ return w.userId !== S.id && w.status !== "ditolak" && w.num === num; });
