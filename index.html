@@ -1185,7 +1185,7 @@
               </div>
               <div class="ad-info">
                 <h3>🎬 Iklan Berhadiah</h3>
-                <p>Tonton iklan sampai selesai, dapat +5 poin. Maks 5x sehari.</p>
+                <p>Hadiah acak 100–10.000 poin tiap iklan! Tonton sampai selesai — maks 5x sehari.</p>
                 <div class="ad-left hidden" id="adLeftBox">Sisa kuota hari ini: <b><span id="adLeftNum">5</span> dari 5</b></div>
                 <button class="btn-emerald" id="adBtn" type="button">▶️ Putar Iklan</button>
               </div>
@@ -1303,7 +1303,7 @@
                   <div>
                     <h4>Iklan Berhadiah</h4>
                     <p>Tonton iklan sampai selesai, poin langsung masuk ke saldo bebas.</p>
-                    <span class="reward-badge">+5 poin / iklan · maks 5x sehari</span>
+                    <span class="reward-badge">Iklan berhadiah acak 100–10.000 poin · maks 5x sehari</span>
                   </div>
                 </div>
                 <div class="earn-row">
@@ -1977,7 +1977,7 @@
           registered: true, name: name, idLabel: idLabel, pass: pass ? hashPw(pass) : "",
           free: 0, locked: 0, unlocked: 0, checkins: 0,
           spinsLeft: G.settings.spinQuota, friends: 0, msDone: [],
-          wdSmallUsed: false, ciStreak: 0, lastCiDay: "", miningStart: 0, giftDay: "", giftPrize: 0, history: []
+          wdSmallUsed: false, ciStreak: 0, lastCiDay: "", miningStart: 0, giftDay: "", giftPrize: 0, adDay: "", adCount: 0, history: []
         };
         if(extra) for(var k in extra) u[k] = extra[k];
         return u;
@@ -2877,16 +2877,35 @@
       }, 1000);
 
       /* ---------------- iklan berhadiah (AdsGram) ----------------
-         Poin HANYA dikreditkan server lewat POST /ad/claim setelah
-         iklan terbukti selesai ditonton (result.done dari SDK).
-         Klien tidak pernah menambah poin iklan sendiri. */
+         Hadiah ACAK 100–10.000 poin per iklan selesai, kuota 5x/hari,
+         rate susah: kebanyakan 100–299, nominal besar langka.
+         Mode server: poin dikreditkan server lewat POST /ad/claim setelah
+         iklan terbukti selesai ditonton (result.done dari SDK); jumlah
+         sebenarnya ada di field reward respons server.
+         Mode lokal: undian disimulasikan di klien dengan rentang & rate
+         yang sama, kuota harian disimpan di record pengguna lokal. */
       var AD_BLOCK_ID = "61710";
       var AD_DAILY_MAX = 5;
       var adBusy = false;
+      function rollAdReward(){
+        var r = Math.random() * 100;
+        if(r < 70) return 100 + Math.floor(Math.random() * 200);   /* 100–299 (70%) */
+        if(r < 90) return 300 + Math.floor(Math.random() * 700);   /* 300–999 (20%) */
+        if(r < 97) return 1000 + Math.floor(Math.random() * 2000); /* 1.000–2.999 (7%) */
+        if(r < 99.5) return 3000 + Math.floor(Math.random() * 4000); /* 3.000–6.999 (2,5%) */
+        return 7000 + Math.floor(Math.random() * 3001);            /* 7.000–10.000 (0,5%) */
+      }
+      function localAdLeft(){
+        if(!S) return AD_DAILY_MAX;
+        if(S.adDay !== wibDayKey()) return AD_DAILY_MAX;
+        return Math.max(0, AD_DAILY_MAX - (S.adCount || 0));
+      }
       function renderAd(){
         var card = $("adCard");
         if(!card) return;
-        var left = (serverMode && S && typeof S.adLeft === "number") ? S.adLeft : null;
+        var left = serverMode
+          ? ((S && typeof S.adLeft === "number") ? S.adLeft : null)
+          : localAdLeft();
         var box = $("adLeftBox");
         if(left === null){ box.classList.add("hidden"); }
         else {
@@ -2914,7 +2933,25 @@
       $("adBtn").addEventListener("click", function(){
         if(adBusy) return;
         if(!serverMode){
-          toast("Iklan cuma tersedia di mode server/Telegram");
+          if(localAdLeft() <= 0){
+            toast("Kuota iklan hari ini sudah habis — balik lagi besok ya.");
+            return;
+          }
+          var lbtn = $("adBtn");
+          adBusy = true;
+          renderAd();
+          setBtnBusy(lbtn, true, "Memutar Iklan…");
+          setTimeout(function(){
+            var reward = rollAdReward();
+            if(S.adDay !== wibDayKey()){ S.adDay = wibDayKey(); S.adCount = 0; }
+            S.adCount = (S.adCount || 0) + 1;
+            S.free += reward;
+            addHistory("game", "Iklan Berhadiah", reward);
+            adBusy = false;
+            setBtnBusy(lbtn, false);
+            renderWallet();
+            toast("🎉 Kamu dapat +" + fmt(reward) + " poin dari iklan!");
+          }, 1200);
           return;
         }
         if(S && typeof S.adLeft === "number" && S.adLeft <= 0){
@@ -2947,7 +2984,7 @@
               if(res && res.ok){
                 if(res.state) applyServerState(res.state);
                 renderWallet();
-                toast("🎬 +" + fmt(res.reward || 5) + " poin dari iklan — langsung masuk saldo bebas!");
+                toast(typeof res.reward === "number" ? "🎉 Kamu dapat +" + fmt(res.reward) + " poin dari iklan!" : "🎉 Poin dari iklan sudah masuk ke saldo bebas!");
               } else {
                 toast((res && res.error) ? res.error : "Klaim iklan gagal — coba lagi ya.");
                 refreshAdState();
