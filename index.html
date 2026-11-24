@@ -936,6 +936,22 @@
       .seg{ box-shadow:none; border-radius:12px; }
       .seg button{ font-weight:600; }
       .seg button.on{ background:var(--emerald); box-shadow:none; }
+
+      /* --- auth: judul mode + tab besar + jalur pindah yang jelas --- */
+      .auth-head{ margin-bottom:14px; }
+      .auth-head h2{ font-size:19px; font-weight:700; letter-spacing:-.2px; }
+      .auth-head p{ font-size:13px; color:var(--ink-2); line-height:1.5; margin-top:3px; }
+      .seg.auth-tabs{ padding:5px; border-radius:14px; }
+      .seg.auth-tabs button{ min-height:3rem; font-size:15px; font-weight:700; border-radius:10px; }
+      .auth-method-lbl{ font-size:12px; font-weight:600; color:var(--ink-2); margin-bottom:7px; }
+      .auth-switch{
+        text-align:center; font-size:13.5px; color:var(--ink-2); margin-top:18px;
+        padding-top:16px; border-top:1px solid var(--line);
+      }
+      .auth-switch button{
+        color:var(--emerald-deep); font-weight:700; font-size:13.5px; padding:6px 8px;
+        text-decoration:underline; text-underline-offset:3px; min-height:2.25rem;
+      }
       .chip{ font-weight:600; }
       .chip.sel{ border-color:var(--emerald); background:#E1EDE4; color:var(--emerald-deep); }
       .dest-opt{ border-radius:14px; box-shadow:var(--shadow-sm); font-weight:600; }
@@ -1030,13 +1046,18 @@
         </div>
 
         <div class="auth-card">
-          <div class="seg" role="tablist" aria-label="Masuk atau daftar">
-            <button id="tabDaftar" class="on" type="button">Daftar</button>
-            <button id="tabMasuk" type="button">Masuk</button>
+          <div class="auth-head">
+            <h2 id="authTitle">Buat akun baru</h2>
+            <p id="authHint">Daftar sebentar, langsung dapat bonus 5.000 poin terkunci.</p>
+          </div>
+          <div class="seg auth-tabs" role="tablist" aria-label="Masuk atau daftar">
+            <button id="tabDaftar" class="on" type="button" aria-selected="true">Daftar</button>
+            <button id="tabMasuk" type="button" aria-selected="false">Masuk</button>
           </div>
 
           <!-- REGISTER -->
           <div id="regPane" style="margin-top:18px;">
+            <div class="auth-method-lbl" id="regMethodLbl">Daftar pakai</div>
             <div class="seg small" role="tablist" aria-label="Metode pendaftaran">
               <button id="mEmail" class="on" type="button">Email</button>
               <button id="mHp" type="button">No. HP</button>
@@ -1117,7 +1138,8 @@
             <button class="btn-emerald" type="submit" id="loginBtn">Masuk ke Dompet</button>
           </form>
 
-          <p class="auth-note">Dengan mendaftar, kamu menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi Cuanmu.</p>
+          <p class="auth-switch"><span id="authSwitchText">Sudah punya akun?</span> <button id="authSwitchBtn" type="button">Masuk di sini</button></p>
+          <p class="auth-note">Dengan melanjutkan, kamu menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi Cuanmu.</p>
         </div>
       </div>
 
@@ -2237,19 +2259,31 @@
       });
       $("goTransfer").addEventListener("click", function(){ resetTransfer(); showView("transfer"); });
       $("goWithdraw").addEventListener("click", function(){ resetWithdraw(); showView("withdraw"); });
-      document.querySelector('[data-go="transfer"]').addEventListener("click", function(){ resetTransfer(); });
+      var goTfBtn = document.querySelector('[data-go="transfer"]');
+      if(goTfBtn) goTfBtn.addEventListener("click", function(){ resetTransfer(); });
 
       /* ---------------- auth ---------------- */
       function setFieldInvalid(id, bad){ $(id).classList.toggle("invalid", bad); return !bad; }
+      var authPaneMode = "reg";
       function showAuthPane(which){
+        authPaneMode = which;
         $("regPane").classList.toggle("hidden", which !== "reg");
         $("otpPane").classList.toggle("hidden", which !== "otp");
         $("loginForm").classList.toggle("hidden", which !== "login");
         $("tabDaftar").classList.toggle("on", which === "reg" || which === "otp");
         $("tabMasuk").classList.toggle("on", which === "login");
+        $("tabDaftar").setAttribute("aria-selected", (which === "reg" || which === "otp") ? "true" : "false");
+        $("tabMasuk").setAttribute("aria-selected", which === "login" ? "true" : "false");
+        var isLogin = which === "login";
+        var at = $("authTitle"); if(at) at.textContent = isLogin ? "Masuk ke akun kamu" : "Buat akun baru";
+        var ah = $("authHint"); if(ah) ah.textContent = isLogin ? "Pakai email atau nomor HP yang kamu daftarkan dulu." : "Daftar sebentar, langsung dapat bonus 5.000 poin terkunci.";
+        var sw = $("authSwitchText"); if(sw) sw.textContent = isLogin ? "Belum punya akun?" : "Sudah punya akun?";
+        var sb = $("authSwitchBtn"); if(sb) sb.textContent = isLogin ? "Daftar di sini" : "Masuk di sini";
       }
       $("tabDaftar").addEventListener("click", function(){ showAuthPane("reg"); });
       $("tabMasuk").addEventListener("click", function(){ showAuthPane("login"); });
+      var authSwitchBtn = $("authSwitchBtn");
+      if(authSwitchBtn) authSwitchBtn.addEventListener("click", function(){ showAuthPane(authPaneMode === "login" ? "reg" : "login"); });
       $("mEmail").addEventListener("click", function(){
         $("mEmail").classList.add("on"); $("mHp").classList.remove("on");
         $("regEmailForm").classList.remove("hidden"); $("regHpForm").classList.add("hidden");
@@ -2584,7 +2618,7 @@
         renderWallet();
       }
       $("checkinBtn").addEventListener("click", doCheckin);
-      document.querySelector(".misi-checkin").addEventListener("click", doCheckin);
+      document.querySelectorAll(".misi-checkin").forEach(function(el){ el.addEventListener("click", doCheckin); });
 
       /* ---------------- mining ---------------- */
       function toMs(v){
