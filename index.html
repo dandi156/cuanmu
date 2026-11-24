@@ -2202,7 +2202,7 @@
       /* ---------------- kotak hadiah ----------------
          Kotak baru tiap jam 12 malam (00:00 WIB), 1x per hari.
          Mode server: hadiah WAJIB dari POST /gift (state.giftReady jadi penanda).
-         Mode lokal: simulasi bobot sama (500 50% · 1.000 35% · 50.000 10% · 100.000 5%),
+         Mode lokal: simulasi bobot sama (500 60% · 1.000 37% · 50.000 2% · 100.000 1%),
          status harian disimpan di record pengguna lokal. */
       var giftBusy = false;
       var giftWonSession = 0; // hadiah sesi ini (mode server tidak mengirim ulang nominalnya)
@@ -2239,9 +2239,9 @@
       }
       function rollGiftPrize(){
         var r = Math.random() * 100;
-        if(r < 50) return 500;
-        if(r < 85) return 1000;
-        if(r < 95) return 50000;
+        if(r < 60) return 500;
+        if(r < 97) return 1000;
+        if(r < 99) return 50000;
         return 100000;
       }
       function updateGiftTimer(){
