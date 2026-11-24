@@ -687,8 +687,6 @@
       .maint-reason p{ font-size:15.5px; font-weight:800; line-height:1.45; margin-top:3px; }
       .maint-note{ font-size:12.5px; color:var(--ink-3); line-height:1.65; margin-top:16px; max-width:340px; }
       .maint-actions{ width:100%; max-width:360px; margin-top:20px; }
-      .maint-admin-link{ margin-top:22px; font-size:12.5px; font-weight:600; color:var(--ink-3); text-decoration:underline; text-underline-offset:3px; padding:10px 14px; }
-      .maint-admin-link:active{ transform:scale(.97); }
       .page-head{ padding:22px 18px 0; }
       .page-head h2{ font-size:20px; font-weight:800; }
       .page-head p{ font-size:13px; color:var(--ink-2); margin-top:4px; line-height:1.55; }
@@ -1239,7 +1237,7 @@
           </div>
         </div>
         <div class="maint-wrap">
-          <span class="maint-ic" aria-hidden="true">
+          <span class="maint-ic" id="maintWrench" aria-hidden="true">
             <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z"/></svg>
           </span>
           <span class="maint-badge">Maintenance</span>
@@ -1253,7 +1251,6 @@
           <div class="maint-actions">
             <button class="btn-gold" id="maintRetry" type="button">Cek Lagi</button>
           </div>
-          <button class="maint-admin-link" id="maintAdminLink" type="button">Login Admin</button>
         </div>
       </div>
 
@@ -1787,14 +1784,27 @@
         $("authView").classList.remove("hidden");
         showAuthPane("login");
       });
-      /* Jalur admin dari layar maintenance: tombol kecil di bawah
-         membuka form Masuk normal; hanya login admin yang bisa tembus. */
-      $("maintAdminLink").addEventListener("click", function(){
-        hideMaintenanceView();
-        $("authView").classList.remove("hidden");
-        showAuthPane("login");
-        var li = $("loginId"); if(li) li.focus();
-      });
+      /* Pintu admin tersembunyi selama maintenance: ketuk ikon kunci
+         pas 5x cepat (dalam ±2 detik) untuk membuka form Masuk normal;
+         hanya login admin yang bisa menembus ke panel. Tanpa petunjuk
+         visual apa pun di halaman. */
+      (function(){
+        var wrench = $("maintWrench");
+        if(!wrench) return;
+        var taps = 0, firstTapAt = 0;
+        wrench.addEventListener("click", function(){
+          var now = Date.now();
+          if(!firstTapAt || now - firstTapAt > 2000){ taps = 0; firstTapAt = now; }
+          taps++;
+          if(taps >= 5){
+            taps = 0; firstTapAt = 0;
+            hideMaintenanceView();
+            $("authView").classList.remove("hidden");
+            showAuthPane("login");
+            var li = $("loginId"); if(li) li.focus();
+          }
+        });
+      })();
       $("maintRetry").addEventListener("click", function(){
         var btn = $("maintRetry");
         setBtnBusy(btn, true, "Memeriksa…");
