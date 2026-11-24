@@ -566,6 +566,7 @@
       }
       .wd-lock.open{ background:#e2f4ec; border-color:rgba(5,150,105,.4); }
       @media (prefers-color-scheme: dark){ .wd-lock.open{ background:#123626; } }
+      .wd-lock .r100{ font-weight:700; margin-bottom:10px; }
       .wd-lock b.t{ font-size:14px; display:block; }
       .wd-lock p{ color:var(--ink-2); margin-top:3px; }
       .wd-lock .progress{ margin-top:11px; }
@@ -1363,7 +1364,7 @@
         <section class="view" id="view-withdraw">
           <div class="flow-head">
             <button class="back-btn" data-back="home" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-            <div><h2>Tarik Saldo ke DANA</h2><p id="wdHeadNote">Semua penarikan butuh check-in 3 hari berturut-turut. Penarikan kecil maks 1x sehari.</p></div>
+            <div><h2>Tarik Saldo ke DANA</h2><p id="wdHeadNote">Penarikan Rp100 bisa langsung, maks 1x sehari. Di atas Rp100 butuh check-in 3 hari berturut-turut.</p></div>
           </div>
           <div class="steps" id="wdSteps">
             <div class="step on" data-s="1"><div class="dot">1</div><span>Isi Data</span></div>
@@ -1375,10 +1376,10 @@
           <div class="flow-body">
             <div id="wdStep1">
               <div class="wd-lock" id="wdLockPanel">
-                <b class="t" id="wdLockTitle">🔒 Penarikan terkunci — check-in 3 hari berturut-turut buat membuka</b>
-                <p id="wdLockText">Check-in tiap hari tanpa bolong sampai streak 3 hari. Kalau bolong satu hari, streak mulai lagi dari awal.</p>
-                <div class="progress"><i id="wdStreakBar" style="width:0%;"></i></div>
-                <div class="srow"><span>Check-in beruntun: <b id="wdStreakNow" style="color:var(--ink);">0</b> dari 3 hari</span><span id="wdStreakLeft"></span></div>
+                <div class="r100" id="wdRule100">✅ Penarikan 100 bisa langsung (maks 1x sehari)</div>
+                <b class="t" id="wdLockTitle">🔒 Penarikan di atas 100 butuh check-in 3 hari berturut-turut</b>
+                <div class="progress" id="wdStreakProgress"><i id="wdStreakBar" style="width:0%;"></i></div>
+                <div class="srow" id="wdStreakRow"><span>Check-in beruntun: <b id="wdStreakNow" style="color:var(--ink);">0</b> dari 3 hari</span><span id="wdStreakLeft"></span></div>
               </div>
               <div class="wd-dest">
                 <span class="brand-badge" style="background:linear-gradient(135deg,#1299f2,#0b6fd6);">DANA</span>
@@ -1408,10 +1409,6 @@
                 </div>
               </div>
               <p style="font-size:12.5px; color:var(--ink-3); margin-bottom:14px;">Saldo bebas kamu: <b style="color:var(--ink);">Rp <span class="balMirror">0</span></b> · Penarikan diproses manual, biasanya di hari yang sama.</p>
-              <div class="wd-rules">
-                <div class="r"><span class="st no" id="wdRuleGateSt">●</span><span id="wdRuleGate">Semua penarikan: butuh check-in <b>3 hari berturut-turut</b>.</span></div>
-                <div class="r"><span class="st ok" id="wdRuleSmallSt">●</span><span id="wdRuleSmall">Penarikan di bawah Rp500: maksimal <b>1x sehari</b>.</span></div>
-              </div>
               <div class="err" id="wdErr" style="display:none; color:var(--red); font-size:13px; font-weight:600; margin-bottom:12px;"></div>
               <button class="btn-emerald" id="wdNext" type="button">Lanjut ke Konfirmasi</button>
             </div>
@@ -1588,17 +1585,18 @@
       var esc = function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
       var nowTime = function(){ return new Date().toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"}).replace(":", "."); };
       var dayKey = function(offset){ var d = new Date(); d.setDate(d.getDate() + (offset || 0)); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
-      /* Satu gerbang penarikan untuk SEMUA nominal: streak check-in >= 3 hari
-         beruntun. Mode server: wdReady dari server (termasuk akun wdUnlock).
+      /* Gerbang streak HANYA buat penarikan DI ATAS 100 poin: streak check-in
+         >= 3 hari beruntun. Penarikan tepat 100 bebas streak (maks 1x sehari).
+         Mode server: wdStreakReady dari server (termasuk akun wdUnlock).
          Mode lokal: dihitung dari streak check-in lokal. */
-      function wdGateOpen(){ return !!S.wdReady || (S.ciStreak || 0) >= 3; }
+      function wdStreakReady(){ return !!S.wdStreakReady || !!S.wdReady || (S.ciStreak || 0) >= 3; }
 
       /* ---------------- state ---------------- */
       var S = {
         registered:false, name:"", idLabel:"",
         free:0, locked:0, unlocked:0, checkins:0,
         spinsLeft:3, friends:0, milestoneClaimed:false,
-        wdSmallUsed:false, wdReady:false, ciStreak:0, lastCiDay:"",
+        wdSmallUsed:false, wdReady:false, wdStreakReady:false, ciStreak:0, lastCiDay:"",
         history:[]
       };
       var pendingReg = null; // {name, phone, pass}
@@ -1729,7 +1727,7 @@
           checkins: st.checkins || 0,
           spinsLeft: (st.spinLeft !== undefined ? st.spinLeft : (st.spinsLeft || 0)),
           friends: st.invited || 0, milestoneClaimed: !!st.milestoneDone,
-          wdSmallUsed: !!st.wd100UsedToday, wdReady: !!st.wdReady, ciStreak: st.ciStreak || 0,
+          wdSmallUsed: !!st.wd100UsedToday, wdReady: !!st.wdReady, wdStreakReady: (st.wdStreakReady !== undefined ? !!st.wdStreakReady : !!st.wdReady), ciStreak: st.ciStreak || 0,
           banned: !!st.banned, checkedToday: !!st.checkedToday,
           adLeft: (st.adLeft !== undefined && st.adLeft !== null) ? st.adLeft : null,
           mining: st.mining || null,
@@ -3005,42 +3003,32 @@
       /* ---------------- withdraw ---------------- */
       var wdAmt = 0;
       function updateWdRules(){
-        var gSt = $("wdRuleGateSt"), sSt = $("wdRuleSmallSt");
-        if(!gSt || !sSt) return;
-        var open = wdGateOpen();
+        var ready = wdStreakReady();
         var streak = Math.min(S.ciStreak || 0, 3);
         var panel = $("wdLockPanel");
         if(panel){
-          panel.classList.toggle("open", open);
-          $("wdLockTitle").textContent = open ? "🔓 Penarikan terbuka" : "🔒 Penarikan terkunci — check-in 3 hari berturut-turut buat membuka";
-          $("wdLockText").textContent = open
-            ? "Streak check-in kamu sudah 3 hari — semua nominal penarikan bisa dipakai."
-            : "Check-in tiap hari tanpa bolong sampai streak 3 hari. Kalau bolong satu hari, streak mulai lagi dari awal.";
-          $("wdStreakBar").style.width = (streak / 3 * 100) + "%";
-          $("wdStreakNow").textContent = streak;
-          $("wdStreakLeft").textContent = open ? "Siap ditarik ✓" : ("Kurang " + (3 - streak) + " hari lagi");
-        }
-        if(open){
-          gSt.className = "st ok";
-          $("wdRuleGate").innerHTML = "Semua penarikan: streak check-in 3 hari tercapai — <b>sudah terbuka</b>.";
-        } else {
-          gSt.className = "st no";
-          $("wdRuleGate").innerHTML = "Semua penarikan: butuh check-in <b>3 hari berturut-turut</b> — streak kamu sekarang " + (S.ciStreak || 0) + " hari.";
-        }
-        if(S.wdSmallUsed){
-          sSt.className = "st no";
-          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: <b>sudah dipakai hari ini</b> — bisa lagi besok.";
-        } else {
-          sSt.className = "st ok";
-          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: maksimal <b>1x sehari</b>.";
+          panel.classList.toggle("open", ready);
+          $("wdRule100").textContent = S.wdSmallUsed
+            ? "✅ Penarikan 100 bisa langsung (maks 1x sehari) — jatah hari ini sudah dipakai, bisa lagi besok"
+            : "✅ Penarikan 100 bisa langsung (maks 1x sehari)";
+          $("wdLockTitle").textContent = ready
+            ? "🔓 Penarikan di atas 100 terbuka"
+            : "🔒 Penarikan di atas 100 butuh check-in 3 hari berturut-turut";
+          $("wdStreakProgress").style.display = ready ? "none" : "";
+          $("wdStreakRow").style.display = ready ? "none" : "";
+          if(!ready){
+            $("wdStreakBar").style.width = (streak / 3 * 100) + "%";
+            $("wdStreakNow").textContent = streak;
+            $("wdStreakLeft").textContent = "Kurang " + (3 - streak) + " hari lagi";
+          }
         }
         $("wdChips").querySelectorAll(".chip").forEach(function(c){
           var v = c.getAttribute("data-amt");
           var amt = v === "all" ? S.free : parseInt(v, 10);
-          c.disabled = !open || (amt > 0 && amt < 500 && S.wdSmallUsed);
+          c.disabled = (amt > 100 && !ready) || (amt > 0 && amt < 500 && S.wdSmallUsed);
         });
         var nb = $("wdNext");
-        if(nb) nb.disabled = !open;
+        if(nb) nb.disabled = wdAmt > 100 && !ready;
       }
       function resetWithdraw(){
         wdAmt = 0;
@@ -3057,6 +3045,7 @@
           $("wdChips").querySelectorAll(".chip").forEach(function(x){ x.classList.remove("sel"); });
           c.classList.add("sel");
           wdAmt = c.getAttribute("data-amt") === "all" ? S.free : parseInt(c.getAttribute("data-amt"), 10);
+          updateWdRules();
         });
       });
       $("wdNext").addEventListener("click", function(){
@@ -3069,7 +3058,7 @@
         if(wdAmt <= 0){ err.textContent = "Pilih nominal penarikan dulu ya."; err.style.display = "block"; return; }
         if(wdAmt < G.settings.minWd){ err.textContent = "Minimum penarikan adalah Rp" + fmt(G.settings.minWd) + "."; err.style.display = "block"; return; }
         if(wdAmt > S.free){ err.textContent = "Saldo bebas kamu tidak cukup untuk nominal ini."; err.style.display = "block"; return; }
-        if(!wdGateOpen()){ err.textContent = "Penarikan masih terkunci — check-in 3 hari berturut-turut dulu buat membuka. Streak kamu sekarang " + (S.ciStreak || 0) + " dari 3 hari."; err.style.display = "block"; return; }
+        if(wdAmt > 100 && !wdStreakReady()){ err.textContent = "Penarikan di atas Rp100 masih terkunci — check-in 3 hari berturut-turut dulu buat membuka. Streak kamu sekarang " + (S.ciStreak || 0) + " dari 3 hari."; err.style.display = "block"; return; }
         if(wdAmt < 500 && S.wdSmallUsed){ err.textContent = "Penarikan di bawah Rp500 cuma bisa 1x sehari — jatah hari ini sudah dipakai. Coba lagi besok ya."; err.style.display = "block"; return; }
         err.style.display = "none";
         if(!ok) return;
