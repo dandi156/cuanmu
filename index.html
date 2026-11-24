@@ -346,6 +346,60 @@
       }
       @media (prefers-color-scheme: dark){ .mining-full{ color:#ffe08a; } }
 
+      /* ---------- kotak hadiah ---------- */
+      .gift-card{
+        display:flex; gap:15px; align-items:center; position:relative; overflow:hidden;
+        background:linear-gradient(150deg, var(--surface) 25%, var(--gold-soft));
+        border-color:rgba(201,147,10,.45);
+      }
+      .gift-stage{ width:98px; height:100px; flex:none; display:flex; align-items:flex-end; justify-content:center; position:relative; }
+      .gift-box{ position:relative; width:82px; height:86px; }
+      .gift-box:not(.open){ animation:giftWiggle 3.2s ease-in-out infinite; transform-origin:50% 90%; }
+      @keyframes giftWiggle{ 0%,100%{ transform:rotate(0deg);} 6%{ transform:rotate(-3.5deg);} 12%{ transform:rotate(3deg);} 18%{ transform:rotate(-2deg);} 24%{ transform:rotate(0deg);} }
+      .gift-box.shaking{ animation:giftShake .12s linear infinite; }
+      @keyframes giftShake{ 0%{ transform:translateX(-3px) rotate(-2deg);} 50%{ transform:translateX(3px) rotate(2deg);} 100%{ transform:translateX(-3px) rotate(-2deg);} }
+      @media (prefers-reduced-motion: reduce){ .gift-box:not(.open), .gift-box.shaking{ animation:none; } }
+      .gift-bodybox{
+        position:absolute; bottom:0; left:7px; right:7px; height:56px; border-radius:9px; z-index:1;
+        background:linear-gradient(160deg,#0ea573,#057a55 70%,#046647);
+        box-shadow:0 10px 18px rgba(5,90,60,.35), inset 0 1px 0 rgba(255,255,255,.35);
+      }
+      .gift-bodybox::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:13px; transform:translateX(-50%); background:linear-gradient(180deg,#ffd968,#e9b83a); }
+      .gift-lid{
+        position:absolute; bottom:52px; left:0; right:0; height:21px; border-radius:8px; z-index:3;
+        background:linear-gradient(180deg,#14bd8a,#059669 60%,#047857);
+        box-shadow:0 5px 10px rgba(4,80,55,.3), inset 0 1px 0 rgba(255,255,255,.4);
+        transition:transform .5s cubic-bezier(.2,.9,.3,1.3), opacity .4s ease;
+      }
+      .gift-lid::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:13px; transform:translateX(-50%); background:linear-gradient(180deg,#ffe084,#f2c230); border-radius:2px; }
+      .gift-bow{ position:absolute; left:50%; top:-12px; transform:translateX(-50%); width:13px; height:13px; border-radius:50%; background:#f2c230; z-index:4; box-shadow:inset 0 -2px 3px rgba(146,96,0,.4); }
+      .gift-bow::before,.gift-bow::after{ content:""; position:absolute; top:0; width:19px; height:11px; border:4px solid #f2c230; border-radius:50%; }
+      .gift-bow::before{ right:7px; transform:rotate(-22deg); }
+      .gift-bow::after{ left:7px; transform:rotate(22deg); }
+      .gift-box.open .gift-lid{ transform:translate(16px,-30px) rotate(24deg); }
+      .gift-box.open .gift-bodybox{ box-shadow:0 10px 22px rgba(201,147,10,.45), inset 0 1px 0 rgba(255,255,255,.35), 0 0 0 3px rgba(242,194,48,.35); }
+      .gift-burst{ position:absolute; left:50%; top:26px; width:0; height:0; z-index:5; }
+      .gift-coin{
+        position:absolute; left:-7px; top:-7px; width:14px; height:14px; border-radius:50%;
+        background:radial-gradient(circle at 35% 30%, #ffe9a3, #f2c230 55%, #d99a06);
+        box-shadow:inset 0 0 0 2px rgba(146,96,0,.35), 0 2px 5px rgba(0,0,0,.25);
+        animation:coinFly .95s cubic-bezier(.17,.67,.35,1) forwards; opacity:0;
+      }
+      .gift-coin.big{ width:19px; height:19px; left:-10px; top:-10px; }
+      @keyframes coinFly{ 0%{ transform:translate(0,0) scale(.4); opacity:1; } 70%{ opacity:1; } 100%{ transform:translate(var(--dx), var(--dy)) scale(1); opacity:0; } }
+      @media (prefers-reduced-motion: reduce){ .gift-coin{ animation:none; display:none; } .gift-lid{ transition:none; } }
+      .gift-info{ flex:1; min-width:0; position:relative; z-index:1; }
+      .gift-info h3{ font-size:16.5px; font-weight:800; }
+      .gift-info p{ font-size:12.5px; color:var(--ink-2); margin-top:3px; line-height:1.55; }
+      .gift-prize{ font-size:20px; font-weight:800; color:var(--gold-deep); margin-top:9px; line-height:1.3; animation:popIn .45s cubic-bezier(.2,.9,.3,1.25) both; }
+      @media (prefers-color-scheme: dark){ .gift-prize{ color:#ffe08a; } }
+      @media (prefers-reduced-motion: reduce){ .gift-prize{ animation:none; } }
+      .gift-count{ margin-top:11px; font-size:13px; font-weight:700; color:var(--ink-2); background:var(--surface); border:1.5px dashed rgba(201,147,10,.5); border-radius:12px; padding:10px 12px; text-align:center; }
+      .gift-count b{ color:var(--ink); font-variant-numeric:tabular-nums; font-size:14.5px; letter-spacing:.5px; }
+      #giftBtn{ margin-top:11px; }
+      #giftBtn:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
+      @media (prefers-reduced-motion: reduce){ #giftBtn:not(:disabled){ animation:none; } }
+
       /* history */
       .hist-item{ display:flex; gap:12px; padding:13px 2px; border-bottom:1px solid var(--line); align-items:flex-start; }
       .hist-item:last-child{ border-bottom:none; }
@@ -749,6 +803,23 @@
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
                   Tarik Saldo
                 </button>
+              </div>
+            </div>
+
+            <div class="card gift-card" id="giftCard">
+              <div class="gift-stage" aria-hidden="true">
+                <div class="gift-box" id="giftBox">
+                  <div class="gift-bodybox"></div>
+                  <div class="gift-lid"><i class="gift-bow"></i></div>
+                  <div class="gift-burst" id="giftBurst"></div>
+                </div>
+              </div>
+              <div class="gift-info">
+                <h3>🎁 Kotak Hadiah</h3>
+                <p id="giftText">Kotak baru muncul tiap jam 12 malam — 1x per hari. Isinya acak: 500, 1.000, 50.000, sampai 100.000 poin!</p>
+                <div class="gift-prize hidden" id="giftPrize"></div>
+                <button class="btn-gold" id="giftBtn" type="button">Buka Kotak</button>
+                <div class="gift-count hidden" id="giftCount">Kotak berikutnya: <b id="giftTimer">--:--:--</b></div>
               </div>
             </div>
 
@@ -1296,6 +1367,7 @@
       }
       function iconForText(text){
         var s = String(text || "").toLowerCase();
+        if(s.indexOf("kotak") >= 0) return "gift";
         if(s.indexOf("check-in") >= 0 || s.indexOf("checkin") >= 0) return "check";
         if(s.indexOf("spin") >= 0 || s.indexOf("jackpot") >= 0) return "game";
         if(s.indexOf("mining") >= 0) return "pick";
@@ -1392,7 +1464,7 @@
           registered: true, name: name, idLabel: idLabel, pass: pass ? hashPw(pass) : "",
           free: 0, locked: 0, unlocked: 0, checkins: 0,
           spinsLeft: G.settings.spinQuota, friends: 0, milestoneClaimed: false,
-          wdSmallUsed: false, wdBigReady: false, miningStart: 0, history: []
+          wdSmallUsed: false, wdBigReady: false, miningStart: 0, giftDay: "", giftPrize: 0, history: []
         };
         if(extra) for(var k in extra) u[k] = extra[k];
         return u;
@@ -1523,6 +1595,7 @@
         updateWdRules();
         syncServerCheckinBtn();
         renderMining();
+        renderGift();
       }
       function renderBroadcast(){
         var b = $("broadcastBanner");
@@ -1970,6 +2043,160 @@
         if($("appView").classList.contains("hidden")) return;
         if(!$("view-home").classList.contains("active")) return;
         renderMining();
+      }, 1000);
+
+      /* ---------------- kotak hadiah ----------------
+         Kotak baru tiap jam 12 malam (00:00 WIB), 1x per hari.
+         Mode server: hadiah WAJIB dari POST /gift (state.giftReady jadi penanda).
+         Mode lokal: simulasi bobot sama (500 50% · 1.000 35% · 50.000 10% · 100.000 5%),
+         status harian disimpan di record pengguna lokal. */
+      var giftBusy = false;
+      var giftWonSession = 0; // hadiah sesi ini (mode server tidak mengirim ulang nominalnya)
+      function wibParts(){
+        try {
+          var parts = new Intl.DateTimeFormat("en-GB", { timeZone:"Asia/Jakarta", hour12:false, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit" }).formatToParts(new Date());
+          var o = {};
+          parts.forEach(function(x){ o[x.type] = x.value; });
+          return o;
+        } catch(e) {
+          var d = new Date();
+          function p2(n){ return (n < 10 ? "0" : "") + n; }
+          return { year:"" + d.getFullYear(), month:p2(d.getMonth() + 1), day:p2(d.getDate()), hour:p2(d.getHours()), minute:p2(d.getMinutes()), second:p2(d.getSeconds()) };
+        }
+      }
+      function wibDayKey(){ var o = wibParts(); return o.year + "-" + o.month + "-" + o.day; }
+      function secsToWibMidnight(){
+        var o = wibParts();
+        var h = parseInt(o.hour, 10) % 24, m = parseInt(o.minute, 10) || 0, s = parseInt(o.second, 10) || 0;
+        return 86400 - (h * 3600 + m * 60 + s);
+      }
+      function fmtHMS(sec){
+        sec = Math.max(0, Math.floor(sec));
+        function p2(n){ return (n < 10 ? "0" : "") + n; }
+        return p2(Math.floor(sec / 3600)) + ":" + p2(Math.floor((sec % 3600) / 60)) + ":" + p2(sec % 60);
+      }
+      function giftIsReady(){
+        if(serverMode) return !!(serverState && serverState.giftReady);
+        return !S || S.giftDay !== wibDayKey();
+      }
+      function giftWonToday(){
+        if(serverMode) return giftWonSession;
+        return (S && S.giftDay === wibDayKey()) ? (S.giftPrize || 0) : 0;
+      }
+      function rollGiftPrize(){
+        var r = Math.random() * 100;
+        if(r < 50) return 500;
+        if(r < 85) return 1000;
+        if(r < 95) return 50000;
+        return 100000;
+      }
+      function updateGiftTimer(){
+        var t = $("giftTimer");
+        if(t) t.textContent = fmtHMS(secsToWibMidnight());
+      }
+      function renderGift(){
+        var card = $("giftCard");
+        if(!card) return;
+        var ready = giftIsReady();
+        $("giftBox").classList.toggle("open", !ready);
+        $("giftBtn").classList.toggle("hidden", !ready);
+        $("giftCount").classList.toggle("hidden", ready);
+        var prizeEl = $("giftPrize");
+        if(ready){
+          prizeEl.classList.add("hidden");
+          $("giftText").textContent = "Kotak hari ini belum dibuka! Isinya acak — bisa 500, 1.000, 50.000, sampai 100.000 poin. Kotak baru muncul tiap jam 12 malam, 1x per hari.";
+        } else {
+          var won = giftWonToday();
+          if(won > 0){
+            prizeEl.textContent = "🎉 Kamu dapat +Rp" + fmt(won) + " poin!";
+            prizeEl.classList.remove("hidden");
+          } else prizeEl.classList.add("hidden");
+          $("giftText").textContent = "Kotak hari ini sudah dibuka. Kotak baru muncul lagi jam 12 malam — jangan sampai kelewatan ya!";
+          updateGiftTimer();
+        }
+      }
+      function giftBurst(){
+        var host = $("giftBurst");
+        if(!host) return;
+        host.innerHTML = "";
+        if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        for(var i = 0; i < 16; i++){
+          var c = document.createElement("i");
+          c.className = "gift-coin" + (i % 3 === 0 ? " big" : "");
+          var ang = (Math.PI * 2 * i / 16) + Math.random() * 0.6;
+          var dist = 44 + Math.random() * 58;
+          c.style.setProperty("--dx", Math.round(Math.cos(ang) * dist) + "px");
+          c.style.setProperty("--dy", Math.round(Math.sin(ang) * dist - 26) + "px");
+          c.style.animationDelay = (Math.random() * 0.08).toFixed(2) + "s";
+          host.appendChild(c);
+        }
+        setTimeout(function(){ host.innerHTML = ""; }, 1500);
+      }
+      function openGiftVisual(prize){
+        $("giftBox").classList.add("open");
+        giftBurst();
+        var prizeEl = $("giftPrize");
+        prizeEl.textContent = "🎉 Kamu dapat +Rp" + fmt(prize) + " poin!";
+        prizeEl.classList.remove("hidden");
+      }
+      $("giftBtn").addEventListener("click", function(){
+        if(giftBusy || !giftIsReady()) return;
+        giftBusy = true;
+        var btn = $("giftBtn");
+        setBtnBusy(btn, true, "Membuka…");
+        var box = $("giftBox");
+        box.classList.add("shaking");
+        var finish = function(){ box.classList.remove("shaking"); giftBusy = false; setBtnBusy(btn, false); };
+        if(serverMode){
+          apiCall("POST", "/gift", {}, authToken).then(function(res){
+            setTimeout(function(){
+              finish();
+              if(res && res.ok){
+                giftWonSession = res.prize || 0;
+                openGiftVisual(giftWonSession);
+                if(res.state) applyServerState(res.state);
+                renderWallet();
+                toast("🎁 Selamat! Kotak Hadiah memberimu +" + fmt(giftWonSession) + " poin — langsung masuk saldo bebas!");
+              } else {
+                toast((res && res.error) ? res.error : "Kotak gagal dibuka — coba lagi ya.");
+                if(authToken){
+                  apiCall("GET", "/me", null, authToken).then(function(r2){
+                    if(r2 && r2.ok && r2.state){ applyServerState(r2.state); renderWallet(); }
+                    else renderGift();
+                  });
+                } else renderGift();
+              }
+            }, 900);
+          });
+          return;
+        }
+        setTimeout(function(){
+          finish();
+          var prize = rollGiftPrize();
+          S.giftDay = wibDayKey();
+          S.giftPrize = prize;
+          S.free += prize;
+          addHistory("gift", "Kotak Hadiah Harian", prize);
+          openGiftVisual(prize);
+          renderWallet();
+          toast("🎁 Selamat! Kotak Hadiah memberimu +" + fmt(prize) + " poin — langsung masuk saldo bebas!");
+        }, 900);
+      });
+      var giftDaySeen = wibDayKey();
+      setInterval(function(){
+        if($("appView").classList.contains("hidden")) return;
+        var dk = wibDayKey();
+        if(dk !== giftDaySeen){
+          giftDaySeen = dk;
+          giftWonSession = 0;
+          if(serverMode && authToken){
+            apiCall("GET", "/me", null, authToken).then(function(res){
+              if(res && res.ok && res.state){ applyServerState(res.state); renderWallet(); }
+            });
+          } else renderGift();
+          return;
+        }
+        if(!giftIsReady()) updateGiftTimer();
       }, 1000);
 
       /* ---------------- spin game ---------------- */
