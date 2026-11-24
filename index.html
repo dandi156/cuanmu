@@ -146,12 +146,12 @@
         animation:riseIn .55s cubic-bezier(.22,.8,.28,1) .08s both;
       }
       @media (prefers-reduced-motion: reduce){ .auth-card{ animation:none; } }
-      #checkinBtn:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
+      #checkinBtn:not(:disabled), #checkinBtnSimple:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
       @keyframes btnPulse{
         0%,100%{ box-shadow:0 12px 24px rgba(189,136,7,.36), inset 0 1px 0 rgba(255,255,255,.75), inset 0 -2px 0 rgba(146,96,0,.22); }
         50%{ box-shadow:0 12px 28px rgba(189,136,7,.5), 0 0 0 8px rgba(242,194,48,.18), inset 0 1px 0 rgba(255,255,255,.75), inset 0 -2px 0 rgba(146,96,0,.22); }
       }
-      @media (prefers-reduced-motion: reduce){ #checkinBtn:not(:disabled){ animation:none; } }
+      @media (prefers-reduced-motion: reduce){ #checkinBtn:not(:disabled), #checkinBtnSimple:not(:disabled){ animation:none; } }
       .seg{
         display:flex; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px;
         box-shadow:inset 0 1px 3px rgba(3,44,28,.07);
@@ -812,7 +812,7 @@
       }
       .btn-gold:disabled,.btn-emerald:disabled{ background:#C9D4CC; color:#fff; opacity:1; box-shadow:none; }
       .btn-ghost{ border:1px solid var(--line); border-radius:12px; font-weight:600; box-shadow:none; }
-      #checkinBtn:not(:disabled),#giftBtn:not(:disabled),#spinBtn:not(:disabled){ animation:none; }
+      #checkinBtn:not(:disabled),#checkinBtnSimple:not(:disabled),#giftBtn:not(:disabled),#spinBtn:not(:disabled){ animation:none; }
       @media (hover:hover){
         .btn-gold:hover,.btn-emerald:hover{ filter:none; background:var(--emerald-deep); }
         .btn-ghost:hover{ border-color:var(--emerald); }
@@ -1039,8 +1039,8 @@
           <div class="bonus-strip">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffe08a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
             <div>
-              <div class="amt" id="authBonusAmt">Bonus Daftar 5.000 Poin</div>
-              <div class="lbl" id="authBonusLbl">Langsung masuk sebagai bonus terkunci — terbuka 2.000 tiap check-in harian.</div>
+              <div class="amt" id="authBonusAmt">Bonus Daftar 100 Poin</div>
+              <div class="lbl" id="authBonusLbl">Langsung masuk ke saldo kamu — tanpa terkunci, bisa langsung dipakai.</div>
             </div>
           </div>
         </div>
@@ -1048,7 +1048,7 @@
         <div class="auth-card">
           <div class="auth-head">
             <h2 id="authTitle">Buat akun baru</h2>
-            <p id="authHint">Daftar sebentar, langsung dapat bonus 5.000 poin terkunci.</p>
+            <p id="authHint">Daftar sebentar, langsung dapat bonus 100 poin masuk saldo.</p>
           </div>
           <div class="seg auth-tabs" role="tablist" aria-label="Masuk atau daftar">
             <button id="tabDaftar" class="on" type="button" aria-selected="true">Daftar</button>
@@ -1079,7 +1079,7 @@
                 <input id="regPassE" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password" />
                 <div class="err">Password minimal 6 karakter.</div>
               </div>
-              <button class="btn-gold" type="submit" id="regSubmitBtn">Daftar &amp; Klaim Bonus 5.000</button>
+              <button class="btn-gold" type="submit" id="regSubmitBtn">Daftar &amp; Klaim Bonus 100</button>
             </form>
 
             <form id="regHpForm" class="hidden" novalidate style="margin-top:18px;">
@@ -1213,25 +1213,45 @@
               </div>
             </div>
 
-            <h3 class="section-title compact">Bonus Pendaftaran</h3>
-            <div class="card">
+            <div id="lockedWrap" class="hidden">
+              <h3 class="section-title compact">Bonus Pendaftaran</h3>
+              <div class="card">
+                <div class="locked-head">
+                  <span class="lock-ic">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </span>
+                  <div>
+                    <h3>Bonus Terkunci</h3>
+                    <p id="lockedCardText">Tiap check-in membuka 2.000 poin + bonus check-in 20 poin.</p>
+                  </div>
+                  <div class="locked-amt">
+                    <div class="a" id="lockedAmt">0</div>
+                    <div class="b">poin terkunci</div>
+                  </div>
+                </div>
+                <div class="progress"><i id="unlockBar" style="width:0%"></i></div>
+                <div class="locked-foot"><span id="unlockText">Terbuka 0 dari 0</span><span id="checkinCount">Check-in: 0 hari</span></div>
+                <div id="bonusDone" class="hidden"><span class="done-badge">✓ Bonus pendaftaran sudah terbuka semua</span></div>
+                <button class="btn-gold" id="checkinBtn" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
+              </div>
+            </div>
+
+            <div class="card hidden" id="simpleCheckinCard">
               <div class="locked-head">
-                <span class="lock-ic">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span class="lock-ic" style="background:#E1EDE4; color:#07714C;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
                 </span>
                 <div>
-                  <h3>Bonus Terkunci</h3>
-                  <p id="lockedCardText">Tiap check-in membuka 2.000 poin + bonus check-in 20 poin.</p>
+                  <h3>Check-in Harian</h3>
+                  <p id="simpleCheckinStatus">Belum check-in hari ini — klaim poin harianmu sekarang.</p>
                 </div>
                 <div class="locked-amt">
-                  <div class="a" id="lockedAmt">5.000</div>
-                  <div class="b">poin terkunci</div>
+                  <div class="a" id="simpleCheckinReward" style="color:var(--emerald-deep);">+20</div>
+                  <div class="b">poin / hari</div>
                 </div>
               </div>
-              <div class="progress"><i id="unlockBar" style="width:0%"></i></div>
-              <div class="locked-foot"><span id="unlockText">Terbuka 0 dari 5.000</span><span id="checkinCount">Check-in: 0 hari</span></div>
-              <div id="bonusDone" class="hidden"><span class="done-badge">✓ Bonus pendaftaran sudah terbuka semua</span></div>
-              <button class="btn-gold" id="checkinBtn" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
+              <div class="locked-foot"><span id="simpleCheckinCount">Check-in: 0 hari</span><span id="simpleCheckinStreak"></span></div>
+              <button class="btn-gold" id="checkinBtnSimple" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
             </div>
 
             <!-- ===== Menu fitur: grid 2 kolom, kontennya tampil di satu panel di bawah grid ===== -->
@@ -1310,7 +1330,7 @@
                 <div class="earn-row">
                   <div>
                     <h4>Check-in Harian</h4>
-                    <p>Check-in tiap hari dapat poin, sekaligus membuka bonus pendaftaranmu 2.000 poin per hari.</p>
+                    <p>Check-in tiap hari dapat poin masuk saldo bebas. Akun baru juga langsung dapat bonus daftar +100 poin pas pendaftaran selesai.</p>
                     <span class="reward-badge js-ci-badge">+20 poin / hari</span>
                   </div>
                 </div>
@@ -1355,9 +1375,9 @@
                 <div class="promo">
                   <div class="promo-track" id="promoTrack">
                     <div class="promo-slide" style="background:#E1EDE4;">
-                      <h3>Bonus Daftar 5.000 Poin</h3>
-                      <p>Check-in tiap hari, bonus terkunci terbuka 2.000 per hari. 3 hari langsung lunas!</p>
-                      <span class="big">5rb</span>
+                      <h3>Bonus Daftar 100 Poin</h3>
+                      <p>Daftar baru langsung dapat +100 poin masuk saldo bebas — tanpa terkunci, bisa langsung dipakai!</p>
+                      <span class="big">+100</span>
                     </div>
                     <div class="promo-slide" style="background:#FBF3DC;">
                       <h3>Undang Teman, Cuan Bareng</h3>
@@ -1418,7 +1438,7 @@
                 <span class="misi-ic" style="background:#FBF3DC; color:#B45309; box-shadow:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
                 <div>
                   <h3>Check-in Harian</h3>
-                  <p>Check-in tiap hari dapat +20 poin, sekaligus membuka bonus pendaftaranmu 2.000 per hari.</p>
+                  <p>Check-in tiap hari dapat +20 poin masuk saldo bebas.</p>
                   <span class="reward-badge js-ci-badge">+20 poin / hari</span>
                 </div>
               </div>
@@ -1726,7 +1746,7 @@
             <h3 class="section-title" style="margin-top:6px;">Pengaturan Aplikasi</h3>
             <div class="card">
               <div class="set-grid">
-                <div class="set-row"><label for="setBonus">Bonus Pendaftaran (poin)</label><input id="setBonus" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setBonus">Bonus Pendaftaran (poin, langsung masuk)</label><input id="setBonus" type="tel" inputmode="numeric" /></div>
                 <div class="set-row"><label for="setUnlock">Terbuka per Check-in (poin)</label><input id="setUnlock" type="tel" inputmode="numeric" /></div>
                 <div class="set-row"><label for="setCheckin">Hadiah Check-in (poin)</label><input id="setCheckin" type="tel" inputmode="numeric" /></div>
                 <div class="set-row"><label for="setRef">Hadiah Undang Teman (poin)</label><input id="setRef" type="tel" inputmode="numeric" /></div>
@@ -1906,7 +1926,12 @@
       function applyServerState(st){
         if(!st) return;
         serverState = st;
-        var unlockedCalc = Math.max(0, G.settings.signupBonus - (st.locked || 0));
+        /* Bonus daftar baru sekarang +100 langsung masuk saldo (bukan
+           terkunci). Pengguna lama yang masih punya saldo terkunci
+           berasal dari bonus lama 5.000 — totalnya tetap dihitung dari
+           5.000 selama sisa terkuncinya masih di atas bonus baru. */
+        var bonusTotal = (st.locked || 0) > G.settings.signupBonus ? 5000 : G.settings.signupBonus;
+        var unlockedCalc = (st.unlocked !== undefined && st.unlocked !== null) ? st.unlocked : Math.max(0, bonusTotal - (st.locked || 0));
         S = {
           registered: true, id: st.id, name: st.name || "", idLabel: st.contact || "",
           free: st.poin || 0, locked: st.locked || 0, unlocked: unlockedCalc,
@@ -1934,15 +1959,19 @@
       }
       function syncServerCheckinBtn(){
         if(!serverMode || !serverState) return;
-        var b = $("checkinBtn");
-        if(!b) return;
-        if(serverState.checkedToday){
-          b.disabled = true;
-          b.textContent = "Sudah Check-in Hari Ini ✓";
-        } else {
-          if(!checkinBusy){ b.disabled = false; }
-          b.textContent = "Check-in Hari Ini · +" + fmt(G.settings.checkinReward) + " Poin";
-        }
+        ["checkinBtn", "checkinBtnSimple"].forEach(function(id){
+          var b = $(id);
+          if(!b) return;
+          if(serverState.checkedToday){
+            b.disabled = true;
+            b.textContent = "Sudah Check-in Hari Ini ✓";
+          } else {
+            if(!checkinBusy){ b.disabled = false; }
+            b.textContent = "Check-in Hari Ini · +" + fmt(G.settings.checkinReward) + " Poin";
+          }
+        });
+        var ss = $("simpleCheckinStatus");
+        if(ss) ss.textContent = serverState.checkedToday ? "Kamu sudah check-in hari ini ✓ — balik lagi besok ya." : "Belum check-in hari ini — klaim poin harianmu sekarang.";
       }
       function enterServerApp(st, welcomeBack){
         applyServerState(st);
@@ -1968,7 +1997,7 @@
             sessSave();
             pendingReg = null;
             enterServerApp(res.state, false);
-            toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin terkunci sudah masuk.");
+            toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin langsung masuk ke saldo kamu.");
           } else {
             toast((res && res.error) ? res.error : "Pendaftaran gagal — coba lagi ya.");
           }
@@ -1989,7 +2018,7 @@
         return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
       }
       var G = {
-        settings: { signupBonus:5000, checkinReward:20, unlockPerCheckin:2000, referralReward:500, milestoneTarget:5, milestoneBonus:10000, minWd:100, spinQuota:3, miningRate:5, miningHours:24 },
+        settings: { signupBonus:100, checkinReward:20, unlockPerCheckin:2000, referralReward:500, milestoneTarget:5, milestoneBonus:10000, minWd:100, spinQuota:3, miningRate:5, miningHours:24 },
         broadcast: "",
         users: [], withdrawals: [], activity: [], seq: 100
       };
@@ -2146,6 +2175,20 @@
         $("checkinCount").textContent = "Check-in: " + S.checkins + " hari";
         $("bonusDone").classList.toggle("hidden", S.locked > 0);
         $("checkinBtn").classList.toggle("hidden", S.locked <= 0 && false);
+        /* Kartu bonus terkunci HANYA buat pengguna yang masih punya
+           saldo terkunci (bonus lama). Pengguna lain dapat kartu
+           check-in sederhana supaya tombol check-in tetap gampang
+           dijangkau dari Beranda. */
+        var hasLocked = (S.locked || 0) > 0;
+        var lw = $("lockedWrap"); if(lw) lw.classList.toggle("hidden", !hasLocked);
+        var sc = $("simpleCheckinCard"); if(sc) sc.classList.toggle("hidden", hasLocked);
+        var scc = $("simpleCheckinCount"); if(scc) scc.textContent = "Check-in: " + S.checkins + " hari";
+        var scs = $("simpleCheckinStreak"); if(scs) scs.textContent = (S.ciStreak || 0) > 0 ? ("Streak: " + S.ciStreak + " hari") : "";
+        var scr = $("simpleCheckinReward"); if(scr) scr.textContent = "+" + fmt(G.settings.checkinReward);
+        if(!serverMode){
+          var sst = $("simpleCheckinStatus");
+          if(sst) sst.textContent = (S.lastCiDay === dayKey(0)) ? "Kamu sudah check-in hari ini ✓ — balik lagi besok ya." : "Belum check-in hari ini — klaim poin harianmu sekarang.";
+        }
         $("spinsLeft").textContent = S.spinsLeft;
         $("spinBtn").disabled = S.spinsLeft <= 0;
         $("spinBtn").textContent = S.spinsLeft > 0 ? "SPIN" : "Spin Habis — Check-in Besok";
@@ -2196,10 +2239,11 @@
       function applySettingsUI(){
         var st = G.settings;
         $("authBonusAmt").textContent = "Bonus Daftar " + fmt(st.signupBonus) + " Poin";
-        $("authBonusLbl").textContent = "Langsung masuk sebagai bonus terkunci — terbuka " + fmt(st.unlockPerCheckin) + " tiap check-in harian.";
+        $("authBonusLbl").textContent = "Langsung masuk ke saldo kamu — tanpa terkunci, bisa langsung dipakai.";
         $("regSubmitBtn").textContent = "Daftar & Klaim Bonus " + fmt(st.signupBonus);
         $("lockedCardText").textContent = "Tiap check-in membuka " + fmt(st.unlockPerCheckin) + " poin + bonus check-in " + fmt(st.checkinReward) + " poin.";
         $("checkinBtn").textContent = "Check-in Hari Ini · +" + fmt(st.checkinReward) + " Poin";
+        var csb = $("checkinBtnSimple"); if(csb) csb.textContent = "Check-in Hari Ini · +" + fmt(st.checkinReward) + " Poin";
         document.querySelectorAll(".js-ref-badge").forEach(function(el){ el.textContent = "+" + fmt(st.referralReward) + " poin / teman"; });
         $("simInvite").textContent = "Simulasikan Teman Bergabung · +" + fmt(st.referralReward);
         document.querySelectorAll(".js-ci-badge").forEach(function(el){ el.textContent = "+" + fmt(st.checkinReward) + " poin / hari"; });
@@ -2276,7 +2320,7 @@
         $("tabMasuk").setAttribute("aria-selected", which === "login" ? "true" : "false");
         var isLogin = which === "login";
         var at = $("authTitle"); if(at) at.textContent = isLogin ? "Masuk ke akun kamu" : "Buat akun baru";
-        var ah = $("authHint"); if(ah) ah.textContent = isLogin ? "Pakai email atau nomor HP yang kamu daftarkan dulu." : "Daftar sebentar, langsung dapat bonus 5.000 poin terkunci.";
+        var ah = $("authHint"); if(ah) ah.textContent = isLogin ? "Pakai email atau nomor HP yang kamu daftarkan dulu." : "Daftar sebentar, langsung dapat bonus " + fmt(G.settings.signupBonus) + " poin masuk saldo.";
         var sw = $("authSwitchText"); if(sw) sw.textContent = isLogin ? "Belum punya akun?" : "Sudah punya akun?";
         var sb = $("authSwitchBtn"); if(sb) sb.textContent = isLogin ? "Daftar di sini" : "Masuk di sini";
       }
@@ -2294,12 +2338,12 @@
       });
 
       function createAccount(name, idLabel, pass){
-        var rec = mkUser(name, idLabel, pass, { locked: G.settings.signupBonus });
+        var rec = mkUser(name, idLabel, pass, { free: G.settings.signupBonus });
         G.users.push(rec);
         S = rec;
-        addHistory("gift", "Bonus Pendaftaran Terkunci", 0, "Terkunci " + fmt(G.settings.signupBonus));
+        addHistory("gift", "Bonus Pendaftaran", G.settings.signupBonus);
         enterApp();
-        toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin terkunci sudah masuk.");
+        toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin langsung masuk ke saldo kamu.");
       }
       function showBanned(user){
         $("authView").classList.add("hidden");
@@ -2618,6 +2662,7 @@
         renderWallet();
       }
       $("checkinBtn").addEventListener("click", doCheckin);
+      var csb2 = $("checkinBtnSimple"); if(csb2) csb2.addEventListener("click", doCheckin);
       document.querySelectorAll(".misi-checkin").forEach(function(el){ el.addEventListener("click", doCheckin); });
 
       /* ---------------- mining ---------------- */
