@@ -433,9 +433,6 @@
       }
       .ad-left b{ color:var(--ink); font-variant-numeric:tabular-nums; }
       #adBtn{ margin-top:11px; }
-      .ad-gate-note{ font-size:12px; font-weight:700; color:var(--ink-2); margin-top:9px; line-height:1.5; display:flex; align-items:center; gap:6px; }
-      .ad-gate-note::before{ content:"🎬"; font-size:13px; }
-      .ad-gate-note.on-dark{ color:#ffe9a8; justify-content:center; }
 
       /* history */
       .hist-item{ display:flex; gap:12px; padding:13px 2px; border-bottom:1px solid var(--line); align-items:flex-start; }
@@ -893,7 +890,6 @@
                 <p id="giftText">Kotak baru muncul tiap jam 12 malam — 1x per hari. Isinya acak: 500, 1.000, 50.000, sampai 100.000 poin!</p>
                 <div class="gift-prize hidden" id="giftPrize"></div>
                 <button class="btn-gold" id="giftBtn" type="button">Buka Kotak</button>
-                <p class="ad-gate-note hidden" id="giftAdNote">Nonton iklan dulu buat buka kotak</p>
                 <div class="gift-count hidden" id="giftCount">Kotak berikutnya: <b id="giftTimer">--:--:--</b></div>
               </div>
             </div>
@@ -976,7 +972,6 @@
               <div class="locked-foot"><span id="unlockText">Terbuka 0 dari 5.000</span><span id="checkinCount">Check-in: 0 hari</span></div>
               <div id="bonusDone" class="hidden"><span class="done-badge">✓ Bonus pendaftaran sudah terbuka semua</span></div>
               <button class="btn-gold" id="checkinBtn" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
-              <p class="ad-gate-note hidden" id="checkinAdNote">Check-in: nonton iklan dulu</p>
             </div>
 
             <h3 class="section-title">Mining Poin</h3>
@@ -1061,7 +1056,6 @@
                 </div>
               </div>
               <button class="btn-gold misi-checkin" type="button" style="margin-top:14px;">Check-in Sekarang</button>
-              <p class="ad-gate-note hidden js-checkin-ad-note">Check-in: nonton iklan dulu</p>
             </div>
 
             <div class="card" style="margin-top:16px;">
@@ -1095,7 +1089,6 @@
               </div>
               <div class="slot-msg" id="slotMsg">Tekan SPIN buat mulai!</div>
               <button class="btn-gold" id="spinBtn" type="button">SPIN</button>
-              <p class="ad-gate-note on-dark hidden" id="spinAdNote">Spin: nonton iklan dulu</p>
               <p class="hint" style="margin-top:12px;">Kuota spin terisi lagi setiap kamu check-in hari berikutnya.</p>
             </div>
             <div class="card" style="margin-top:16px;">
@@ -1552,44 +1545,6 @@
       function serverRefLink(){
         return REF_BASE + (serverState ? serverState.refCode : "");
       }
-      function refreshGateNotes(){
-        var showCi = !!serverMode;
-        var ci = $("checkinAdNote");
-        if(ci) ci.classList.toggle("hidden", !showCi);
-        document.querySelectorAll(".js-checkin-ad-note").forEach(function(el){ el.classList.toggle("hidden", !showCi); });
-        var gn = $("giftAdNote");
-        if(gn) gn.classList.toggle("hidden", !(serverMode && typeof giftIsReady === "function" && giftIsReady()));
-        var sn = $("spinAdNote");
-        if(sn) sn.classList.toggle("hidden", !showCi);
-      }
-      /* ---------- gerbang iklan (AdsGram) ----------
-         Di mode server, Kotak Hadiah, Check-in & Spin wajib memutar iklan
-         AdsGram (blockId sama dengan kartu Iklan Berhadiah) sampai
-         selesai (result.done) sebelum aksi server dipanggil.
-         Jalur bebas: kalau SDK error / iklan tidak tersedia / blok
-         belum aktif, aksi TETAP dilanjutkan dengan toast pemberitahuan
-         — user tidak boleh terkunci hanya karena iklan kosong.
-         Mode lokal: tanpa gerbang sama sekali. */
-      function playGateAd(btn, proceed, onAbort){
-        if(!serverMode){ proceed(); return; }
-        if(!window.Adsgram){ toast("Iklan lagi kosong — lanjut aja"); proceed(); return; }
-        var ctrl = null;
-        try { ctrl = window.Adsgram.init({ blockId: AD_BLOCK_ID }); } catch(e) { ctrl = null; }
-        if(!ctrl || typeof ctrl.show !== "function"){ toast("Iklan lagi kosong — lanjut aja"); proceed(); return; }
-        if(btn) setBtnBusy(btn, true, "Memutar iklan…");
-        var settled = false;
-        ctrl.show().then(function(result){
-          if(settled) return; settled = true;
-          if(btn) setBtnBusy(btn, false);
-          if(result && result.done){ proceed(); }
-          else { toast("Iklan harus ditonton sampai selesai dulu ya."); if(onAbort) onAbort(); }
-        }).catch(function(){
-          if(settled) return; settled = true;
-          if(btn) setBtnBusy(btn, false);
-          toast("Iklan lagi kosong — lanjut aja");
-          proceed();
-        });
-      }
       function syncServerCheckinBtn(){
         if(!serverMode || !serverState) return;
         var b = $("checkinBtn");
@@ -1790,7 +1745,6 @@
         renderMining();
         renderGift();
         renderAd();
-        refreshGateNotes();
       }
       function renderBroadcast(){
         var b = $("broadcastBanner");
@@ -2138,6 +2092,7 @@
       function doServerCheckin(){
         if(!authToken) return;
         apiCall("POST", "/checkin", {}, authToken).then(function(res){
+          checkinBusy = false;
           if(res && res.ok && res.state){
             var moved = res.moved || 0;
             applyServerState(res.state);
@@ -2155,14 +2110,7 @@
           if(checkinBusy) return;
           if(serverState && serverState.checkedToday) return;
           checkinBusy = true;
-          var cbtn = $("checkinBtn");
-          playGateAd(cbtn, function(){
-            checkinBusy = false;
-            doServerCheckin();
-          }, function(){
-            /* iklan ditutup sebelum selesai — check-in tidak dilanjutkan */
-            checkinBusy = false;
-          });
+          doServerCheckin();
           return;
         }
         S.checkins++;
@@ -2379,7 +2327,7 @@
         var prizeEl = $("giftPrize");
         if(ready){
           prizeEl.classList.add("hidden");
-          $("giftText").textContent = "Kotak hari ini belum dibuka! Isinya acak — bisa 500, 1.000, 50.000, sampai 100.000 poin. Kotak baru muncul tiap jam 12 malam, 1x per hari." + (serverMode ? " Nonton iklan dulu buat buka kotak." : "");
+          $("giftText").textContent = "Kotak hari ini belum dibuka! Isinya acak — bisa 500, 1.000, 50.000, sampai 100.000 poin. Kotak baru muncul tiap jam 12 malam, 1x per hari.";
         } else {
           var won = giftWonToday();
           if(won > 0){
@@ -2419,16 +2367,9 @@
         giftBusy = true;
         var btn = $("giftBtn");
         var box = $("giftBox");
-        /* Mode server: iklan AdsGram diputar dulu sampai selesai,
-           baru POST /gift dipanggil & animasi buka kotak jalan.
-           Mode lokal: langsung dibuka seperti biasa. */
-        playGateAd(btn, function(){
-          setBtnBusy(btn, true, "Membuka…");
-          box.classList.add("shaking");
-          runGiftOpen(btn, box);
-        }, function(){
-          giftBusy = false;
-        });
+        setBtnBusy(btn, true, "Membuka…");
+        box.classList.add("shaking");
+        runGiftOpen(btn, box);
       });
       function runGiftOpen(btn, box){
         var finish = function(){ box.classList.remove("shaking"); giftBusy = false; setBtnBusy(btn, false); };
@@ -2627,15 +2568,7 @@
       $("spinBtn").addEventListener("click", function(){
         if(spinning || S.spinsLeft <= 0) return;
         if(serverMode){
-          /* Gerbang iklan: AdsGram diputar dulu sampai selesai,
-             baru POST /spin dipanggil & animasi putaran jalan.
-             Iklan kosong/error → spin tetap dilanjutkan. */
-          spinning = true;
-          playGateAd($("spinBtn"), function(){
-            doServerSpin();
-          }, function(){
-            spinning = false;
-          });
+          doServerSpin();
           return;
         }
         spinning = true;
