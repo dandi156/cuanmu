@@ -1,0 +1,2530 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Cuanmu — Dompet Poin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+    </style>
+    <style>
+      :root{
+        --bg:#eaf2ec; --surface:#ffffff; --surface-2:#f1f7f2; --ink:#0a2115; --ink-2:#42594a; --ink-3:#6f8778;
+        --line:#dce9de; --emerald:#059669; --emerald-deep:#065f46; --emerald-dark:#04301f;
+        --gold:#edb93c; --gold-deep:#bd8807; --gold-soft:#fdf3d3;
+        --red:#d92d20; --red-soft:#fdecea;
+        --shadow:0 14px 34px rgba(4,48,31,.12); --shadow-sm:0 3px 12px rgba(4,48,31,.07);
+        --radius:24px;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#050f0a; --surface:#0c1f14; --surface-2:#11291b; --ink:#eaf5ee; --ink-2:#a9c4b2; --ink-3:#74907f;
+          --line:#1c3527; --gold-soft:#2c2410; --red-soft:#33161a;
+          --shadow:0 14px 34px rgba(0,0,0,.5); --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+        }
+      }
+      *{ box-sizing:border-box; }
+      html,body{ margin:0; padding:0; }
+      body{
+        font-family:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(900px 500px at 15% -5%, rgba(5,150,105,.16), transparent 60%),
+          radial-gradient(800px 480px at 95% 10%, rgba(237,185,60,.10), transparent 55%),
+          var(--bg);
+        color:var(--ink); min-height:100vh;
+        -webkit-font-smoothing:antialiased;
+      }
+      .phone{
+        max-width:480px; margin:0 auto; min-height:100vh; position:relative;
+        background:var(--bg); display:flex; flex-direction:column;
+      }
+      @media (min-width:560px){
+        .phone{ box-shadow:0 0 60px rgba(4,40,26,.22); }
+      }
+      h1,h2,h3,p{ margin:0; }
+      button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+      input{ font-family:inherit; }
+      .hidden{ display:none !important; }
+
+      /* ---------- generic ---------- */
+      .btn-gold{
+        background:linear-gradient(180deg,#f8d264,#eaa90c); color:#3a2a00; font-weight:800;
+        border-radius:16px; padding:14px 20px; font-size:15px; width:100%;
+        box-shadow:0 10px 22px rgba(189,136,7,.32), inset 0 1px 0 rgba(255,255,255,.65);
+        transition:transform .12s ease, box-shadow .2s ease, opacity .2s, filter .2s ease;
+      }
+      .btn-gold:active{ transform:scale(.97); }
+      .btn-gold:disabled{ opacity:.45; box-shadow:none; cursor:not-allowed; }
+      .btn-ghost{
+        background:var(--surface); border:1.5px solid var(--line); color:var(--ink); font-weight:700;
+        border-radius:16px; padding:13px 18px; font-size:14px; width:100%; transition:transform .12s ease;
+      }
+      .btn-ghost:active{ transform:scale(.97); }
+      .btn-emerald{
+        background:linear-gradient(180deg,#0cb07c,#047857); color:#fff; font-weight:800;
+        border-radius:16px; padding:14px 20px; font-size:15px; width:100%;
+        box-shadow:0 10px 22px rgba(4,120,87,.30), inset 0 1px 0 rgba(255,255,255,.28);
+        transition:transform .12s ease, filter .2s ease;
+      }
+      @media (hover:hover){
+        .btn-gold:hover{ filter:brightness(1.05); }
+        .btn-emerald:hover{ filter:brightness(1.07); }
+        .btn-ghost:hover{ border-color:var(--emerald); }
+        .shortcut:hover{ transform:translateY(-2px); box-shadow:0 10px 20px rgba(4,48,31,.12); }
+        .dest-opt:hover{ border-color:var(--emerald); }
+        .chip:hover{ border-color:var(--gold-deep); }
+      }
+      .btn-emerald:active{ transform:scale(.97); }
+      .btn-emerald:disabled{ opacity:.45; box-shadow:none; cursor:not-allowed; }
+      .field{ margin-bottom:14px; }
+      .field label{ display:block; font-size:13px; font-weight:700; color:var(--ink-2); margin-bottom:7px; }
+      .field input{
+        width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid var(--line);
+        background:var(--surface); color:var(--ink); font-size:15px; outline:none; transition:border-color .15s, box-shadow .15s;
+      }
+      .field input:focus{ border-color:var(--emerald); box-shadow:0 0 0 4px rgba(5,150,105,.15); }
+      .field .err{ display:none; color:var(--red); font-size:12.5px; font-weight:600; margin-top:6px; }
+      .field.invalid input{ border-color:var(--red); }
+      .field.invalid .err{ display:block; }
+      .card{
+        background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow-sm);
+        border:1px solid var(--line); padding:18px;
+      }
+
+      /* ---------- auth ---------- */
+      #authView{ flex:1; display:flex; flex-direction:column; }
+      .auth-hero{
+        background:linear-gradient(155deg,#03291a 0%,#065f46 42%,#07875f 78%,#0a9d6e 100%);
+        padding:44px 24px 64px; color:#fff; position:relative; overflow:hidden;
+        border-radius:0 0 32px 32px;
+      }
+      .auth-hero::after{
+        content:""; position:absolute; right:-70px; top:-70px; width:240px; height:240px; border-radius:50%;
+        background:radial-gradient(circle, rgba(248,210,100,.42), transparent 65%);
+      }
+      .auth-hero::before{
+        content:""; position:absolute; inset:0;
+        background-image:radial-gradient(rgba(255,255,255,.13) 1.2px, transparent 1.4px);
+        background-size:22px 22px;
+        -webkit-mask-image:linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+        mask-image:linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+      }
+      .brand{ display:flex; align-items:center; gap:12px; position:relative; z-index:1; }
+      .brand-mark{
+        width:48px; height:48px; border-radius:15px; display:grid; place-items:center;
+        background:linear-gradient(160deg,#f8d264,#dda106); color:#43300a;
+        box-shadow:0 8px 18px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.7);
+      }
+      .brand-name{ font-size:26px; font-weight:800; letter-spacing:-.5px; }
+      .brand-tag{ font-size:13px; opacity:.85; font-weight:500; }
+      .auth-hero h1{ font-size:24px; font-weight:800; line-height:1.25; margin-top:26px; position:relative; z-index:1; }
+      .auth-hero .sub{ font-size:14px; opacity:.9; margin-top:8px; line-height:1.55; position:relative; z-index:1; max-width:330px; }
+      .bonus-strip{
+        margin-top:20px; position:relative; z-index:1; display:flex; gap:12px; align-items:center;
+        background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28); border-radius:18px; padding:13px 15px;
+        backdrop-filter:blur(4px);
+      }
+      .bonus-strip .amt{ font-size:20px; font-weight:800; color:#ffe08a; }
+      .bonus-strip .lbl{ font-size:12.5px; line-height:1.45; opacity:.95; }
+      .auth-card{
+        margin:-38px 18px 28px; position:relative; z-index:2; background:var(--surface);
+        border-radius:26px; box-shadow:var(--shadow); border:1px solid var(--line); padding:22px 20px 24px;
+        animation:riseIn .55s cubic-bezier(.22,.8,.28,1) .08s both;
+      }
+      @media (prefers-reduced-motion: reduce){ .auth-card{ animation:none; } }
+      #checkinBtn:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
+      @keyframes btnPulse{
+        0%,100%{ box-shadow:0 10px 22px rgba(189,136,7,.32), inset 0 1px 0 rgba(255,255,255,.65); }
+        50%{ box-shadow:0 10px 26px rgba(189,136,7,.45), 0 0 0 7px rgba(237,185,60,.16), inset 0 1px 0 rgba(255,255,255,.65); }
+      }
+      @media (prefers-reduced-motion: reduce){ #checkinBtn:not(:disabled){ animation:none; } }
+      .seg{
+        display:flex; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px;
+      }
+      .seg button{
+        flex:1; padding:10px; border-radius:11px; font-weight:700; font-size:14px; color:var(--ink-2);
+        transition:background .18s, color .18s, box-shadow .18s; min-height:2.75rem;
+      }
+      .seg button.on{ background:var(--surface); color:var(--ink); box-shadow:0 3px 10px rgba(6,60,40,.12); }
+      .seg.small button{ font-size:13.5px; padding:9px; }
+      .auth-note{ font-size:12.5px; color:var(--ink-3); text-align:center; line-height:1.6; margin-top:16px; }
+      .otp-row{ display:flex; gap:8px; justify-content:space-between; margin:18px 0 6px; }
+      .otp-row input{
+        width:100%; aspect-ratio:.92; max-width:52px; text-align:center; font-size:22px; font-weight:800;
+        border-radius:14px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); outline:none;
+        transition:border-color .15s, box-shadow .15s, transform .15s;
+      }
+      .otp-row input:focus{ transform:translateY(-2px); }
+      .otp-row input:focus{ border-color:var(--emerald); box-shadow:0 0 0 4px rgba(5,150,105,.15); }
+      .linklike{ color:var(--emerald); font-weight:700; font-size:13.5px; padding:8px; }
+      .linklike:disabled{ color:var(--ink-3); cursor:default; }
+
+      /* ---------- app shell ---------- */
+      #appView{ flex:1; display:flex; flex-direction:column; }
+      .view{ display:none; flex:1; flex-direction:column; animation:viewIn .38s cubic-bezier(.22,.8,.28,1) both; }
+      .view.active{ display:flex; }
+      @keyframes viewIn{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:none;} }
+      /* staggered entrance for blocks inside the active view */
+      .view.active .content > *, .view.active .flow-body > *, #adminView .admin-body > *{
+        animation:riseIn .5s cubic-bezier(.22,.8,.28,1) both;
+      }
+      .view.active .content > *:nth-child(2), .view.active .flow-body > *:nth-child(2){ animation-delay:.05s; }
+      .view.active .content > *:nth-child(3), .view.active .flow-body > *:nth-child(3){ animation-delay:.10s; }
+      .view.active .content > *:nth-child(4){ animation-delay:.15s; }
+      .view.active .content > *:nth-child(5){ animation-delay:.20s; }
+      .view.active .content > *:nth-child(6){ animation-delay:.25s; }
+      .view.active .content > *:nth-child(7){ animation-delay:.30s; }
+      .view.active .content > *:nth-child(8){ animation-delay:.35s; }
+      .view.active .content > *:nth-child(n+9){ animation-delay:.40s; }
+      @keyframes riseIn{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:none;} }
+      @media (prefers-reduced-motion: reduce){
+        .view, .view.active .content > *, .view.active .flow-body > *, #adminView .admin-body > *{ animation:none; }
+      }
+
+      .hero{
+        background:linear-gradient(158deg,#03291a 0%,#065f46 40%,#07875f 76%,#0aa873 100%);
+        color:#fff; padding:22px 18px 74px; position:relative; overflow:hidden;
+        border-radius:0 0 30px 30px;
+      }
+      .hero::after{
+        content:""; position:absolute; right:-60px; top:-80px; width:230px; height:230px; border-radius:50%;
+        background:radial-gradient(circle, rgba(248,210,100,.4), transparent 65%);
+      }
+      .hero::before{
+        content:""; position:absolute; inset:0;
+        background-image:radial-gradient(rgba(255,255,255,.12) 1.2px, transparent 1.4px);
+        background-size:22px 22px;
+        -webkit-mask-image:linear-gradient(180deg, #000, transparent 85%);
+        mask-image:linear-gradient(180deg, #000, transparent 85%);
+      }
+      .hero-top{ display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; }
+      .hello{ font-size:13px; opacity:.85; font-weight:500; }
+      .uname{ font-size:17px; font-weight:800; margin-top:2px; }
+      .icon-btn{
+        width:42px; height:42px; border-radius:13px; display:grid; place-items:center;
+        background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); color:#fff;
+      }
+      .icon-btn:active{ transform:scale(.94); }
+      .content{ padding:0 18px 110px; margin-top:-56px; position:relative; z-index:3; flex:1; }
+      .content.plain{ margin-top:0; padding-top:20px; }
+
+      .balance-card{
+        background:linear-gradient(140deg,#082418,#103c27 55%,#1a5c3c); color:#fff;
+        border-radius:26px; padding:20px; box-shadow:0 20px 38px rgba(3,35,22,.38);
+        border:1px solid rgba(248,210,100,.4); position:relative; overflow:hidden;
+      }
+      .balance-card::after{
+        content:""; position:absolute; right:-46px; bottom:-60px; width:170px; height:170px; border-radius:50%;
+        background:radial-gradient(circle, rgba(248,210,100,.35), transparent 65%);
+      }
+      .balance-card::before{
+        content:""; position:absolute; top:0; bottom:0; width:90px; left:-120px; z-index:1;
+        background:linear-gradient(100deg, transparent, rgba(255,255,255,.16), transparent);
+        transform:skewX(-18deg); animation:cardShine 1.4s ease .35s 1 both; pointer-events:none;
+      }
+      @keyframes cardShine{ from{ left:-120px; } to{ left:130%; } }
+      @media (prefers-reduced-motion: reduce){ .balance-card::before{ animation:none; display:none; } }
+      .bal-lbl{ font-size:12.5px; font-weight:600; opacity:.8; letter-spacing:.4px; text-transform:uppercase; }
+      .bal-amt{ font-size:34px; font-weight:800; letter-spacing:-.5px; margin:4px 0 2px; }
+      .bal-sub{ font-size:12.5px; opacity:.75; }
+      .bal-actions{ display:flex; gap:10px; margin-top:16px; position:relative; z-index:1; }
+      .bal-actions button{
+        flex:1; padding:12px 8px; border-radius:14px; font-weight:800; font-size:13.5px;
+        display:flex; align-items:center; justify-content:center; gap:7px; transition:transform .12s;
+      }
+      .bal-actions button:active{ transform:scale(.96); }
+      .ba-gold{ background:linear-gradient(180deg,#f8d264,#eaa90c); color:#3a2a00; box-shadow:0 6px 14px rgba(189,136,7,.35); }
+      .ba-glass{ background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.3); color:#fff; }
+
+      .section-title{ font-size:16.5px; font-weight:800; margin:26px 2px 12px; display:flex; align-items:center; justify-content:space-between; }
+      .section-title .more{ font-size:13px; color:var(--emerald); font-weight:700; padding:6px 4px; }
+
+      .shortcut-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:18px; }
+      .shortcut{
+        background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:14px 4px 12px;
+        display:flex; flex-direction:column; align-items:center; gap:8px; box-shadow:var(--shadow-sm);
+        transition:transform .12s ease; min-height:5.4rem;
+      }
+      .shortcut:active{ transform:scale(.94); }
+      .shortcut .ic{
+        width:46px; height:46px; border-radius:15px; display:grid; place-items:center;
+      }
+      .shortcut span{ font-size:12px; font-weight:700; color:var(--ink); text-align:center; line-height:1.3; }
+      .ic-em{ background:#e2f4ec; color:#057a55; } .ic-gold{ background:var(--gold-soft); color:#a87b04; }
+      .ic-sky{ background:#e3f0fb; color:#1d6fb8; } .ic-rose{ background:#fde8ef; color:#c2345f; }
+      @media (prefers-color-scheme: dark){
+        .ic-em{ background:#123626; } .ic-sky{ background:#122c42; } .ic-rose{ background:#3a1622; }
+      }
+
+      /* promo carousel */
+      .promo{ margin-top:22px; }
+      .promo-track{
+        display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none;
+        border-radius:22px; overscroll-behavior-x:contain;
+      }
+      .promo-track::-webkit-scrollbar{ display:none; }
+      .promo-slide{
+        flex:0 0 100%; scroll-snap-align:center; border-radius:22px; padding:18px; color:#fff;
+        min-height:118px; display:flex; flex-direction:column; justify-content:center; position:relative; overflow:hidden;
+      }
+      .promo-slide h3{ font-size:17px; font-weight:800; line-height:1.3; max-width:250px; }
+      .promo-slide p{ font-size:12.5px; opacity:.9; margin-top:5px; max-width:250px; line-height:1.5; }
+      .promo-slide .big{ position:absolute; right:14px; bottom:6px; font-size:52px; font-weight:800; opacity:.22; }
+      .promo-dots{ display:flex; gap:6px; justify-content:center; margin-top:10px; }
+      .promo-dots i{ width:7px; height:7px; border-radius:99px; background:var(--line); transition:all .25s; }
+      .promo-dots i.on{ width:22px; background:var(--emerald); }
+
+      /* locked bonus */
+      .locked-head{ display:flex; align-items:center; gap:12px; }
+      .locked-head > div{ min-width:0; }
+      .lock-ic{ width:44px; height:44px; border-radius:14px; background:var(--gold-soft); color:#a87b04; display:grid; place-items:center; flex:none; }
+      .locked-head h3{ font-size:15.5px; font-weight:800; }
+      .locked-head p{ font-size:12.5px; color:var(--ink-2); margin-top:2px; line-height:1.5; }
+      .locked-amt{ margin-left:auto; text-align:right; flex:none; }
+      .locked-amt .a{ font-size:18px; font-weight:800; color:var(--gold-deep); }
+      .locked-amt .b{ font-size:11.5px; color:var(--ink-3); font-weight:600; }
+      .progress{ height:10px; border-radius:99px; background:var(--surface-2); border:1px solid var(--line); overflow:hidden; margin-top:14px; }
+      .progress i{ display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#e9b83a,#f8d264); transition:width .6s cubic-bezier(.2,.8,.2,1); position:relative; overflow:hidden; }
+      .progress i::after{
+        content:""; position:absolute; inset:0;
+        background:linear-gradient(100deg, transparent 25%, rgba(255,255,255,.5) 50%, transparent 75%);
+        transform:translateX(-110%); animation:shimmer 2.6s ease-in-out infinite;
+      }
+      @keyframes shimmer{ 0%{ transform:translateX(-110%);} 55%,100%{ transform:translateX(110%);} }
+      @media (prefers-reduced-motion: reduce){ .progress i::after{ animation:none; display:none; } }
+      .locked-foot{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink-2); font-weight:600; margin-top:8px; }
+      .done-badge{
+        display:inline-flex; align-items:center; gap:6px; background:#e2f4ec; color:#057a55; font-weight:800;
+        font-size:12.5px; padding:7px 12px; border-radius:99px; margin-top:12px;
+      }
+      @media (prefers-color-scheme: dark){ .done-badge{ background:#123626; } }
+
+      /* ---------- mining ---------- */
+      .mining-top{ display:flex; align-items:center; gap:12px; }
+      .mining-top > div{ min-width:0; }
+      .mining-ic{
+        width:48px; height:48px; border-radius:16px; display:grid; place-items:center; flex:none; color:#fff;
+        background:linear-gradient(150deg,#0aa873,#057a55); box-shadow:0 8px 16px rgba(5,122,85,.3);
+      }
+      .mining-card.on .mining-ic svg{ animation:pickSwing 1.5s ease-in-out infinite; transform-origin:72% 28%; }
+      @keyframes pickSwing{ 0%,100%{ transform:rotate(0deg);} 32%{ transform:rotate(-26deg);} 58%{ transform:rotate(10deg);} 78%{ transform:rotate(-6deg);} }
+      @media (prefers-reduced-motion: reduce){ .mining-card.on .mining-ic svg{ animation:none; } }
+      .mining-top h3{ font-size:15.5px; font-weight:800; }
+      .mining-top p{ font-size:12.5px; color:var(--ink-2); margin-top:2px; line-height:1.5; }
+      .mining-full{
+        margin-top:13px; border-radius:14px; padding:11px 13px; font-size:13px; font-weight:700; line-height:1.55;
+        background:var(--gold-soft); color:#8a6400; border:1px solid rgba(201,147,10,.35);
+      }
+      @media (prefers-color-scheme: dark){ .mining-full{ color:#ffe08a; } }
+
+      /* history */
+      .hist-item{ display:flex; gap:12px; padding:13px 2px; border-bottom:1px solid var(--line); align-items:flex-start; }
+      .hist-item:last-child{ border-bottom:none; }
+      .hist-ic{ width:40px; height:40px; border-radius:13px; display:grid; place-items:center; flex:none; }
+      .hist-main{ flex:1; min-width:0; }
+      .hist-title{ font-size:13.5px; font-weight:700; line-height:1.4; }
+      .hist-sub{ font-size:12px; color:var(--ink-3); margin-top:2px; }
+      .hist-amt{ font-size:13.5px; font-weight:800; flex:none; }
+      .hist-amt.plus{ color:var(--emerald); } .hist-amt.minus{ color:var(--ink); }
+      .status-chip{ font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:99px; background:var(--gold-soft); color:#a87b04; margin-left:6px; vertical-align:1px; }
+      .empty{ text-align:center; padding:28px 10px; color:var(--ink-3); font-size:13.5px; line-height:1.6; }
+
+      /* misi */
+      .misi-card{ position:relative; overflow:hidden; }
+      .misi-top{ display:flex; gap:13px; align-items:flex-start; }
+      .misi-ic{ width:48px; height:48px; border-radius:16px; background:linear-gradient(150deg,#0aa873,#057a55); color:#fff; display:grid; place-items:center; flex:none; box-shadow:0 8px 16px rgba(5,122,85,.3); }
+      .misi-top h3{ font-size:16px; font-weight:800; }
+      .misi-top p{ font-size:13px; color:var(--ink-2); line-height:1.55; margin-top:3px; }
+      .reward-badge{
+        display:inline-block; background:var(--gold-soft); color:#a87b04; font-weight:800; font-size:12.5px;
+        padding:6px 11px; border-radius:99px; margin-top:10px; border:1px solid rgba(201,147,10,.3);
+      }
+      .ref-box{
+        display:flex; gap:8px; margin-top:14px; background:var(--surface-2); border:1.5px dashed var(--line);
+        border-radius:14px; padding:8px 8px 8px 14px; align-items:center;
+      }
+      .ref-box span{ flex:1; font-size:13px; font-weight:600; color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .ref-box button{
+        background:var(--emerald); color:#fff; font-weight:800; font-size:12.5px; border-radius:10px; padding:9px 14px; flex:none;
+      }
+      .ref-box button:active{ transform:scale(.95); }
+      .milestone{
+        margin-top:16px; border-radius:18px; padding:15px; background:linear-gradient(140deg,#fdf3d7,#fbe9ae);
+        border:1px solid rgba(201,147,10,.35); color:#4d3600;
+      }
+      @media (prefers-color-scheme: dark){ .milestone{ background:linear-gradient(140deg,#2c2410,#3a2f10); color:#ffe08a; } }
+      .milestone h4{ margin:0; font-size:14.5px; font-weight:800; }
+      .milestone p{ font-size:12.5px; margin-top:3px; opacity:.85; line-height:1.5; }
+      .milestone .progress{ background:rgba(255,255,255,.55); border:none; margin-top:11px; }
+      .milestone.claimed{ background:linear-gradient(140deg,#0aa873,#057a55); color:#fff; border:none; }
+
+      /* game */
+      .slot-machine{
+        background:linear-gradient(160deg,#082418,#17573a 70%,#1d6b47); border-radius:26px; padding:22px 18px;
+        color:#fff; text-align:center; box-shadow:0 20px 38px rgba(3,35,22,.38); border:1px solid rgba(248,210,100,.4);
+      }
+      .slot-machine h3{ font-size:17px; font-weight:800; }
+      .slot-machine .hint{ font-size:12.5px; opacity:.8; margin-top:4px; }
+      .reels{ display:flex; gap:10px; justify-content:center; margin:20px 0 6px; }
+      .reel{
+        width:84px; height:96px; background:#fff; border-radius:18px; display:grid; place-items:center;
+        font-size:46px; box-shadow:inset 0 -8px 0 rgba(0,0,0,.07), 0 8px 16px rgba(0,0,0,.25);
+        transition:filter .15s ease;
+      }
+      .reel.spinning{ animation:reelShake .1s linear infinite; filter:blur(2px) saturate(1.25); }
+      @keyframes reelShake{ 0%{ transform:translateY(-4px);} 50%{ transform:translateY(4px);} 100%{ transform:translateY(-4px);} }
+      @media (prefers-reduced-motion: reduce){ .reel.spinning{ animation:none; filter:none; } }
+      .slot-msg{ min-height:24px; font-weight:800; font-size:15px; margin:10px 0 14px; color:#ffe08a; }
+      .paytable{ font-size:12.5px; color:var(--ink-2); line-height:2; }
+      .paytable b{ color:var(--ink); }
+
+      /* flows (transfer / tarik) */
+      .flow-head{ display:flex; align-items:center; gap:12px; padding:20px 18px 4px; }
+      .back-btn{ width:42px; height:42px; border-radius:13px; background:var(--surface); border:1px solid var(--line); display:grid; place-items:center; box-shadow:var(--shadow-sm); flex:none; }
+      .back-btn:active{ transform:scale(.94); }
+      .flow-head h2{ font-size:19px; font-weight:800; }
+      .flow-head p{ font-size:12.5px; color:var(--ink-2); margin-top:2px; }
+      .steps{ display:flex; align-items:center; gap:0; padding:18px 26px 4px; }
+      .step{ display:flex; flex-direction:column; align-items:center; gap:6px; flex:none; }
+      .step .dot{
+        width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font-size:13px; font-weight:800;
+        background:var(--surface); border:2px solid var(--line); color:var(--ink-3); transition:all .25s;
+      }
+      .step.on .dot{ background:var(--emerald); border-color:var(--emerald); color:#fff; }
+      .step.done .dot{ background:var(--emerald); border-color:var(--emerald); color:#fff; }
+      .step span{ font-size:11px; font-weight:700; color:var(--ink-3); }
+      .step.on span{ color:var(--ink); }
+      .step-line{ flex:1; height:2px; background:var(--line); margin:0 8px 22px; border-radius:2px; }
+      .step-line.done{ background:var(--emerald); }
+      .flow-body{ padding:16px 18px 110px; }
+      .dest-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+      .dest-grid.two{ grid-template-columns:repeat(2,1fr); }
+      .dest-opt{
+        background:var(--surface); border:1.5px solid var(--line); border-radius:16px; padding:14px 6px;
+        font-weight:800; font-size:14px; text-align:center; transition:all .15s; min-height:3.4rem;
+      }
+      .dest-opt small{ display:block; font-size:11px; font-weight:600; color:var(--ink-3); margin-top:2px; }
+      .dest-opt.sel{ border-color:var(--emerald); background:#e9f7f1; color:#04503a; box-shadow:0 0 0 3px rgba(5,150,105,.14); }
+      @media (prefers-color-scheme: dark){ .dest-opt.sel{ background:#123626; color:#7fe3bb; } }
+      .chips{ display:flex; flex-wrap:wrap; gap:9px; }
+      .chip{
+        padding:11px 16px; border-radius:99px; border:1.5px solid var(--line); background:var(--surface);
+        font-weight:800; font-size:13.5px; transition:all .15s;
+      }
+      .chip.sel{ border-color:var(--gold-deep); background:var(--gold-soft); color:#8a6400; }
+      @media (prefers-color-scheme: dark){ .chip.sel{ color:#ffe08a; } }
+      .chip:disabled{ opacity:.45; cursor:not-allowed; }
+      .wd-rules{
+        background:var(--surface-2); border:1px solid var(--line); border-radius:16px;
+        padding:13px 15px; margin-bottom:14px; font-size:12.5px; line-height:1.55; color:var(--ink-2);
+      }
+      .wd-rules .r{ display:flex; gap:8px; align-items:flex-start; }
+      .wd-rules .r + .r{ margin-top:7px; }
+      .wd-rules .st{ font-weight:800; flex:none; }
+      .wd-rules .st.ok{ color:var(--emerald); }
+      .wd-rules .st.no{ color:var(--gold-deep); }
+      .summary{ border-radius:20px; overflow:hidden; border:1px solid var(--line); }
+      .summary .row{ display:flex; justify-content:space-between; gap:14px; padding:13px 16px; background:var(--surface); font-size:13.5px; }
+      .summary .row + .row{ border-top:1px solid var(--line); }
+      .summary .row span{ color:var(--ink-2); font-weight:600; }
+      .summary .row b{ font-weight:800; text-align:right; }
+      .summary .row.total{ background:var(--surface-2); }
+      .summary .row.total b{ color:var(--emerald); font-size:16px; }
+      .success-wrap{ text-align:center; padding:26px 10px 8px; animation:popIn .45s cubic-bezier(.2,.9,.3,1.25) both; }
+      @keyframes popIn{ from{ opacity:0; transform:scale(.92) translateY(8px);} to{ opacity:1; transform:none;} }
+      @media (prefers-reduced-motion: reduce){ .success-wrap{ animation:none; } }
+      .check-anim{ width:96px; height:96px; margin:0 auto 18px; }
+      .check-anim circle{ fill:none; stroke:var(--emerald); stroke-width:3; stroke-dasharray:290; stroke-dashoffset:290; animation:draw .7s ease forwards; }
+      .check-anim path{ fill:none; stroke:var(--emerald); stroke-width:5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:60; stroke-dashoffset:60; animation:draw .45s .5s ease forwards; }
+      @keyframes draw{ to{ stroke-dashoffset:0; } }
+      @media (prefers-reduced-motion: reduce){ .check-anim circle,.check-anim path{ animation:none; stroke-dashoffset:0; } }
+      .success-wrap h3{ font-size:20px; font-weight:800; }
+      .success-wrap p{ font-size:13.5px; color:var(--ink-2); margin-top:7px; line-height:1.6; }
+
+      /* bottom nav */
+      .tabbar{
+        position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; z-index:20;
+        background:var(--surface); border-top:1px solid var(--line); display:flex;
+        padding:8px 10px calc(10px + env(safe-area-inset-bottom));
+        box-shadow:0 -8px 24px rgba(6,60,40,.07);
+      }
+      .tabbar button{
+        flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 2px;
+        font-size:11.5px; font-weight:700; color:var(--ink-3); border-radius:14px;
+        transition:color .2s, background .25s, transform .12s;
+      }
+      .tabbar button.on{ color:var(--emerald-deep); background:#e4f4ec; }
+      .tabbar button.on svg{ animation:tabPop .32s cubic-bezier(.2,.9,.3,1.4) both; }
+      @keyframes tabPop{ 0%{ transform:scale(.75);} 60%{ transform:scale(1.12);} 100%{ transform:scale(1);} }
+      @media (prefers-color-scheme: dark){ .tabbar button.on{ color:#5fd6a8; background:#123626; } }
+      @media (prefers-reduced-motion: reduce){ .tabbar button.on svg{ animation:none; } }
+      .tabbar button:active{ transform:scale(.95); }
+
+      /* toast */
+      #toast{
+        position:fixed; left:50%; bottom:104px; transform:translate(-50%, 16px) scale(.96); z-index:60;
+        background:#0a2a1c; color:#fff; font-size:13.5px; font-weight:700; padding:13px 18px; border-radius:14px;
+        box-shadow:0 16px 34px rgba(0,0,0,.32); opacity:0; pointer-events:none;
+        transition:opacity .28s ease, transform .34s cubic-bezier(.22,.9,.3,1.2);
+        max-width:88vw; text-align:center; line-height:1.45;
+      }
+      #toast.show{ opacity:1; transform:translate(-50%, 0) scale(1); }
+      /* ---------- broadcast ---------- */
+      .broadcast{
+        margin-top:16px; border-radius:18px; padding:14px 16px; display:flex; gap:11px; align-items:flex-start;
+        background:linear-gradient(140deg,#fdf3d7,#fbe9ae); border:1px solid rgba(201,147,10,.4); color:#4d3600;
+      }
+      @media (prefers-color-scheme: dark){ .broadcast{ background:linear-gradient(140deg,#2c2410,#3a2f10); color:#ffe08a; } }
+      .broadcast svg{ flex:none; margin-top:1px; }
+      .broadcast b{ font-size:13.5px; }
+      .broadcast p{ font-size:13px; line-height:1.55; margin-top:2px; }
+
+      /* ---------- admin ---------- */
+      #adminView{ flex:1; display:flex; flex-direction:column; }
+      .admin-head{ background:linear-gradient(155deg,#03291a,#065f46 55%,#07875f); color:#fff; padding:20px 18px 22px; border-radius:0 0 26px 26px; }
+      .admin-head .row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+      .admin-badge{ display:inline-block; background:linear-gradient(180deg,#f6cd55,#e3a812); color:#3a2a00; font-size:11px; font-weight:800; padding:4px 10px; border-radius:99px; letter-spacing:.5px; }
+      .admin-tabs{ display:flex; gap:8px; overflow-x:auto; padding:16px 18px 4px; scrollbar-width:none; }
+      .admin-tabs::-webkit-scrollbar{ display:none; }
+      .admin-tabs button{ flex:none; padding:10px 16px; border-radius:99px; border:1.5px solid var(--line); background:var(--surface); font-weight:800; font-size:13px; color:var(--ink-2); min-height:2.6rem; }
+      .admin-tabs button.on{ background:var(--emerald); border-color:var(--emerald); color:#fff; }
+      .admin-body{ padding:14px 18px 44px; }
+      .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+      .stat-card{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow-sm); }
+      .stat-card .lbl{ font-size:12px; font-weight:700; color:var(--ink-2); }
+      .stat-card .val{ font-size:23px; font-weight:800; margin-top:4px; letter-spacing:-.3px; }
+      .stat-card .sub{ font-size:11.5px; color:var(--ink-3); margin-top:2px; }
+      .queue-item, .user-item{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow-sm); margin-bottom:12px; }
+      .qi-top{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+      .qi-name{ font-size:15px; font-weight:800; }
+      .qi-sub{ font-size:12.5px; color:var(--ink-2); margin-top:2px; line-height:1.55; }
+      .qi-amt{ font-size:16px; font-weight:800; color:var(--emerald); flex:none; }
+      .qi-actions{ display:flex; gap:9px; margin-top:13px; }
+      .qi-actions button{ flex:1; padding:11px; border-radius:12px; font-weight:800; font-size:13.5px; }
+      .qi-actions button:active{ transform:scale(.97); }
+      .btn-approve{ background:var(--emerald); color:#fff; }
+      .btn-reject{ background:var(--red-soft); color:var(--red); border:1.5px solid rgba(220,38,38,.3); }
+      .pill{ font-size:11px; font-weight:800; padding:4px 10px; border-radius:99px; flex:none; }
+      .pill.pending{ background:var(--gold-soft); color:#a87b04; }
+      .pill.lunas, .pill.aktif{ background:#e2f4ec; color:#057a55; }
+      .pill.ditolak, .pill.banned{ background:var(--red-soft); color:var(--red); }
+      @media (prefers-color-scheme: dark){ .pill.lunas, .pill.aktif{ background:#123626; } }
+      .pts-row{ display:flex; gap:8px; margin-top:12px; }
+      .pts-row input{ flex:1; min-width:0; padding:11px 13px; border-radius:12px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); font-size:14px; font-weight:700; outline:none; }
+      .pts-row input:focus{ border-color:var(--emerald); }
+      .pts-row button{ padding:11px 13px; border-radius:12px; font-weight:800; font-size:13px; flex:none; }
+      .pts-row button:active{ transform:scale(.96); }
+      .btn-plus{ background:#e2f4ec; color:#057a55; }
+      .btn-minus{ background:var(--gold-soft); color:#8a6400; }
+      @media (prefers-color-scheme: dark){ .btn-plus{ background:#123626; } .btn-minus{ color:#ffe08a; } }
+      .btn-ban{ width:100%; margin-top:9px; padding:11px; border-radius:12px; font-weight:800; font-size:13px; background:var(--surface-2); border:1.5px solid var(--line); color:var(--red); }
+      .btn-ban.unban{ color:var(--emerald); }
+      .set-row{ margin-bottom:14px; }
+      .set-row label{ display:block; font-size:13px; font-weight:700; color:var(--ink-2); margin-bottom:7px; }
+      .set-row input, .set-row textarea{
+        width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid var(--line);
+        background:var(--surface); color:var(--ink); font-size:15px; outline:none; font-family:inherit;
+      }
+      .set-row input:focus, .set-row textarea:focus{ border-color:var(--emerald); box-shadow:0 0 0 4px rgba(5,150,105,.15); }
+      .set-row textarea{ resize:vertical; min-height:84px; line-height:1.55; }
+      .set-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
+      #bannedView{ flex:1; display:flex; flex-direction:column; }
+      .banned-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:48px 28px; }
+      .banned-ic{ width:84px; height:84px; border-radius:26px; background:var(--red-soft); color:var(--red); display:grid; place-items:center; margin-bottom:20px; }
+      .page-head{ padding:22px 18px 0; }
+      .page-head h2{ font-size:20px; font-weight:800; }
+      .page-head p{ font-size:13px; color:var(--ink-2); margin-top:4px; line-height:1.55; }
+    </style>
+  </head>
+  <body>
+    <div class="phone">
+
+      <!-- ================= AUTH ================= -->
+      <div id="authView">
+        <div class="auth-hero">
+          <div class="brand">
+            <div class="brand-mark">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+            </div>
+            <div>
+              <div class="brand-name">Cuanmu</div>
+              <div class="brand-tag">Dompet poin serba bisa</div>
+            </div>
+          </div>
+          <h1>Kumpulin poin,<br />tukar jadi saldo DANA.</h1>
+          <p class="sub">Check-in harian, main game gratis, dan undang teman — semua poin bisa ditarik ke DANA kamu.</p>
+          <div class="bonus-strip">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffe08a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
+            <div>
+              <div class="amt" id="authBonusAmt">Bonus Daftar 5.000 Poin</div>
+              <div class="lbl" id="authBonusLbl">Langsung masuk sebagai bonus terkunci — terbuka 2.000 tiap check-in harian.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-card">
+          <div class="seg" role="tablist" aria-label="Masuk atau daftar">
+            <button id="tabDaftar" class="on" type="button">Daftar</button>
+            <button id="tabMasuk" type="button">Masuk</button>
+          </div>
+
+          <!-- REGISTER -->
+          <div id="regPane" style="margin-top:18px;">
+            <div class="seg small" role="tablist" aria-label="Metode pendaftaran">
+              <button id="mEmail" class="on" type="button">Email</button>
+              <button id="mHp" type="button">No. HP</button>
+            </div>
+
+            <form id="regEmailForm" novalidate style="margin-top:18px;">
+              <div class="field" id="fRegNameE">
+                <label for="regNameE">Nama lengkap</label>
+                <input id="regNameE" type="text" placeholder="Nama kamu" autocomplete="name" />
+                <div class="err">Nama wajib diisi.</div>
+              </div>
+              <div class="field" id="fRegEmail">
+                <label for="regEmail">Email</label>
+                <input id="regEmail" type="email" placeholder="nama@email.com" autocomplete="email" />
+                <div class="err">Masukkan email yang valid.</div>
+              </div>
+              <div class="field" id="fRegPassE">
+                <label for="regPassE">Password</label>
+                <input id="regPassE" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password" />
+                <div class="err">Password minimal 6 karakter.</div>
+              </div>
+              <button class="btn-gold" type="submit" id="regSubmitBtn">Daftar &amp; Klaim Bonus 5.000</button>
+            </form>
+
+            <form id="regHpForm" class="hidden" novalidate style="margin-top:18px;">
+              <div class="field" id="fRegNameH">
+                <label for="regNameH">Nama lengkap</label>
+                <input id="regNameH" type="text" placeholder="Nama kamu" autocomplete="name" />
+                <div class="err">Nama wajib diisi.</div>
+              </div>
+              <div class="field" id="fRegHp">
+                <label for="regHp">Nomor HP (WhatsApp)</label>
+                <input id="regHp" type="tel" inputmode="numeric" placeholder="08xxxxxxxxxx" autocomplete="tel" />
+                <div class="err">Nomor harus diawali 08 dan 10–14 digit angka.</div>
+              </div>
+              <div class="field" id="fRegPassH">
+                <label for="regPassH">Password</label>
+                <input id="regPassH" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password" />
+                <div class="err">Password minimal 6 karakter.</div>
+              </div>
+              <button class="btn-gold" type="submit">Kirim Kode OTP</button>
+            </form>
+          </div>
+
+          <!-- OTP -->
+          <div id="otpPane" class="hidden" style="margin-top:18px;">
+            <h3 style="font-size:16.5px; font-weight:800;">Masukkan Kode OTP</h3>
+            <p style="font-size:13px; color:var(--ink-2); margin-top:6px; line-height:1.6;">Kode 6 digit sudah dikirim ke <b id="otpTarget"></b>. Masukkan kode apa pun untuk melanjutkan.</p>
+            <div class="otp-row" id="otpRow">
+              <input type="tel" inputmode="numeric" maxlength="1" aria-label="Digit 1" />
+              <input type="tel" inputmode="numeric" maxlength="1" aria-label="Digit 2" />
+              <input type="tel" inputmode="numeric" maxlength="1" aria-label="Digit 3" />
+              <input type="tel" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
+              <input type="tel" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
+              <input type="tel" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
+            </div>
+            <button class="btn-gold" id="otpVerify" type="button" disabled>Verifikasi &amp; Buat Akun</button>
+            <div style="text-align:center; margin-top:8px;">
+              <button class="linklike" id="otpResend" type="button" disabled>Kirim ulang kode (30)</button>
+            </div>
+            <div style="text-align:center;">
+              <button class="linklike" id="otpBack" type="button" style="color:var(--ink-3);">← Ganti nomor</button>
+            </div>
+          </div>
+
+          <!-- LOGIN -->
+          <form id="loginForm" class="hidden" novalidate style="margin-top:18px;">
+            <div class="field" id="fLoginId">
+              <label for="loginId">Email atau No. HP</label>
+              <input id="loginId" type="text" placeholder="nama@email.com / 08xxxxxxxxxx" autocomplete="username" />
+              <div class="err">Isi email atau nomor HP kamu.</div>
+            </div>
+            <div class="field" id="fLoginPass">
+              <label for="loginPass">Password</label>
+              <input id="loginPass" type="password" placeholder="Password kamu" autocomplete="current-password" />
+              <div class="err">Password wajib diisi.</div>
+            </div>
+            <button class="btn-emerald" type="submit">Masuk ke Dompet</button>
+          </form>
+
+          <p class="auth-note">Dengan mendaftar, kamu menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi Cuanmu.</p>
+        </div>
+      </div>
+
+      <!-- ================= APP ================= -->
+      <div id="appView" class="hidden">
+
+        <!-- BERANDA -->
+        <section class="view active" id="view-home">
+          <div class="hero">
+            <div class="hero-top">
+              <div>
+                <div class="hello">Selamat datang,</div>
+                <div class="uname" id="helloName">Pengguna</div>
+              </div>
+              <button class="icon-btn" id="logoutBtn" type="button" aria-label="Keluar akun">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="content">
+            <div class="balance-card">
+              <div class="bal-lbl">Saldo Poin Bebas</div>
+              <div class="bal-amt">Rp <span id="balAmt">0</span></div>
+              <div class="bal-sub">1 poin = Rp1 · bisa ditransfer &amp; ditarik ke DANA</div>
+              <div class="bal-actions">
+                <button class="ba-gold" id="goTransfer" type="button">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                  Transfer
+                </button>
+                <button class="ba-glass" id="goWithdraw" type="button">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                  Tarik Saldo
+                </button>
+              </div>
+            </div>
+
+            <div class="broadcast hidden" id="broadcastBanner">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+              <div><b>Pengumuman</b><p id="broadcastText"></p></div>
+            </div>
+
+            <div class="shortcut-grid">
+              <button class="shortcut" data-go="transfer" type="button">
+                <span class="ic ic-em"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 3 4 4-4 4"/><path d="M21 7H9"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12"/></svg></span>
+                <span>Transfer</span>
+              </button>
+              <button class="shortcut" id="checkinShortcut" type="button">
+                <span class="ic ic-gold"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+                <span>Check-in</span>
+              </button>
+              <button class="shortcut" data-go="misi" type="button">
+                <span class="ic ic-rose"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+                <span>Misi</span>
+              </button>
+              <button class="shortcut" data-go="game" type="button">
+                <span class="ic ic-sky"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
+                <span>Game</span>
+              </button>
+            </div>
+
+            <div class="promo">
+              <div class="promo-track" id="promoTrack">
+                <div class="promo-slide" style="background:linear-gradient(130deg,#04503a,#0aa873 72%,#12bd8a);">
+                  <h3>Bonus Daftar 5.000 Poin</h3>
+                  <p>Check-in tiap hari, bonus terkunci terbuka 2.000 per hari. 3 hari langsung lunas!</p>
+                  <span class="big">5rb</span>
+                </div>
+                <div class="promo-slide" style="background:linear-gradient(130deg,#7c5800,#c9930a 58%,#eebd3a);">
+                  <h3>Undang Teman, Cuan Bareng</h3>
+                  <p>+2.000 poin tiap teman yang daftar. Kumpulkan 5 teman, bonus ekstra +10.000!</p>
+                  <span class="big">+2rb</span>
+                </div>
+                <div class="promo-slide" style="background:linear-gradient(130deg,#083f57,#1273a5 62%,#1d9bc4);">
+                  <h3>Spin Harian, Jackpot 10.000</h3>
+                  <p>3x spin gratis tiap hari. Dapatkan 777 dan bawa pulang jackpot 10.000 poin.</p>
+                  <span class="big">777</span>
+                </div>
+              </div>
+              <div class="promo-dots" id="promoDots"><i class="on"></i><i></i><i></i></div>
+            </div>
+
+            <h3 class="section-title">Bonus Pendaftaran</h3>
+            <div class="card">
+              <div class="locked-head">
+                <span class="lock-ic">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <div>
+                  <h3>Bonus Terkunci</h3>
+                  <p id="lockedCardText">Tiap check-in membuka 2.000 poin + bonus check-in 20 poin.</p>
+                </div>
+                <div class="locked-amt">
+                  <div class="a" id="lockedAmt">5.000</div>
+                  <div class="b">poin terkunci</div>
+                </div>
+              </div>
+              <div class="progress"><i id="unlockBar" style="width:0%"></i></div>
+              <div class="locked-foot"><span id="unlockText">Terbuka 0 dari 5.000</span><span id="checkinCount">Check-in: 0 hari</span></div>
+              <div id="bonusDone" class="hidden"><span class="done-badge">✓ Bonus pendaftaran sudah terbuka semua</span></div>
+              <button class="btn-gold" id="checkinBtn" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
+            </div>
+
+            <h3 class="section-title">Mining Poin</h3>
+            <div class="card mining-card" id="miningCard">
+              <div class="mining-top">
+                <span class="mining-ic">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/></svg>
+                </span>
+                <div>
+                  <h3>Mesin Mining</h3>
+                  <p id="miningRateText">5 poin/jam · siklus 24 jam</p>
+                </div>
+                <div class="locked-amt">
+                  <div class="a" id="miningAccrued">0</div>
+                  <div class="b">poin terkumpul</div>
+                </div>
+              </div>
+              <div class="progress"><i id="miningBar" style="width:0%"></i></div>
+              <div class="locked-foot"><span id="miningTimeText">Mining belum jalan — mulai siklus pertamamu.</span><span id="miningPct">0%</span></div>
+              <div class="mining-full hidden" id="miningFullNote">Mining penuh — poin berhenti nambah. Klaim sekarang, terus mulai siklus baru.</div>
+              <button class="btn-emerald" id="miningStartBtn" type="button" style="margin-top:14px;">Mulai Mining</button>
+              <button class="btn-gold hidden" id="miningClaimBtn" type="button" style="margin-top:14px;" disabled>Klaim Poin</button>
+              <p style="font-size:12.5px; color:var(--ink-3); margin-top:11px; line-height:1.55;">Poin ngalir otomatis selama mining jalan. Kamu yang pencet Klaim sendiri — hasil klaim langsung masuk ke saldo bebas.</p>
+            </div>
+
+            <h3 class="section-title">Misi Hari Ini <button class="more" data-go="misi" type="button">Lihat Semua</button></h3>
+            <div class="card misi-card">
+              <div class="misi-top">
+                <span class="misi-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
+                <div>
+                  <h3>Undang Teman</h3>
+                  <p>Ajak teman daftar pakai link kamu.</p>
+                  <span class="reward-badge js-ref-badge">+2.000 poin / teman</span>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="section-title">Aktivitas Terakhir <button class="more" data-go="riwayat" type="button">Lihat Semua</button></h3>
+            <div class="card" id="homeHistory"></div>
+          </div>
+        </section>
+
+        <!-- MISI -->
+        <section class="view" id="view-misi">
+          <div class="page-head">
+            <h2>Misi</h2>
+            <p>Selesaikan misi buat nambah poin. Poin langsung masuk ke saldo bebas kamu.</p>
+          </div>
+          <div class="content plain">
+            <div class="card misi-card">
+              <div class="misi-top">
+                <span class="misi-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
+                <div>
+                  <h3>Undang Teman</h3>
+                  <p>Ajak teman daftar pakai link kamu — tiap teman yang bergabung, kamu dapat poin.</p>
+                  <span class="reward-badge js-ref-badge">+2.000 poin / teman</span>
+                </div>
+              </div>
+              <div class="locked-foot" style="margin-top:14px;"><span>Teman bergabung</span><span><b id="friendCount" style="color:var(--ink);">0</b> teman</span></div>
+              <div class="ref-box">
+                <span id="refLink">https://dandi156.github.io/cuanmu/?ref=…</span>
+                <button id="copyRef" type="button">Salin</button>
+              </div>
+              <button class="btn-emerald" id="simInvite" type="button" style="margin-top:12px;">Simulasikan Teman Bergabung · +2.000</button>
+              <p class="hidden" id="serverRefNote" style="font-size:12.5px; color:var(--ink-2); line-height:1.6; margin-top:12px;">Bagikan link di atas ke temanmu — poin undangan masuk otomatis begitu dia selesai daftar lewat link itu.</p>
+
+              <div class="milestone" id="milestoneBox">
+                <h4 id="milestoneTitle">🎁 Milestone 5 Teman</h4>
+                <p id="milestoneText">Undang 5 teman dan dapatkan bonus sekali klaim sebesar +10.000 poin.</p>
+                <div class="progress"><i id="milestoneBar" style="width:0%"></i></div>
+                <div class="locked-foot" style="color:inherit;"><span>Progress</span><span id="milestoneCount">0/5 teman</span></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <div class="misi-top">
+                <span class="misi-ic" style="background:linear-gradient(150deg,#e9b83a,#c9930a); box-shadow:0 8px 16px rgba(201,147,10,.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+                <div>
+                  <h3>Check-in Harian</h3>
+                  <p>Check-in tiap hari dapat +20 poin, sekaligus membuka bonus pendaftaranmu 2.000 per hari.</p>
+                  <span class="reward-badge js-ci-badge">+20 poin / hari</span>
+                </div>
+              </div>
+              <button class="btn-gold misi-checkin" type="button" style="margin-top:14px;">Check-in Sekarang</button>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <div class="misi-top">
+                <span class="misi-ic" style="background:linear-gradient(150deg,#1d8ab8,#0b4f6c); box-shadow:0 8px 16px rgba(11,79,108,.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
+                <div>
+                  <h3>Main Spin Harian</h3>
+                  <p>3x spin gratis tiap hari di tab Game. Jackpot 777 senilai 10.000 poin.</p>
+                  <span class="reward-badge">Jackpot 10.000 poin</span>
+                </div>
+              </div>
+              <button class="btn-emerald" data-go="game" type="button" style="margin-top:14px;">Main Sekarang</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- GAME -->
+        <section class="view" id="view-game">
+          <div class="page-head">
+            <h2>Game Spin</h2>
+            <p>Spin gratis tiap hari — hadiah poin langsung masuk ke saldo bebas.</p>
+          </div>
+          <div class="content plain">
+            <div class="slot-machine">
+              <h3>🎰 Slot Cuanmu</h3>
+              <p class="hint">Sisa spin hari ini: <b id="spinsLeft">3</b> dari <span id="spinQuotaLbl">3</span></p>
+              <div class="reels">
+                <div class="reel" id="reel0">🍒</div>
+                <div class="reel" id="reel1">🍋</div>
+                <div class="reel" id="reel2">⭐</div>
+              </div>
+              <div class="slot-msg" id="slotMsg">Tekan SPIN buat mulai!</div>
+              <button class="btn-gold" id="spinBtn" type="button">SPIN</button>
+              <p class="hint" style="margin-top:12px;">Kuota spin terisi lagi setiap kamu check-in hari berikutnya.</p>
+            </div>
+            <div class="card" style="margin-top:16px;">
+              <h3 style="font-size:15px; font-weight:800; margin-bottom:6px;">Tabel Hadiah</h3>
+              <div class="paytable">
+                <div><b>7 7 7</b> — Jackpot <b>10.000 poin</b></div>
+                <div><b>💎 💎 💎</b> — 500 poin · <b>⭐ ⭐ ⭐</b> — 300 poin</div>
+                <div><b>🔔 🔔 🔔</b> — 200 poin · <b>🍋 🍋 🍋</b> — 150 poin</div>
+                <div><b>🍒 🍒 🍒</b> — 100 poin · <b>Dua simbol sama</b> — 20 poin</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIWAYAT -->
+        <section class="view" id="view-riwayat">
+          <div class="page-head">
+            <h2>Riwayat Transaksi</h2>
+            <p>Semua aktivitas poin dan saldo kamu tercatat di sini.</p>
+          </div>
+          <div class="content plain">
+            <div class="card" id="fullHistory"></div>
+          </div>
+        </section>
+
+        <!-- TRANSFER -->
+        <section class="view" id="view-transfer">
+          <div class="flow-head">
+            <button class="back-btn" data-back="home" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div><h2>Transfer</h2><p>Kirim saldo ke bank atau e-wallet, biaya admin Rp0.</p></div>
+          </div>
+          <div class="steps" id="tfSteps">
+            <div class="step on" data-s="1"><div class="dot">1</div><span>Tujuan</span></div>
+            <div class="step-line"></div>
+            <div class="step" data-s="2"><div class="dot">2</div><span>Konfirmasi</span></div>
+            <div class="step-line"></div>
+            <div class="step" data-s="3"><div class="dot">3</div><span>Selesai</span></div>
+          </div>
+          <div class="flow-body">
+            <div id="tfStep1">
+              <div class="seg" style="margin-bottom:16px;">
+                <button id="tfTypeBank" class="on" type="button">Bank</button>
+                <button id="tfTypeEw" type="button">E-Wallet</button>
+              </div>
+              <div class="field">
+                <label id="tfDestLabel">Pilih Bank Tujuan</label>
+                <div class="dest-grid" id="tfDestGrid"></div>
+              </div>
+              <div class="field" id="fTfNum" style="margin-top:16px;">
+                <label for="tfNum" id="tfNumLabel">Nomor Rekening</label>
+                <input id="tfNum" type="tel" inputmode="numeric" placeholder="Masukkan nomor rekening" />
+                <div class="err">Nomor tujuan wajib diisi (minimal 8 digit).</div>
+              </div>
+              <div class="field" id="fTfName">
+                <label for="tfName">Nama Penerima</label>
+                <input id="tfName" type="text" placeholder="Nama pemilik rekening" />
+                <div class="err">Nama penerima wajib diisi.</div>
+              </div>
+              <div class="field" id="fTfAmt">
+                <label for="tfAmt">Jumlah Transfer (poin)</label>
+                <input id="tfAmt" type="tel" inputmode="numeric" placeholder="Minimal 100" />
+                <div class="err" id="tfAmtErr">Minimal transfer 100 poin.</div>
+              </div>
+              <p style="font-size:12.5px; color:var(--ink-3); margin-bottom:14px;">Saldo bebas kamu: <b style="color:var(--ink);">Rp <span class="balMirror">0</span></b> · Biaya admin <b style="color:var(--emerald);">Rp0</b></p>
+              <button class="btn-emerald" id="tfNext" type="button">Lanjut ke Konfirmasi</button>
+            </div>
+
+            <div id="tfStep2" class="hidden">
+              <div class="summary" id="tfSummary"></div>
+              <button class="btn-gold" id="tfConfirm" type="button" style="margin-top:18px;">Konfirmasi &amp; Kirim</button>
+              <button class="btn-ghost" id="tfBack" type="button" style="margin-top:10px;">Ubah Detail</button>
+            </div>
+
+            <div id="tfStep3" class="hidden">
+              <div class="success-wrap">
+                <svg class="check-anim" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><path d="M32 51.5 44 63l24-27"/></svg>
+                <h3>Transfer Terkirim!</h3>
+                <p id="tfSuccessText"></p>
+              </div>
+              <button class="btn-emerald" data-back="home" type="button" style="margin-top:18px;">Kembali ke Beranda</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TARIK SALDO -->
+        <section class="view" id="view-withdraw">
+          <div class="flow-head">
+            <button class="back-btn" data-back="home" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div><h2>Tarik Saldo ke DANA</h2><p id="wdHeadNote">Rp100 bisa langsung ditarik 1x sehari. Rp500 ke atas butuh check-in di hari berikutnya.</p></div>
+          </div>
+          <div class="steps" id="wdSteps">
+            <div class="step on" data-s="1"><div class="dot">1</div><span>Isi Data</span></div>
+            <div class="step-line"></div>
+            <div class="step" data-s="2"><div class="dot">2</div><span>Konfirmasi</span></div>
+            <div class="step-line"></div>
+            <div class="step" data-s="3"><div class="dot">3</div><span>Selesai</span></div>
+          </div>
+          <div class="flow-body">
+            <div id="wdStep1">
+              <div class="field" id="fWdNum">
+                <label for="wdNum">Nomor DANA</label>
+                <input id="wdNum" type="tel" inputmode="numeric" placeholder="08xxxxxxxxxx" />
+                <div class="err">Nomor DANA harus diawali 08 dan 10–14 digit.</div>
+              </div>
+              <div class="field" id="fWdName">
+                <label for="wdName">Nama Pemilik DANA</label>
+                <input id="wdName" type="text" placeholder="Nama sesuai akun DANA" />
+                <div class="err">Nama pemilik wajib diisi.</div>
+              </div>
+              <div class="field">
+                <label>Pilih Nominal</label>
+                <div class="chips" id="wdChips">
+                  <button class="chip" data-amt="100" type="button">Rp100</button>
+                  <button class="chip" data-amt="500" type="button">Rp500</button>
+                  <button class="chip" data-amt="50000" type="button">Rp50.000</button>
+                  <button class="chip" data-amt="100000" type="button">Rp100.000</button>
+                  <button class="chip" data-amt="all" type="button">Semua</button>
+                </div>
+              </div>
+              <p style="font-size:12.5px; color:var(--ink-3); margin-bottom:14px;">Saldo bebas kamu: <b style="color:var(--ink);">Rp <span class="balMirror">0</span></b> · Penarikan diproses manual, biasanya di hari yang sama.</p>
+              <div class="wd-rules">
+                <div class="r"><span class="st ok" id="wdRuleSmallSt">●</span><span id="wdRuleSmall">Penarikan di bawah Rp500: bisa langsung, maksimal <b>1x sehari</b>.</span></div>
+                <div class="r"><span class="st no" id="wdRuleBigSt">●</span><span id="wdRuleBig">Penarikan <b>Rp500 ke atas</b>: harus check-in dulu di hari berikutnya.</span></div>
+              </div>
+              <div class="err" id="wdErr" style="display:none; color:var(--red); font-size:13px; font-weight:600; margin-bottom:12px;"></div>
+              <button class="btn-emerald" id="wdNext" type="button">Lanjut ke Konfirmasi</button>
+            </div>
+
+            <div id="wdStep2" class="hidden">
+              <div class="summary" id="wdSummary"></div>
+              <button class="btn-gold" id="wdConfirm" type="button" style="margin-top:18px;">Konfirmasi Penarikan</button>
+              <button class="btn-ghost" id="wdBack" type="button" style="margin-top:10px;">Ubah Detail</button>
+            </div>
+
+            <div id="wdStep3" class="hidden">
+              <div class="success-wrap">
+                <svg class="check-anim" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><path d="M32 51.5 44 63l24-27"/></svg>
+                <h3>Penarikan Diajukan!</h3>
+                <p id="wdSuccessText"></p>
+              </div>
+              <button class="btn-emerald" data-back="home" type="button" style="margin-top:18px;">Kembali ke Beranda</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- bottom nav -->
+        <nav class="tabbar" id="tabbar">
+          <button data-tab="home" class="on" type="button">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22v-8h6v8"/></svg>
+            Beranda
+          </button>
+          <button data-tab="misi" type="button">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            Misi
+          </button>
+          <button data-tab="game" type="button">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg>
+            Game
+          </button>
+          <button data-tab="riwayat" type="button">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8"/><path d="M8 12h8"/></svg>
+            Riwayat
+          </button>
+        </nav>
+      </div>
+
+      <!-- ================= AKUN DIBLOKIR ================= -->
+      <div id="bannedView" class="hidden">
+        <div class="banned-wrap">
+          <span class="banned-ic">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+          </span>
+          <h2 style="font-size:21px; font-weight:800;">Akun Diblokir</h2>
+          <p id="bannedText" style="font-size:14px; color:var(--ink-2); line-height:1.65; margin-top:10px; max-width:320px;">Akun kamu sedang diblokir oleh admin sehingga tidak bisa masuk. Kalau ini keliru, hubungi tim Cuanmu ya.</p>
+          <button class="btn-emerald" id="bannedBack" type="button" style="margin-top:24px; max-width:280px;">Kembali ke Halaman Masuk</button>
+        </div>
+      </div>
+
+      <!-- ================= PANEL ADMIN ================= -->
+      <div id="adminView" class="hidden">
+        <div class="admin-head">
+          <div class="row">
+            <div>
+              <span class="admin-badge">PANEL ADMIN</span>
+              <div style="font-size:21px; font-weight:800; margin-top:9px;">Kelola Cuanmu</div>
+              <div style="font-size:12.5px; opacity:.85; margin-top:2px;">admin@cuanmu.id · kendali penuh aplikasi</div>
+            </div>
+            <button class="icon-btn" id="adminLogout" type="button" aria-label="Keluar panel admin">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="admin-tabs" id="adminTabs">
+          <button data-atab="dash" class="on" type="button">Dashboard</button>
+          <button data-atab="wd" type="button">Penarikan<span id="adminWdBadge"></span></button>
+          <button data-atab="users" type="button">Pengguna</button>
+          <button data-atab="log" type="button">Aktivitas</button>
+          <button data-atab="settings" type="button">Pengaturan</button>
+        </div>
+        <div class="admin-body">
+
+          <div id="apane-dash">
+            <div class="stat-grid">
+              <div class="stat-card"><div class="lbl">Total Pengguna</div><div class="val" id="stUsers">0</div><div class="sub">akun terdaftar</div></div>
+              <div class="stat-card"><div class="lbl">Poin Beredar</div><div class="val" id="stPoints">Rp0</div><div class="sub">saldo bebas + terkunci</div></div>
+              <div class="stat-card"><div class="lbl">Total Penarikan Lunas</div><div class="val" id="stWdTotal">Rp0</div><div class="sub" id="stWdCount">0 penarikan</div></div>
+              <div class="stat-card"><div class="lbl">WD Menunggu</div><div class="val" id="stWdPending">0</div><div class="sub">perlu ditinjau admin</div></div>
+            </div>
+            <h3 class="section-title">Penarikan Terbaru</h3>
+            <div id="adminRecentWd"></div>
+          </div>
+
+          <div id="apane-wd" class="hidden">
+            <h3 class="section-title" style="margin-top:6px;">Antrean Penarikan</h3>
+            <div id="adminWdQueue"></div>
+            <h3 class="section-title">Sudah Diproses</h3>
+            <div id="adminWdDone"></div>
+          </div>
+
+          <div id="apane-users" class="hidden">
+            <h3 class="section-title" style="margin-top:6px;">Daftar Pengguna</h3>
+            <div id="adminUserList"></div>
+          </div>
+
+          <div id="apane-log" class="hidden">
+            <h3 class="section-title" style="margin-top:6px;">Log Aktivitas Semua Pengguna</h3>
+            <div class="card" id="adminLog" style="padding:6px 18px;"></div>
+          </div>
+
+          <div id="apane-settings" class="hidden">
+            <h3 class="section-title" style="margin-top:6px;">Pengaturan Aplikasi</h3>
+            <div class="card">
+              <div class="set-grid">
+                <div class="set-row"><label for="setBonus">Bonus Pendaftaran (poin)</label><input id="setBonus" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setUnlock">Terbuka per Check-in (poin)</label><input id="setUnlock" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setCheckin">Hadiah Check-in (poin)</label><input id="setCheckin" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setRef">Hadiah Undang Teman (poin)</label><input id="setRef" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setMsTarget">Target Milestone (teman)</label><input id="setMsTarget" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setMsBonus">Bonus Milestone (poin)</label><input id="setMsBonus" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setMinWd">Minimum Penarikan (poin)</label><input id="setMinWd" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setSpin">Kuota Spin Harian (x)</label><input id="setSpin" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setMiningRate">Laju Mining (poin/jam)</label><input id="setMiningRate" type="tel" inputmode="numeric" /></div>
+                <div class="set-row"><label for="setMiningHours">Siklus Mining (jam)</label><input id="setMiningHours" type="tel" inputmode="numeric" /></div>
+              </div>
+              <button class="btn-gold" id="saveSettings" type="button">Simpan Pengaturan</button>
+              <p style="font-size:12.5px; color:var(--ink-3); margin-top:12px; line-height:1.6;">Perubahan langsung berlaku buat semua pengguna — bonus, hadiah, dan batasan di aplikasi otomatis mengikuti angka baru.</p>
+            </div>
+
+            <h3 class="section-title">Pengumuman Broadcast</h3>
+            <div class="card">
+              <div class="set-row" style="margin-bottom:12px;">
+                <label for="bcText">Pesan pengumuman</label>
+                <textarea id="bcText" placeholder="Tulis pengumuman buat semua pengguna…"></textarea>
+              </div>
+              <button class="btn-emerald" id="bcSave" type="button">Tayangkan Pengumuman</button>
+              <button class="btn-ghost" id="bcClear" type="button" style="margin-top:10px;">Hapus Pengumuman</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" role="status"></div>
+
+    <script>
+      "use strict";
+      var $ = function(id){ return document.getElementById(id); };
+      var fmt = function(n){ return Number(n).toLocaleString("id-ID"); };
+      var esc = function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
+      var nowTime = function(){ return new Date().toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"}).replace(":", "."); };
+
+      /* ---------------- state ---------------- */
+      var S = {
+        registered:false, name:"", idLabel:"",
+        free:0, locked:0, unlocked:0, checkins:0,
+        spinsLeft:3, friends:0, milestoneClaimed:false,
+        wdSmallUsed:false, wdBigReady:false,
+        history:[]
+      };
+      var pendingReg = null; // {name, phone, pass}
+
+      /* ---------------- server mode ---------------- */
+      var API_BASE = "https://cuanmu-api.dandikurniawan152.workers.dev";
+      var REF_BASE = "https://dandi156.github.io/cuanmu/";
+      var serverMode = false;
+      var authToken = null;   // token sesi pengguna (di memori saja)
+      var adminToken = null;  // token sesi admin (di memori saja)
+      var serverState = null; // state terakhir dari server
+      var adminOverview = null;
+      var refParam = "";
+      try { refParam = new URLSearchParams(window.location.search).get("ref") || ""; } catch(e) { refParam = ""; }
+
+      function apiCall(method, path, body, token){
+        var opts = { method: method, headers: { "Content-Type": "application/json" } };
+        if(token) opts.headers["Authorization"] = "Bearer " + token;
+        if(body) opts.body = JSON.stringify(body);
+        return fetch(API_BASE + path, opts).then(function(r){ return r.json(); })
+          .catch(function(){ return { ok:false, error:"Tidak bisa terhubung ke server. Coba lagi ya." }; });
+      }
+      function fmtHistTime(t){
+        if(t === null || t === undefined || t === "") return nowTime();
+        var d = null;
+        if(typeof t === "number") d = new Date(t);
+        else if(typeof t === "string" && (t.indexOf("T") > 0 || /^\d{13}$/.test(t))) d = new Date(/^\d+$/.test(t) ? parseInt(t, 10) : t);
+        if(d && !isNaN(d.getTime())) return d.toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"}).replace(":", ".");
+        return String(t);
+      }
+      function iconForText(text){
+        var s = String(text || "").toLowerCase();
+        if(s.indexOf("check-in") >= 0 || s.indexOf("checkin") >= 0) return "check";
+        if(s.indexOf("spin") >= 0 || s.indexOf("jackpot") >= 0) return "game";
+        if(s.indexOf("mining") >= 0) return "pick";
+        if(s.indexOf("milestone") >= 0) return "trophy";
+        if(s.indexOf("undang") >= 0 || s.indexOf("teman") >= 0 || s.indexOf("referral") >= 0) return "users";
+        if(s.indexOf("transfer") >= 0 || s.indexOf("kirim") >= 0) return "send";
+        if(s.indexOf("tarik") >= 0 || s.indexOf("penarikan") >= 0 || s.indexOf("withdraw") >= 0 || s.indexOf("dana") >= 0) return "wallet";
+        if(s.indexOf("terbuka") >= 0 || s.indexOf("terkunci") >= 0) return "lock";
+        if(s.indexOf("bonus") >= 0 || s.indexOf("pendaftaran") >= 0) return "gift";
+        if(s.indexOf("admin") >= 0) return "wallet";
+        return "gift";
+      }
+      function applyServerState(st){
+        if(!st) return;
+        serverState = st;
+        var unlockedCalc = Math.max(0, G.settings.signupBonus - (st.locked || 0));
+        S = {
+          registered: true, id: st.id, name: st.name || "", idLabel: st.contact || "",
+          free: st.poin || 0, locked: st.locked || 0, unlocked: unlockedCalc,
+          checkins: st.checkins || 0,
+          spinsLeft: (st.spinLeft !== undefined ? st.spinLeft : (st.spinsLeft || 0)),
+          friends: st.invited || 0, milestoneClaimed: !!st.milestoneDone,
+          wdSmallUsed: !!st.wd100UsedToday, wdBigReady: !!st.wdBigReady,
+          banned: !!st.banned, checkedToday: !!st.checkedToday,
+          mining: st.mining || null,
+          history: (st.history || []).map(function(h){
+            return { icon: iconForText(h.text), title: h.text || "", amount: h.delta || 0, status: "", time: fmtHistTime(h.t), wdId: "" };
+          })
+        };
+        G.broadcast = st.broadcast || "";
+      }
+      function serverRefLink(){
+        return REF_BASE + "?ref=" + (serverState ? serverState.refCode : "");
+      }
+      function syncServerCheckinBtn(){
+        if(!serverMode || !serverState) return;
+        var b = $("checkinBtn");
+        if(!b) return;
+        if(serverState.checkedToday){
+          b.disabled = true;
+          b.textContent = "Sudah Check-in Hari Ini ✓";
+        } else {
+          b.disabled = false;
+          b.textContent = "Check-in Hari Ini · +" + fmt(G.settings.checkinReward) + " Poin";
+        }
+      }
+      function enterServerApp(st, welcomeBack){
+        applyServerState(st);
+        if(S.banned){ showBanned({ name: S.name, idLabel: S.idLabel }); return; }
+        enterApp();
+        if(welcomeBack) toast("Selamat datang kembali, " + S.name + "!");
+      }
+      function doServerRegister(name, contact, pass){
+        var body = { name: name, contact: contact, password: pass };
+        if(refParam) body.ref = refParam;
+        apiCall("POST", "/register", body, null).then(function(res){
+          if(res && res.ok && res.token){
+            authToken = res.token;
+            enterServerApp(res.state, false);
+            toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin terkunci sudah masuk.");
+          } else {
+            toast((res && res.error) ? res.error : "Pendaftaran gagal — coba lagi ya.");
+          }
+        });
+      }
+
+      /* ---------------- data global: pengguna, penarikan, pengaturan ---------------- */
+      var ADMIN_ID = "admin@cuanmu.id";
+      function hashPw(str){
+        var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+        for(var i = 0, ch; i < str.length; i++){
+          ch = str.charCodeAt(i);
+          h1 = Math.imul(h1 ^ ch, 2654435761);
+          h2 = Math.imul(h2 ^ ch, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
+      }
+      var G = {
+        settings: { signupBonus:5000, checkinReward:20, unlockPerCheckin:2000, referralReward:2000, milestoneTarget:5, milestoneBonus:10000, minWd:100, spinQuota:3, miningRate:5, miningHours:24 },
+        broadcast: "",
+        users: [], withdrawals: [], activity: [], seq: 100
+      };
+      function mkUser(name, idLabel, pass, extra){
+        var u = {
+          id: "u-" + (++G.seq), role: "user", banned: false,
+          registered: true, name: name, idLabel: idLabel, pass: pass ? hashPw(pass) : "",
+          free: 0, locked: 0, unlocked: 0, checkins: 0,
+          spinsLeft: G.settings.spinQuota, friends: 0, milestoneClaimed: false,
+          wdSmallUsed: false, wdBigReady: false, miningStart: 0, history: []
+        };
+        if(extra) for(var k in extra) u[k] = extra[k];
+        return u;
+      }
+      function findUser(idLabel){
+        var key = String(idLabel || "").trim().toLowerCase();
+        for(var i = 0; i < G.users.length; i++) if(G.users[i].idLabel.toLowerCase() === key) return G.users[i];
+        return null;
+      }
+      function findUserById(id){
+        for(var i = 0; i < G.users.length; i++) if(G.users[i].id === id) return G.users[i];
+        return null;
+      }
+      function pushActivity(userName, icon, title, amount, status, wdId, time){
+        G.activity.unshift({ user:userName, icon:icon, title:title, amount:amount, status:status || "", time:time || nowTime(), wdId:wdId || "" });
+      }
+      function seedHist(user, icon, title, amount, status, wdId, time){
+        user.history.push({ icon:icon, title:title, amount:amount, status:status || "", time:time, wdId:wdId || "" });
+        G.activity.push({ user:user.name, icon:icon, title:title, amount:amount, status:status || "", time:time, wdId:wdId || "" });
+      }
+      function seedData(){
+        var seedLock = function(){ return "locked-" + Date.now() + "-" + Math.random(); };
+        var budi = mkUser("Budi Santoso", "budi.santoso@email.com", seedLock(), { free:12450, locked:1000, unlocked:4000, checkins:3, friends:2, spinsLeft:1 });
+        var sari = mkUser("Sari Wulandari", "sari.wulandari@email.com", seedLock(), { free:3200, locked:3000, unlocked:2000, checkins:1, friends:0 });
+        var rizky = mkUser("Rizky Pratama", "081234567890", seedLock(), { free:58750, locked:0, unlocked:5000, checkins:5, friends:6, milestoneClaimed:true, wdBigReady:true });
+        var dewi = mkUser("Dewi Anggraini", "dewi.anggraini@email.com", seedLock(), { free:850, locked:5000, unlocked:0, checkins:0, friends:1 });
+        G.users = [budi, sari, rizky, dewi];
+        G.withdrawals = [
+          { id:"wd-s1", userId:budi.id, name:budi.name, num:"081298765432", amt:500, status:"pending", time:"09.41" },
+          { id:"wd-s2", userId:rizky.id, name:rizky.name, num:"081377889900", amt:50000, status:"pending", time:"10.17" },
+          { id:"wd-s3", userId:sari.id, name:sari.name, num:"085712340987", amt:100, status:"lunas", time:"08.05" }
+        ];
+        seedHist(rizky, "users", "Misi Undang Teman", 2000, "", "", "08.12");
+        seedHist(budi, "check", "Check-in Harian ke-3", 20, "", "", "08.30");
+        seedHist(rizky, "game", "Menang Spin Harian", 150, "", "", "08.47");
+        seedHist(sari, "wallet", "Penarikan ke DANA •••0987", -100, "Lunas", "wd-s3", "08.05");
+        seedHist(budi, "wallet", "Penarikan ke DANA •••5432", -500, "Diproses", "wd-s1", "09.41");
+        seedHist(dewi, "users", "Misi Undang Teman", 2000, "", "", "09.58");
+        seedHist(rizky, "wallet", "Penarikan ke DANA •••9900", -50000, "Diproses", "wd-s2", "10.17");
+        seedHist(budi, "lock", "Bonus Pendaftaran Terbuka", 2000, "", "", "10.22");
+        G.users.forEach(function(u){ u.history.reverse(); });
+        G.activity.reverse();
+      }
+
+      /* ---------------- toast ---------------- */
+      var toastTimer = null;
+      function toast(msg){
+        var t = $("toast"); t.textContent = msg; t.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2800);
+      }
+
+      /* ---------------- history ---------------- */
+      var ICONS = {
+        gift:'<rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+        check:'<rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+        lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+        game:'<rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/>',
+        users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/>',
+        trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+        send:'<path d="m17 3 4 4-4 4"/><path d="M21 7H9"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12"/>',
+        wallet:'<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
+        pick:'<path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/>'
+      };
+      var ICONCLS = { gift:"ic-gold", check:"ic-em", lock:"ic-gold", game:"ic-sky", users:"ic-rose", trophy:"ic-gold", send:"ic-em", wallet:"ic-em", pick:"ic-gold" };
+      function addHistory(icon, title, amount, status, wdId){
+        S.history.unshift({ icon:icon, title:title, amount:amount, status:status || "", time:nowTime(), wdId:wdId || "" });
+        pushActivity(S.name, icon, title, amount, status, wdId);
+        renderHistory();
+      }
+      function addHistoryFor(user, icon, title, amount, status, wdId){
+        user.history.unshift({ icon:icon, title:title, amount:amount, status:status || "", time:nowTime(), wdId:wdId || "" });
+        pushActivity(user.name, icon, title, amount, status, wdId);
+      }
+      function histHTML(list){
+        if(!list.length) return '<div class="empty">Belum ada aktivitas.<br/>Check-in atau main spin buat mulai kumpulin poin.</div>';
+        return list.map(function(h){
+          var amt = h.amount === 0 ? "" :
+            '<div class="hist-amt ' + (h.amount > 0 ? "plus" : "minus") + '">' + (h.amount > 0 ? "+" : "−") + "Rp" + fmt(Math.abs(h.amount)) + "</div>";
+          var chip = h.status ? '<span class="status-chip">' + h.status + "</span>" : "";
+          return '<div class="hist-item"><span class="hist-ic ' + (ICONCLS[h.icon] || "ic-em") + '">' +
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[h.icon] + "</svg></span>" +
+            '<div class="hist-main"><div class="hist-title">' + h.title + chip + '</div><div class="hist-sub">Hari ini · ' + h.time + " WIB</div></div>" + amt + "</div>";
+        }).join("");
+      }
+      function renderHistory(){
+        $("homeHistory").innerHTML = histHTML(S.history.slice(0,4));
+        $("fullHistory").innerHTML = histHTML(S.history);
+      }
+
+      /* ---------------- render wallet ---------------- */
+      var displayedBal = 0, balAnim = null;
+      function renderWallet(){
+        var target = S.free;
+        clearInterval(balAnim);
+        balAnim = setInterval(function(){
+          var diff = target - displayedBal;
+          if(Math.abs(diff) < 1){ displayedBal = target; clearInterval(balAnim); }
+          else displayedBal += Math.ceil(diff / 6);
+          $("balAmt").textContent = fmt(displayedBal);
+        }, 24);
+        document.querySelectorAll(".balMirror").forEach(function(el){ el.textContent = fmt(S.free); });
+        $("lockedAmt").textContent = fmt(S.locked);
+        var pct = S.unlocked + S.locked === 0 ? 100 : Math.round(S.unlocked / (S.unlocked + S.locked) * 100);
+        $("unlockBar").style.width = pct + "%";
+        $("unlockText").textContent = "Terbuka " + fmt(S.unlocked) + " dari " + fmt(S.unlocked + S.locked);
+        $("checkinCount").textContent = "Check-in: " + S.checkins + " hari";
+        $("bonusDone").classList.toggle("hidden", S.locked > 0);
+        $("checkinBtn").classList.toggle("hidden", S.locked <= 0 && false);
+        $("spinsLeft").textContent = S.spinsLeft;
+        $("spinBtn").disabled = S.spinsLeft <= 0;
+        $("spinBtn").textContent = S.spinsLeft > 0 ? "SPIN" : "Spin Habis — Check-in Besok";
+        $("friendCount").textContent = S.friends;
+        var mpct = Math.min(100, S.friends / G.settings.milestoneTarget * 100);
+        $("milestoneBar").style.width = mpct + "%";
+        $("milestoneCount").textContent = Math.min(S.friends, G.settings.milestoneTarget) + "/" + G.settings.milestoneTarget + " teman";
+        if(!S.milestoneClaimed){
+          $("milestoneTitle").textContent = "🎁 Milestone " + G.settings.milestoneTarget + " Teman";
+          $("milestoneText").textContent = "Undang " + G.settings.milestoneTarget + " teman dan dapatkan bonus sekali klaim sebesar +" + fmt(G.settings.milestoneBonus) + " poin.";
+        }
+        if(S.milestoneClaimed){
+          $("milestoneBox").classList.add("claimed");
+          $("milestoneTitle").textContent = "🏆 Milestone Tercapai!";
+          $("milestoneText").textContent = "Bonus +10.000 poin sudah masuk ke saldo bebas kamu. Kerja bagus!";
+        }
+        renderHistory();
+        renderBroadcast();
+        updateWdRules();
+        syncServerCheckinBtn();
+        renderMining();
+      }
+      function renderBroadcast(){
+        var b = $("broadcastBanner");
+        if(!b) return;
+        if(G.broadcast){ $("broadcastText").textContent = G.broadcast; b.classList.remove("hidden"); }
+        else b.classList.add("hidden");
+      }
+      function applySettingsUI(){
+        var st = G.settings;
+        $("authBonusAmt").textContent = "Bonus Daftar " + fmt(st.signupBonus) + " Poin";
+        $("authBonusLbl").textContent = "Langsung masuk sebagai bonus terkunci — terbuka " + fmt(st.unlockPerCheckin) + " tiap check-in harian.";
+        $("regSubmitBtn").textContent = "Daftar & Klaim Bonus " + fmt(st.signupBonus);
+        $("lockedCardText").textContent = "Tiap check-in membuka " + fmt(st.unlockPerCheckin) + " poin + bonus check-in " + fmt(st.checkinReward) + " poin.";
+        $("checkinBtn").textContent = "Check-in Hari Ini · +" + fmt(st.checkinReward) + " Poin";
+        document.querySelectorAll(".js-ref-badge").forEach(function(el){ el.textContent = "+" + fmt(st.referralReward) + " poin / teman"; });
+        $("simInvite").textContent = "Simulasikan Teman Bergabung · +" + fmt(st.referralReward);
+        document.querySelectorAll(".js-ci-badge").forEach(function(el){ el.textContent = "+" + fmt(st.checkinReward) + " poin / hari"; });
+        $("wdHeadNote").textContent = "Rp" + fmt(st.minWd) + " bisa langsung ditarik 1x sehari. Rp500 ke atas butuh check-in di hari berikutnya.";
+        $("spinQuotaLbl").textContent = st.spinQuota;
+        renderMining();
+      }
+
+      /* ---------------- navigation ---------------- */
+      var mainTabs = ["home","misi","game","riwayat"];
+      function showView(name){
+        document.querySelectorAll("#appView .view").forEach(function(v){ v.classList.remove("active"); });
+        var el = $("view-" + name);
+        if(el){ el.classList.remove("active"); void el.offsetWidth; el.classList.add("active"); }
+        document.querySelectorAll("#tabbar button").forEach(function(b){
+          b.classList.toggle("on", b.getAttribute("data-tab") === name);
+        });
+        $("tabbar").style.display = mainTabs.indexOf(name) >= 0 ? "flex" : "none";
+        window.scrollTo(0,0);
+      }
+      document.querySelectorAll("#tabbar button").forEach(function(b){
+        b.addEventListener("click", function(){ showView(b.getAttribute("data-tab")); });
+      });
+      document.querySelectorAll("[data-go]").forEach(function(b){
+        b.addEventListener("click", function(){ showView(b.getAttribute("data-go")); });
+      });
+      document.querySelectorAll("[data-back]").forEach(function(b){
+        b.addEventListener("click", function(){ showView(b.getAttribute("data-back")); });
+      });
+      $("goTransfer").addEventListener("click", function(){ resetTransfer(); showView("transfer"); });
+      $("goWithdraw").addEventListener("click", function(){ resetWithdraw(); showView("withdraw"); });
+      document.querySelector('[data-go="transfer"]').addEventListener("click", function(){ resetTransfer(); });
+
+      /* ---------------- auth ---------------- */
+      function setFieldInvalid(id, bad){ $(id).classList.toggle("invalid", bad); return !bad; }
+      function showAuthPane(which){
+        $("regPane").classList.toggle("hidden", which !== "reg");
+        $("otpPane").classList.toggle("hidden", which !== "otp");
+        $("loginForm").classList.toggle("hidden", which !== "login");
+        $("tabDaftar").classList.toggle("on", which === "reg" || which === "otp");
+        $("tabMasuk").classList.toggle("on", which === "login");
+      }
+      $("tabDaftar").addEventListener("click", function(){ showAuthPane("reg"); });
+      $("tabMasuk").addEventListener("click", function(){ showAuthPane("login"); });
+      $("mEmail").addEventListener("click", function(){
+        $("mEmail").classList.add("on"); $("mHp").classList.remove("on");
+        $("regEmailForm").classList.remove("hidden"); $("regHpForm").classList.add("hidden");
+      });
+      $("mHp").addEventListener("click", function(){
+        $("mHp").classList.add("on"); $("mEmail").classList.remove("on");
+        $("regHpForm").classList.remove("hidden"); $("regEmailForm").classList.add("hidden");
+      });
+
+      function createAccount(name, idLabel, pass){
+        var rec = mkUser(name, idLabel, pass, { locked: G.settings.signupBonus });
+        G.users.push(rec);
+        S = rec;
+        addHistory("gift", "Bonus Pendaftaran Terkunci", 0, "Terkunci " + fmt(G.settings.signupBonus));
+        enterApp();
+        toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin terkunci sudah masuk.");
+      }
+      function showBanned(user){
+        $("authView").classList.add("hidden");
+        $("appView").classList.add("hidden");
+        $("adminView").classList.add("hidden");
+        $("bannedText").textContent = "Halo " + user.name + ", akun kamu (" + user.idLabel + ") sedang diblokir oleh admin sehingga tidak bisa masuk. Kalau ini keliru, hubungi tim Cuanmu ya.";
+        $("bannedView").classList.remove("hidden");
+        window.scrollTo(0,0);
+      }
+      $("bannedBack").addEventListener("click", function(){
+        $("bannedView").classList.add("hidden");
+        $("authView").classList.remove("hidden");
+        showAuthPane("login");
+      });
+      function enterApp(){
+        if(S.banned){ showBanned(S); return; }
+        $("authView").classList.add("hidden");
+        $("bannedView").classList.add("hidden");
+        $("adminView").classList.add("hidden");
+        $("appView").classList.remove("hidden");
+        $("helloName").textContent = S.name;
+        if(serverMode && serverState){
+          $("refLink").textContent = serverRefLink();
+        } else {
+          var code = S.name.replace(/[^a-zA-Z]/g, "").slice(0,4).toUpperCase() || "CUAN";
+          var num = 1000 + Math.floor(Math.random() * 9000);
+          $("refLink").textContent = REF_BASE + "?ref=" + code + num;
+        }
+        displayedBal = 0;
+        showView("home");
+        renderWallet();
+      }
+      $("logoutBtn").addEventListener("click", function(){
+        authToken = null; serverState = null;
+        $("appView").classList.add("hidden");
+        $("adminView").classList.add("hidden");
+        $("bannedView").classList.add("hidden");
+        $("authView").classList.remove("hidden");
+        showAuthPane("login");
+      });
+
+      $("regEmailForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        var name = $("regNameE").value.trim();
+        var email = $("regEmail").value.trim();
+        var pass = $("regPassE").value;
+        var ok = true;
+        ok = setFieldInvalid("fRegNameE", name.length < 2) && ok;
+        ok = setFieldInvalid("fRegEmail", !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
+        ok = setFieldInvalid("fRegPassE", pass.length < 6) && ok;
+        if(!ok) return;
+        if(serverMode){ doServerRegister(name, email, pass); return; }
+        if(findUser(email)){ toast("Email ini sudah terdaftar — silakan masuk pakai akun itu ya."); showAuthPane("login"); return; }
+        createAccount(name, email, pass);
+      });
+
+      var phoneOK = function(v){ return /^08\d{8,12}$/.test(v.replace(/[\s-]/g, "")); };
+      $("regHpForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        var name = $("regNameH").value.trim();
+        var hp = $("regHp").value.trim();
+        var pass = $("regPassH").value;
+        var ok = true;
+        ok = setFieldInvalid("fRegNameH", name.length < 2) && ok;
+        ok = setFieldInvalid("fRegHp", !phoneOK(hp)) && ok;
+        ok = setFieldInvalid("fRegPassH", pass.length < 6) && ok;
+        if(!ok) return;
+        if(!serverMode && findUser(hp.replace(/[\s-]/g, ""))){ toast("Nomor ini sudah terdaftar — silakan masuk pakai akun itu ya."); showAuthPane("login"); return; }
+        pendingReg = { name:name, phone:hp.replace(/[\s-]/g, ""), pass:pass };
+        $("otpTarget").textContent = pendingReg.phone;
+        showAuthPane("otp");
+        startOtpTimer();
+        var first = $("otpRow").querySelector("input"); if(first) first.focus();
+      });
+
+      /* OTP */
+      var otpInputs = Array.prototype.slice.call($("otpRow").querySelectorAll("input"));
+      var otpTimerInt = null, otpSeconds = 0;
+      function startOtpTimer(){
+        otpSeconds = 30;
+        var btn = $("otpResend");
+        btn.disabled = true; btn.textContent = "Kirim ulang kode (" + otpSeconds + ")";
+        clearInterval(otpTimerInt);
+        otpTimerInt = setInterval(function(){
+          otpSeconds--;
+          if(otpSeconds <= 0){
+            clearInterval(otpTimerInt);
+            btn.disabled = false; btn.textContent = "Kirim ulang kode";
+          } else btn.textContent = "Kirim ulang kode (" + otpSeconds + ")";
+        }, 1000);
+      }
+      function otpValue(){ return otpInputs.map(function(i){ return i.value; }).join(""); }
+      otpInputs.forEach(function(inp, idx){
+        inp.addEventListener("input", function(){
+          inp.value = inp.value.replace(/\D/g, "").slice(0,1);
+          if(inp.value && idx < 5) otpInputs[idx+1].focus();
+          $("otpVerify").disabled = otpValue().length !== 6;
+        });
+        inp.addEventListener("keydown", function(e){
+          if(e.key === "Backspace" && !inp.value && idx > 0) otpInputs[idx-1].focus();
+        });
+      });
+      $("otpResend").addEventListener("click", function(){
+        otpInputs.forEach(function(i){ i.value = ""; });
+        $("otpVerify").disabled = true;
+        startOtpTimer();
+        toast("Kode OTP baru sudah dikirim ke " + (pendingReg ? pendingReg.phone : ""));
+        otpInputs[0].focus();
+      });
+      $("otpBack").addEventListener("click", function(){ clearInterval(otpTimerInt); showAuthPane("reg"); });
+      $("otpVerify").addEventListener("click", function(){
+        if(otpValue().length !== 6 || !pendingReg) return;
+        clearInterval(otpTimerInt);
+        if(serverMode){
+          doServerRegister(pendingReg.name, pendingReg.phone, pendingReg.pass);
+          pendingReg = null;
+          return;
+        }
+        createAccount(pendingReg.name, pendingReg.phone, pendingReg.pass);
+        pendingReg = null;
+      });
+
+      $("loginForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        var id = $("loginId").value.trim();
+        var pass = $("loginPass").value;
+        var ok = true;
+        ok = setFieldInvalid("fLoginId", id.length < 3) && ok;
+        ok = setFieldInvalid("fLoginPass", pass.length < 1) && ok;
+        if(!ok) return;
+        if(serverMode){
+          if(id.toLowerCase() === ADMIN_ID){
+            apiCall("POST", "/admin/login", { contact: id, password: pass }, null).then(function(res){
+              if(res && res.ok && res.token){
+                adminToken = res.token;
+                enterAdminServer();
+              } else {
+                setFieldInvalid("fLoginPass", true);
+                toast((res && res.error) ? res.error : "Login admin gagal — periksa lagi email & password-nya ya.");
+              }
+            });
+            return;
+          }
+          apiCall("POST", "/login", { contact: id, password: pass }, null).then(function(res){
+            if(res && res.ok && res.token){
+              authToken = res.token;
+              enterServerApp(res.state, true);
+            } else {
+              setFieldInvalid("fLoginPass", true);
+              toast((res && res.error) ? res.error : "Login gagal — periksa lagi email/HP & password kamu ya.");
+            }
+          });
+          return;
+        }
+        if(id.toLowerCase() === ADMIN_ID){
+          toast("Panel admin hanya bisa dibuka saat server Cuanmu terhubung — koneksi server sedang tidak terjangkau, coba lagi sebentar ya.");
+          return;
+        }
+        var user = findUser(id);
+        if(user){
+          if(user.pass !== hashPw(pass)){ setFieldInvalid("fLoginPass", true); toast("Password salah — coba lagi ya."); return; }
+          if(user.banned){ showBanned(user); return; }
+          S = user;
+          enterApp();
+          toast("Selamat datang kembali, " + S.name + "!");
+          return;
+        }
+        var nm = id.indexOf("@") > 0 ? id.split("@")[0] : "Pengguna Cuanmu";
+        nm = nm.replace(/[._-]/g, " ").replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+        var rec = mkUser(nm, id, pass, {});
+        G.users.push(rec);
+        S = rec;
+        enterApp();
+        toast("Selamat datang kembali, " + S.name + "!");
+      });
+
+      /* ---------------- check-in ---------------- */
+      function doServerCheckin(){
+        if(!authToken) return;
+        apiCall("POST", "/checkin", {}, authToken).then(function(res){
+          if(res && res.ok && res.state){
+            var moved = res.moved || 0;
+            applyServerState(res.state);
+            renderWallet();
+            if(moved > 0) toast("✅ Check-in berhasil! Bonus terkunci terbuka " + fmt(moved) + " poin.");
+            else toast("✅ Check-in berhasil! Hadiah check-in sudah masuk ke saldo kamu.");
+          } else {
+            toast((res && res.error) ? res.error : "Check-in gagal — coba lagi ya.");
+          }
+        });
+      }
+      function doCheckin(){
+        if(serverMode){ doServerCheckin(); return; }
+        S.checkins++;
+        S.free += G.settings.checkinReward;
+        addHistory("check", "Check-in Harian ke-" + S.checkins, G.settings.checkinReward);
+        if(S.locked > 0){
+          var unlock = Math.min(G.settings.unlockPerCheckin, S.locked);
+          S.locked -= unlock; S.unlocked += unlock; S.free += unlock;
+          addHistory("lock", "Bonus Pendaftaran Terbuka", unlock);
+          toast("✅ Check-in berhasil! +" + fmt(G.settings.checkinReward) + " poin & " + fmt(unlock) + " poin bonus terbuka.");
+        } else {
+          toast("✅ Check-in berhasil! +" + fmt(G.settings.checkinReward) + " poin masuk ke saldo bebas.");
+        }
+        S.spinsLeft = G.settings.spinQuota;
+        S.wdSmallUsed = false;
+        /* Penarikan >= 500 baru kebuka setelah check-in di HARI BERIKUTNYA.
+           Check-in pertama = hari pendaftaran, jadi syaratnya total check-in >= 2 hari. */
+        S.wdBigReady = S.checkins >= 2;
+        renderWallet();
+      }
+      $("checkinBtn").addEventListener("click", doCheckin);
+      $("checkinShortcut").addEventListener("click", doCheckin);
+      document.querySelector(".misi-checkin").addEventListener("click", doCheckin);
+
+      /* ---------------- mining ---------------- */
+      function toMs(v){
+        if(!v) return 0;
+        if(typeof v === "number") return v;
+        var p = Date.parse(v);
+        return isNaN(p) ? 0 : p;
+      }
+      function getMining(){
+        if(serverMode && serverState && serverState.mining){
+          var m = serverState.mining;
+          return {
+            active: !!m.active, startedAt: toMs(m.startedAt),
+            rate: m.rate || G.settings.miningRate, hours: m.hours || G.settings.miningHours,
+            serverAccrued: m.accrued || 0, serverFull: !!m.full
+          };
+        }
+        return {
+          active: !!(S && S.miningStart), startedAt: (S && S.miningStart) || 0,
+          rate: G.settings.miningRate, hours: G.settings.miningHours,
+          serverAccrued: 0, serverFull: false
+        };
+      }
+      function miningAccrued(m){
+        if(!m.active) return 0;
+        var cap = m.rate * m.hours;
+        if(!m.startedAt) return Math.max(0, Math.min(cap, Math.floor(m.serverAccrued || 0)));
+        var elHours = (Date.now() - m.startedAt) / 3600000;
+        if(elHours < 0) elHours = 0;
+        return Math.max(0, Math.min(cap, Math.floor(elHours * m.rate)));
+      }
+      function miningIsFull(m){
+        if(!m.active) return false;
+        if(m.serverFull) return true;
+        if(miningAccrued(m) >= m.rate * m.hours) return true;
+        return m.startedAt > 0 && (Date.now() - m.startedAt) >= m.hours * 3600000;
+      }
+      function fmtDur(sec){
+        sec = Math.max(0, Math.floor(sec));
+        var h = Math.floor(sec / 3600), mi = Math.floor((sec % 3600) / 60), s = sec % 60;
+        if(h > 0) return h + " jam " + mi + " menit";
+        if(mi > 0) return mi + " menit " + s + " detik";
+        return s + " detik";
+      }
+      function renderMining(){
+        var card = $("miningCard");
+        if(!card) return;
+        var m = getMining();
+        var cap = m.rate * m.hours;
+        var accrued = miningAccrued(m);
+        var full = miningIsFull(m);
+        $("miningRateText").textContent = fmt(m.rate) + " poin/jam · siklus " + fmt(m.hours) + " jam · maks " + fmt(cap) + " poin per siklus";
+        $("miningAccrued").textContent = fmt(accrued);
+        card.classList.toggle("on", m.active && !full);
+        var pct = 0;
+        if(m.active){
+          if(full) pct = 100;
+          else if(m.startedAt) pct = Math.min(100, (Date.now() - m.startedAt) / (m.hours * 3600000) * 100);
+          else pct = Math.min(100, accrued / cap * 100);
+        }
+        $("miningBar").style.width = pct + "%";
+        $("miningPct").textContent = Math.floor(pct) + "%";
+        var timeEl = $("miningTimeText");
+        if(!m.active){
+          timeEl.textContent = "Mining belum jalan — mulai siklus pertamamu.";
+        } else if(full){
+          timeEl.textContent = "Siklus selesai · berjalan " + fmtDur(m.hours * 3600);
+        } else if(m.startedAt){
+          var elSec = (Date.now() - m.startedAt) / 1000;
+          timeEl.textContent = "Berjalan " + fmtDur(elSec) + " · sisa " + fmtDur(m.hours * 3600 - elSec);
+        } else {
+          timeEl.textContent = "Mining sedang berjalan…";
+        }
+        $("miningFullNote").classList.toggle("hidden", !full);
+        $("miningStartBtn").classList.toggle("hidden", m.active);
+        var claimBtn = $("miningClaimBtn");
+        claimBtn.classList.toggle("hidden", !m.active);
+        claimBtn.disabled = accrued < 1;
+        claimBtn.textContent = full ? ("Klaim " + fmt(accrued) + " Poin Sekarang") : ("Klaim · " + fmt(accrued) + " Poin");
+      }
+      $("miningStartBtn").addEventListener("click", function(){
+        var btn = $("miningStartBtn");
+        if(serverMode){
+          btn.disabled = true;
+          apiCall("POST", "/mining/start", {}, authToken).then(function(res){
+            btn.disabled = false;
+            if(res && res.ok){
+              if(res.state) applyServerState(res.state);
+              renderWallet();
+              toast("⛏️ Mining dimulai! Poin ngalir " + fmt(getMining().rate) + "/jam — klaim sendiri pas sudah terkumpul.");
+            } else {
+              toast((res && res.error) ? res.error : "Gagal memulai mining — coba lagi ya.");
+              renderMining();
+            }
+          });
+          return;
+        }
+        S.miningStart = Date.now();
+        renderMining();
+        toast("⛏️ Mining dimulai! Poin ngalir " + fmt(G.settings.miningRate) + "/jam — klaim sendiri pas sudah terkumpul, maksimal " + fmt(G.settings.miningHours) + " jam per siklus.");
+      });
+      $("miningClaimBtn").addEventListener("click", function(){
+        var btn = $("miningClaimBtn");
+        if(serverMode){
+          btn.disabled = true;
+          apiCall("POST", "/mining/claim", {}, authToken).then(function(res){
+            btn.disabled = false;
+            if(res && res.ok){
+              var claimed = res.claimed || 0;
+              if(res.state) applyServerState(res.state);
+              renderWallet();
+              toast("🎉 Klaim mining berhasil! +" + fmt(claimed) + " poin masuk ke saldo bebas. Mulai siklus baru kapan aja.");
+            } else {
+              toast((res && res.error) ? res.error : "Klaim gagal — coba lagi ya.");
+              renderMining();
+            }
+          });
+          return;
+        }
+        var m = getMining();
+        var a = miningAccrued(m);
+        if(a < 1){ toast("Belum ada poin terkumpul — biarin mining jalan dulu ya."); return; }
+        S.free += a;
+        S.miningStart = 0;
+        addHistory("pick", "Klaim Mining", a);
+        toast("🎉 Klaim mining berhasil! +" + fmt(a) + " poin masuk ke saldo bebas. Mulai siklus baru kapan aja.");
+        renderWallet();
+      });
+      setInterval(function(){
+        if($("appView").classList.contains("hidden")) return;
+        if(!$("view-home").classList.contains("active")) return;
+        renderMining();
+      }, 1000);
+
+      /* ---------------- spin game ---------------- */
+      var SYMBOLS = ["🍒","🍒","🍒","🍋","🍋","🍋","🔔","🔔","⭐","⭐","💎","7"];
+      var spinning = false;
+      function spinResult(a, b, c){
+        if(a === "7" && b === "7" && c === "7") return { prize:10000, msg:"🎉 JACKPOT 777! +10.000 poin!" };
+        if(a === b && b === c){
+          var table = { "💎":500, "⭐":300, "🔔":200, "🍋":150, "🍒":100 };
+          var p = table[a] || 100;
+          return { prize:p, msg:"🎊 Tiga " + a + "! +" + fmt(p) + " poin!" };
+        }
+        if(a === b || b === c || a === c) return { prize:20, msg:"✨ Dua simbol sama! +20 poin" };
+        return { prize:0, msg:"Belum beruntung, coba lagi!" };
+      }
+      function doServerSpin(){
+        spinning = true;
+        $("spinBtn").disabled = true;
+        $("slotMsg").textContent = "Berputar…";
+        var reels = [$("reel0"), $("reel1"), $("reel2")];
+        reels.forEach(function(r){ r.classList.add("spinning"); });
+        var serverRes = null;
+        apiCall("POST", "/spin", {}, authToken).then(function(res){ serverRes = res; });
+        var ticks = 0;
+        var iv = setInterval(function(){
+          ticks++;
+          reels.forEach(function(r){ r.textContent = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; });
+          if(ticks >= 14 && serverRes !== null){
+            clearInterval(iv);
+            spinning = false;
+            if(serverRes && serverRes.ok && serverRes.roll){
+              reels.forEach(function(r, i){ r.classList.remove("spinning"); r.textContent = serverRes.roll[i]; });
+              var res2 = spinResult(serverRes.roll[0], serverRes.roll[1], serverRes.roll[2]);
+              $("slotMsg").textContent = serverRes.prize > 0 ? res2.msg : "Belum beruntung, coba lagi!";
+              if(serverRes.state) applyServerState(serverRes.state);
+            } else {
+              reels.forEach(function(r){ r.classList.remove("spinning"); });
+              $("slotMsg").textContent = "Spin gagal — coba lagi ya.";
+              if(serverRes && serverRes.error) toast(serverRes.error);
+            }
+            renderWallet();
+          } else if(ticks >= 40){
+            clearInterval(iv);
+            spinning = false;
+            reels.forEach(function(r){ r.classList.remove("spinning"); });
+            $("slotMsg").textContent = "Koneksi ke server lambat — coba lagi ya.";
+            renderWallet();
+          }
+        }, 70);
+      }
+      $("spinBtn").addEventListener("click", function(){
+        if(spinning || S.spinsLeft <= 0) return;
+        if(serverMode){ doServerSpin(); return; }
+        spinning = true;
+        S.spinsLeft--;
+        $("spinBtn").disabled = true;
+        $("slotMsg").textContent = "Berputar…";
+        var reels = [$("reel0"), $("reel1"), $("reel2")];
+        reels.forEach(function(r){ r.classList.add("spinning"); });
+        var final = [0,1,2].map(function(){ return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; });
+        var ticks = 0;
+        var iv = setInterval(function(){
+          ticks++;
+          reels.forEach(function(r){ r.textContent = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; });
+          if(ticks >= 14){
+            clearInterval(iv);
+            reels.forEach(function(r, i){ r.classList.remove("spinning"); r.textContent = final[i]; });
+            var res = spinResult(final[0], final[1], final[2]);
+            $("slotMsg").textContent = res.msg;
+            if(res.prize > 0){
+              S.free += res.prize;
+              addHistory("game", res.prize >= 10000 ? "Jackpot Spin 777" : "Menang Spin Harian", res.prize);
+            }
+            spinning = false;
+            renderWallet();
+          }
+        }, 70);
+        renderWallet();
+      });
+
+      /* ---------------- referral / misi ---------------- */
+      $("copyRef").addEventListener("click", function(){
+        var link = $("refLink").textContent;
+        function done(){ toast("🔗 Link referral tersalin!"); }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(link).then(done, function(){ toast("Link kamu: " + link); });
+        } else toast("Link kamu: " + link);
+      });
+      $("simInvite").addEventListener("click", function(){
+        S.friends++;
+        S.free += G.settings.referralReward;
+        addHistory("users", "Misi Undang Teman", G.settings.referralReward);
+        if(S.friends >= G.settings.milestoneTarget && !S.milestoneClaimed){
+          S.milestoneClaimed = true;
+          S.free += G.settings.milestoneBonus;
+          addHistory("trophy", "Bonus Milestone " + G.settings.milestoneTarget + " Teman", G.settings.milestoneBonus);
+          toast("🏆 Milestone " + G.settings.milestoneTarget + " teman tercapai! +" + fmt(G.settings.referralReward) + " poin undangan & bonus +" + fmt(G.settings.milestoneBonus) + " poin!");
+        } else {
+          toast("🎉 Teman baru bergabung! +" + fmt(G.settings.referralReward) + " poin masuk ke saldo kamu.");
+        }
+        renderWallet();
+      });
+
+      /* ---------------- promo carousel ---------------- */
+      var promoTrack = $("promoTrack"), promoDots = $("promoDots").children, promoIdx = 0;
+      function promoGo(i){
+        promoIdx = i;
+        promoTrack.scrollTo({ left: promoTrack.clientWidth * i, behavior:"smooth" });
+        for(var k = 0; k < promoDots.length; k++) promoDots[k].classList.toggle("on", k === i);
+      }
+      setInterval(function(){
+        if(!$("view-home").classList.contains("active")) return;
+        promoGo((promoIdx + 1) % 3);
+      }, 4200);
+      promoTrack.addEventListener("scroll", function(){
+        var i = Math.round(promoTrack.scrollLeft / promoTrack.clientWidth);
+        if(i !== promoIdx){ promoIdx = i; for(var k = 0; k < promoDots.length; k++) promoDots[k].classList.toggle("on", k === i); }
+      });
+
+      /* ---------------- transfer ---------------- */
+      var BANKS = ["BCA","BRI","BNI","Mandiri","BSI","CIMB Niaga"];
+      var EWALLETS = ["DANA","OVO","GoPay","ShopeePay"];
+      var tf = { type:"bank", dest:"", num:"", name:"", amt:0 };
+      function renderDestGrid(){
+        var list = tf.type === "bank" ? BANKS : EWALLETS;
+        $("tfDestGrid").className = "dest-grid" + (tf.type === "bank" ? "" : " two");
+        $("tfDestGrid").innerHTML = list.map(function(d){
+          return '<button type="button" class="dest-opt' + (tf.dest === d ? " sel" : "") + '" data-dest="' + d + '">' + d + "</button>";
+        }).join("");
+        $("tfDestGrid").querySelectorAll("[data-dest]").forEach(function(b){
+          b.addEventListener("click", function(){
+            tf.dest = b.getAttribute("data-dest");
+            renderDestGrid();
+          });
+        });
+        $("tfDestLabel").textContent = tf.type === "bank" ? "Pilih Bank Tujuan" : "Pilih E-Wallet Tujuan";
+        $("tfNumLabel").textContent = tf.type === "bank" ? "Nomor Rekening" : "Nomor HP E-Wallet";
+        $("tfNum").placeholder = tf.type === "bank" ? "Masukkan nomor rekening" : "08xxxxxxxxxx";
+      }
+      function setTfType(t){
+        tf.type = t; tf.dest = "";
+        $("tfTypeBank").classList.toggle("on", t === "bank");
+        $("tfTypeEw").classList.toggle("on", t === "ewallet");
+        renderDestGrid();
+      }
+      $("tfTypeBank").addEventListener("click", function(){ setTfType("bank"); });
+      $("tfTypeEw").addEventListener("click", function(){ setTfType("ewallet"); });
+      function setSteps(prefix, n){
+        var wrap = $(prefix + "Steps");
+        wrap.querySelectorAll(".step").forEach(function(s){
+          var sn = parseInt(s.getAttribute("data-s"), 10);
+          s.classList.toggle("on", sn === n);
+          s.classList.toggle("done", sn < n);
+          if(sn < n) s.querySelector(".dot").innerHTML = "✓"; else s.querySelector(".dot").textContent = sn;
+        });
+        wrap.querySelectorAll(".step-line").forEach(function(l, i){ l.classList.toggle("done", i < n - 1); });
+      }
+      function resetTransfer(){
+        tf = { type:"bank", dest:"", num:"", name:"", amt:0 };
+        $("tfNum").value = ""; $("tfName").value = ""; $("tfAmt").value = "";
+        ["fTfNum","fTfName","fTfAmt"].forEach(function(id){ $(id).classList.remove("invalid"); });
+        setTfType("bank");
+        $("tfStep1").classList.remove("hidden"); $("tfStep2").classList.add("hidden"); $("tfStep3").classList.add("hidden");
+        setSteps("tf", 1);
+      }
+      function maskNum(num){ return "•••" + num.slice(-4); }
+      $("tfNext").addEventListener("click", function(){
+        var num = $("tfNum").value.replace(/\D/g, "");
+        var name = $("tfName").value.trim();
+        var amt = parseInt($("tfAmt").value.replace(/\D/g, ""), 10) || 0;
+        if(!tf.dest){ toast("Pilih dulu tujuan transfernya ya."); return; }
+        var ok = true;
+        ok = setFieldInvalid("fTfNum", num.length < 8) && ok;
+        ok = setFieldInvalid("fTfName", name.length < 2) && ok;
+        var amtBad = amt < 100 || amt > S.free;
+        $("tfAmtErr").textContent = amt < 100 ? "Minimal transfer 100 poin." : "Saldo bebas kamu tidak cukup.";
+        ok = setFieldInvalid("fTfAmt", amtBad) && ok;
+        if(!ok) return;
+        tf.num = num; tf.name = name; tf.amt = amt;
+        $("tfSummary").innerHTML =
+          '<div class="row"><span>Tujuan</span><b>' + tf.dest + " · " + maskNum(num) + "</b></div>" +
+          '<div class="row"><span>Nama Penerima</span><b>' + esc(name) + "</b></div>" +
+          '<div class="row"><span>Jumlah Transfer</span><b>Rp' + fmt(amt) + "</b></div>" +
+          '<div class="row"><span>Biaya Admin</span><b style="color:var(--emerald);">Rp0</b></div>' +
+          '<div class="row total"><span>Total Dibayar</span><b>Rp' + fmt(amt) + "</b></div>";
+        $("tfStep1").classList.add("hidden"); $("tfStep2").classList.remove("hidden");
+        setSteps("tf", 2);
+        window.scrollTo(0,0);
+      });
+      $("tfBack").addEventListener("click", function(){
+        $("tfStep2").classList.add("hidden"); $("tfStep1").classList.remove("hidden");
+        setSteps("tf", 1);
+      });
+      $("tfConfirm").addEventListener("click", function(){
+        if(serverMode){
+          var btn = $("tfConfirm");
+          btn.disabled = true;
+          apiCall("POST", "/transfer", { kind: tf.type, dest: tf.dest, number: tf.num, name: tf.name, amount: tf.amt }, authToken).then(function(res){
+            btn.disabled = false;
+            if(res && res.ok){
+              if(res.state) applyServerState(res.state);
+              $("tfSuccessText").innerHTML = "Rp" + fmt(tf.amt) + " sedang dikirim ke <b>" + tf.dest + " " + maskNum(tf.num) + "</b> atas nama <b>" + esc(tf.name) + "</b>. Biaya admin Rp0.";
+              $("tfStep2").classList.add("hidden"); $("tfStep3").classList.remove("hidden");
+              setSteps("tf", 3);
+              renderWallet();
+              window.scrollTo(0,0);
+            } else {
+              toast((res && res.error) ? res.error : "Transfer gagal — coba lagi ya.");
+            }
+          });
+          return;
+        }
+        S.free -= tf.amt;
+        addHistory("send", "Transfer ke " + tf.dest + " " + maskNum(tf.num), -tf.amt, "Diproses");
+        $("tfSuccessText").innerHTML = "Rp" + fmt(tf.amt) + " sedang dikirim ke <b>" + tf.dest + " " + maskNum(tf.num) + "</b> atas nama <b>" + esc(tf.name) + "</b>. Biaya admin Rp0.";
+        $("tfStep2").classList.add("hidden"); $("tfStep3").classList.remove("hidden");
+        setSteps("tf", 3);
+        renderWallet();
+        window.scrollTo(0,0);
+      });
+
+      /* ---------------- withdraw ---------------- */
+      var wdAmt = 0;
+      function updateWdRules(){
+        var sSt = $("wdRuleSmallSt"), bSt = $("wdRuleBigSt");
+        if(!sSt || !bSt) return;
+        if(S.wdSmallUsed){
+          sSt.className = "st no";
+          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: <b>sudah dipakai hari ini</b> — bisa lagi setelah check-in hari berikutnya.";
+        } else {
+          sSt.className = "st ok";
+          $("wdRuleSmall").innerHTML = "Penarikan di bawah Rp500: bisa langsung, maksimal <b>1x sehari</b>.";
+        }
+        if(S.wdBigReady){
+          bSt.className = "st ok";
+          $("wdRuleBig").innerHTML = "Penarikan <b>Rp500 ke atas</b>: check-in hari berikutnya sudah tercatat — <b>bisa ditarik sekarang</b>.";
+        } else if(S.checkins >= 1){
+          bSt.className = "st no";
+          $("wdRuleBig").innerHTML = "Penarikan <b>Rp500 ke atas</b>: check-in hari ini sudah tercatat — baru kebuka setelah <b>check-in lagi di hari berikutnya</b>.";
+        } else {
+          bSt.className = "st no";
+          $("wdRuleBig").innerHTML = "Penarikan <b>Rp500 ke atas</b>: harus check-in dulu di hari berikutnya.";
+        }
+        $("wdChips").querySelectorAll(".chip").forEach(function(c){
+          var v = c.getAttribute("data-amt");
+          var amt = v === "all" ? S.free : parseInt(v, 10);
+          c.disabled = (amt >= 500 && !S.wdBigReady) || (amt > 0 && amt < 500 && S.wdSmallUsed);
+        });
+      }
+      function resetWithdraw(){
+        wdAmt = 0;
+        $("wdNum").value = ""; $("wdName").value = "";
+        $("wdChips").querySelectorAll(".chip").forEach(function(c){ c.classList.remove("sel"); });
+        ["fWdNum","fWdName"].forEach(function(id){ $(id).classList.remove("invalid"); });
+        $("wdErr").style.display = "none";
+        $("wdStep1").classList.remove("hidden"); $("wdStep2").classList.add("hidden"); $("wdStep3").classList.add("hidden");
+        setSteps("wd", 1);
+        updateWdRules();
+      }
+      $("wdChips").querySelectorAll(".chip").forEach(function(c){
+        c.addEventListener("click", function(){
+          $("wdChips").querySelectorAll(".chip").forEach(function(x){ x.classList.remove("sel"); });
+          c.classList.add("sel");
+          wdAmt = c.getAttribute("data-amt") === "all" ? S.free : parseInt(c.getAttribute("data-amt"), 10);
+        });
+      });
+      $("wdNext").addEventListener("click", function(){
+        var num = $("wdNum").value.replace(/[\s-]/g, "");
+        var name = $("wdName").value.trim();
+        var ok = true;
+        ok = setFieldInvalid("fWdNum", !phoneOK(num)) && ok;
+        ok = setFieldInvalid("fWdName", name.length < 2) && ok;
+        var err = $("wdErr");
+        if(wdAmt <= 0){ err.textContent = "Pilih nominal penarikan dulu ya."; err.style.display = "block"; return; }
+        if(wdAmt < G.settings.minWd){ err.textContent = "Minimum penarikan adalah Rp" + fmt(G.settings.minWd) + "."; err.style.display = "block"; return; }
+        if(wdAmt > S.free){ err.textContent = "Saldo bebas kamu tidak cukup untuk nominal ini."; err.style.display = "block"; return; }
+        if(wdAmt >= 500 && !S.wdBigReady){ err.textContent = "Penarikan Rp500 ke atas harus check-in dulu di hari berikutnya. Check-in dulu, besoknya nominal ini baru bisa ditarik."; err.style.display = "block"; return; }
+        if(wdAmt < 500 && S.wdSmallUsed){ err.textContent = "Penarikan di bawah Rp500 cuma bisa 1x sehari — jatah hari ini sudah dipakai. Bisa tarik lagi setelah check-in hari berikutnya."; err.style.display = "block"; return; }
+        err.style.display = "none";
+        if(!ok) return;
+        $("wdSummary").innerHTML =
+          '<div class="row"><span>Tujuan</span><b>DANA · ' + maskNum(num) + "</b></div>" +
+          '<div class="row"><span>Nama Pemilik</span><b>' + esc(name) + "</b></div>" +
+          '<div class="row"><span>Jumlah Penarikan</span><b>Rp' + fmt(wdAmt) + "</b></div>" +
+          '<div class="row"><span>Biaya Admin</span><b style="color:var(--emerald);">Rp0</b></div>' +
+          '<div class="row total"><span>Total Diterima</span><b>Rp' + fmt(wdAmt) + "</b></div>";
+        $("wdStep1").classList.add("hidden"); $("wdStep2").classList.remove("hidden");
+        setSteps("wd", 2);
+        window.scrollTo(0,0);
+      });
+      $("wdBack").addEventListener("click", function(){
+        $("wdStep2").classList.add("hidden"); $("wdStep1").classList.remove("hidden");
+        setSteps("wd", 1);
+      });
+      $("wdConfirm").addEventListener("click", function(){
+        var num = $("wdNum").value.replace(/[\s-]/g, "");
+        var amt = wdAmt;
+        if(serverMode){
+          var wname = $("wdName").value.trim();
+          var wbtn = $("wdConfirm");
+          wbtn.disabled = true;
+          apiCall("POST", "/withdraw", { amount: amt, dana: num, name: wname }, authToken).then(function(res){
+            wbtn.disabled = false;
+            if(res && res.ok){
+              if(res.state) applyServerState(res.state);
+              $("wdSuccessText").innerHTML = "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang diproses. Saldo akan masuk di hari yang sama.";
+              $("wdStep2").classList.add("hidden"); $("wdStep3").classList.remove("hidden");
+              setSteps("wd", 3);
+              renderWallet();
+              window.scrollTo(0,0);
+            } else {
+              var errMsg = (res && res.error) ? res.error : "Penarikan gagal — coba lagi ya.";
+              $("wdStep2").classList.add("hidden"); $("wdStep1").classList.remove("hidden");
+              setSteps("wd", 1);
+              var werr = $("wdErr");
+              werr.textContent = errMsg;
+              werr.style.display = "block";
+              window.scrollTo(0,0);
+            }
+          });
+          return;
+        }
+        if(amt >= 500) S.wdBigReady = false; else S.wdSmallUsed = true;
+        S.free -= amt;
+        var wdId = "wd-" + (++G.seq);
+        G.withdrawals.unshift({ id:wdId, userId:S.id, name:S.name, num:num, amt:amt, status:"pending", time:nowTime() });
+        addHistory("wallet", "Penarikan ke DANA " + maskNum(num), -amt, "Diproses", wdId);
+        $("wdSuccessText").innerHTML = "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang diproses. Saldo akan masuk di hari yang sama.";
+        $("wdStep2").classList.add("hidden"); $("wdStep3").classList.remove("hidden");
+        setSteps("wd", 3);
+        renderWallet();
+        window.scrollTo(0,0);
+      });
+
+      /* ---------------- panel admin ---------------- */
+      $("adminLogout").addEventListener("click", function(){
+        adminToken = null; adminOverview = null;
+        $("adminView").classList.add("hidden");
+        $("authView").classList.remove("hidden");
+        showAuthPane("login");
+      });
+      $("adminTabs").querySelectorAll("button").forEach(function(b){
+        b.addEventListener("click", function(){
+          $("adminTabs").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+          ["dash","wd","users","log","settings"].forEach(function(t){
+            $("apane-" + t).classList.toggle("hidden", t !== b.getAttribute("data-atab"));
+          });
+          window.scrollTo(0,0);
+        });
+      });
+      function wdPill(st){
+        if(st === "pending") return '<span class="pill pending">Menunggu</span>';
+        if(st === "lunas") return '<span class="pill lunas">Lunas</span>';
+        return '<span class="pill ditolak">Ditolak</span>';
+      }
+      function wdRowHTML(w, actions){
+        var html = '<div class="queue-item"><div class="qi-top"><div>' +
+          '<div class="qi-name">' + esc(w.name) + '</div>' +
+          '<div class="qi-sub">DANA •••' + esc(String(w.num).slice(-4)) + ' · Hari ini ' + w.time + ' WIB</div></div>' +
+          '<div style="text-align:right;"><div class="qi-amt">Rp' + fmt(w.amt) + '</div><div style="margin-top:5px;">' + wdPill(w.status) + '</div></div></div>';
+        if(actions && w.status === "pending"){
+          html += '<div class="qi-actions"><button class="btn-approve" data-wd-act="approve" data-wid="' + w.id + '" type="button">✓ Setujui · Lunas</button>' +
+            '<button class="btn-reject" data-wd-act="reject" data-wid="' + w.id + '" type="button">✕ Tolak · Refund</button></div>';
+        }
+        return html + "</div>";
+      }
+      function renderAdmin(){
+        var totalPoints = 0;
+        G.users.forEach(function(u){ totalPoints += u.free + u.locked; });
+        var wdLunas = 0, wdLunasCount = 0, pending = 0;
+        G.withdrawals.forEach(function(w){
+          if(w.status === "lunas"){ wdLunas += w.amt; wdLunasCount++; }
+          if(w.status === "pending") pending++;
+        });
+        $("stUsers").textContent = G.users.length;
+        $("stPoints").textContent = "Rp" + fmt(totalPoints);
+        $("stWdTotal").textContent = "Rp" + fmt(wdLunas);
+        $("stWdCount").textContent = wdLunasCount + " penarikan lunas";
+        $("stWdPending").textContent = pending;
+        $("adminWdBadge").textContent = pending ? " · " + pending : "";
+        $("adminRecentWd").innerHTML = G.withdrawals.length
+          ? G.withdrawals.slice(0,3).map(function(w){ return wdRowHTML(w, false); }).join("")
+          : '<div class="empty">Belum ada penarikan.</div>';
+        var queue = G.withdrawals.filter(function(w){ return w.status === "pending"; });
+        var done = G.withdrawals.filter(function(w){ return w.status !== "pending"; });
+        $("adminWdQueue").innerHTML = queue.length
+          ? queue.map(function(w){ return wdRowHTML(w, true); }).join("")
+          : '<div class="empty">Antrean kosong — semua penarikan sudah ditinjau. 🎉</div>';
+        $("adminWdDone").innerHTML = done.length
+          ? done.map(function(w){ return wdRowHTML(w, false); }).join("")
+          : '<div class="empty">Belum ada penarikan yang selesai diproses.</div>';
+        $("adminUserList").innerHTML = G.users.map(function(u){
+          return '<div class="user-item"><div class="qi-top"><div>' +
+            '<div class="qi-name">' + esc(u.name) + '</div>' +
+            '<div class="qi-sub">' + esc(u.idLabel) + ' · Check-in ' + u.checkins + ' hari · ' + u.friends + ' teman</div></div>' +
+            (u.banned ? '<span class="pill banned">Diblokir</span>' : '<span class="pill aktif">Aktif</span>') + '</div>' +
+            '<div class="qi-sub" style="margin-top:9px;">Saldo bebas <b style="color:var(--ink);">Rp' + fmt(u.free) + '</b> · Terkunci <b style="color:var(--ink);">Rp' + fmt(u.locked) + '</b></div>' +
+            '<div class="pts-row"><input type="tel" inputmode="numeric" placeholder="Jumlah poin" id="pts-' + u.id + '" />' +
+            '<button class="btn-plus" data-pts="plus" data-uid="' + u.id + '" type="button">+ Tambah</button>' +
+            '<button class="btn-minus" data-pts="minus" data-uid="' + u.id + '" type="button">− Kurangi</button></div>' +
+            '<button class="btn-ban' + (u.banned ? " unban" : "") + '" data-ban="' + u.id + '" type="button">' + (u.banned ? "Buka Blokir Pengguna" : "Blokir Pengguna") + '</button></div>';
+        }).join("");
+        $("adminLog").innerHTML = G.activity.length ? G.activity.map(function(a){
+          var amt = a.amount === 0 ? "" :
+            '<div class="hist-amt ' + (a.amount > 0 ? "plus" : "minus") + '">' + (a.amount > 0 ? "+" : "−") + "Rp" + fmt(Math.abs(a.amount)) + "</div>";
+          var chip = a.status ? '<span class="status-chip">' + a.status + "</span>" : "";
+          return '<div class="hist-item"><span class="hist-ic ' + (ICONCLS[a.icon] || "ic-em") + '">' +
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[a.icon] + "</svg></span>" +
+            '<div class="hist-main"><div class="hist-title">' + a.title + chip + '</div><div class="hist-sub">' + esc(a.user) + ' · Hari ini ' + a.time + " WIB</div></div>" + amt + "</div>";
+        }).join("") : '<div class="empty">Belum ada aktivitas.</div>';
+        var st = G.settings;
+        $("setBonus").value = st.signupBonus; $("setUnlock").value = st.unlockPerCheckin;
+        $("setCheckin").value = st.checkinReward; $("setRef").value = st.referralReward;
+        $("setMsTarget").value = st.milestoneTarget; $("setMsBonus").value = st.milestoneBonus;
+        $("setMinWd").value = st.minWd; $("setSpin").value = st.spinQuota;
+        $("setMiningRate").value = st.miningRate; $("setMiningHours").value = st.miningHours;
+        $("bcText").value = G.broadcast;
+      }
+      function setWdStatusEverywhere(w, label){
+        var u = findUserById(w.userId);
+        if(u) u.history.forEach(function(h){ if(h.wdId === w.id) h.status = label; });
+        G.activity.forEach(function(a){ if(a.wdId === w.id) a.status = label; });
+      }
+      function handleWdAction(e){
+        var b = e.target.closest("[data-wd-act]");
+        if(!b) return;
+        var w = null;
+        G.withdrawals.forEach(function(x){ if(x.id === b.getAttribute("data-wid")) w = x; });
+        if(!w || w.status !== "pending") return;
+        if(b.getAttribute("data-wd-act") === "approve"){
+          w.status = "lunas";
+          setWdStatusEverywhere(w, "Lunas");
+          toast("✅ Penarikan Rp" + fmt(w.amt) + " dari " + w.name + " disetujui — status Lunas.");
+        } else {
+          w.status = "ditolak";
+          setWdStatusEverywhere(w, "Ditolak");
+          var u = findUserById(w.userId);
+          if(u){ u.free += w.amt; addHistoryFor(u, "wallet", "Penarikan Ditolak — Poin Dikembalikan", w.amt); }
+          toast("Penarikan " + w.name + " ditolak — Rp" + fmt(w.amt) + " dikembalikan ke saldonya.");
+        }
+        renderAdmin();
+      }
+      $("adminWdQueue").addEventListener("click", handleWdAction);
+      $("adminUserList").addEventListener("click", function(e){
+        var pb = e.target.closest("[data-pts]");
+        var bb = e.target.closest("[data-ban]");
+        if(pb){
+          var u1 = findUserById(pb.getAttribute("data-uid"));
+          var amt = parseInt(($("pts-" + u1.id).value || "").replace(/\D/g, ""), 10) || 0;
+          if(amt <= 0){ toast("Isi dulu jumlah poinnya ya."); return; }
+          if(pb.getAttribute("data-pts") === "plus"){
+            u1.free += amt;
+            addHistoryFor(u1, "wallet", "Penyesuaian Saldo oleh Admin", amt);
+            toast("✅ Saldo " + u1.name + " ditambah Rp" + fmt(amt) + ".");
+          } else {
+            if(amt > u1.free){ toast("Saldo bebas " + u1.name + " cuma Rp" + fmt(u1.free) + " — tidak bisa dikurangi segitu."); return; }
+            u1.free -= amt;
+            addHistoryFor(u1, "wallet", "Penyesuaian Saldo oleh Admin", -amt);
+            toast("Saldo " + u1.name + " dikurangi Rp" + fmt(amt) + ".");
+          }
+          renderAdmin();
+          return;
+        }
+        if(bb){
+          var u2 = findUserById(bb.getAttribute("data-ban"));
+          u2.banned = !u2.banned;
+          toast(u2.banned ? "🚫 " + u2.name + " diblokir — dia tidak bisa masuk lagi." : "✅ Blokir " + u2.name + " dibuka — dia bisa masuk lagi.");
+          renderAdmin();
+        }
+      });
+      function readSet(id, fallback, min){
+        var v = parseInt(($(id).value || "").replace(/\D/g, ""), 10);
+        if(isNaN(v)) return fallback;
+        return Math.max(min, v);
+      }
+      $("saveSettings").addEventListener("click", function(){
+        if(serverMode && adminToken){ doServerSaveSettings(); return; }
+        var st = G.settings;
+        st.signupBonus = readSet("setBonus", st.signupBonus, 0);
+        st.unlockPerCheckin = readSet("setUnlock", st.unlockPerCheckin, 0);
+        st.checkinReward = readSet("setCheckin", st.checkinReward, 0);
+        st.referralReward = readSet("setRef", st.referralReward, 0);
+        st.milestoneTarget = readSet("setMsTarget", st.milestoneTarget, 1);
+        st.milestoneBonus = readSet("setMsBonus", st.milestoneBonus, 0);
+        st.minWd = readSet("setMinWd", st.minWd, 1);
+        st.spinQuota = readSet("setSpin", st.spinQuota, 0);
+        st.miningRate = readSet("setMiningRate", st.miningRate, 0);
+        st.miningHours = readSet("setMiningHours", st.miningHours, 1);
+        applySettingsUI();
+        renderAdmin();
+        toast("⚙️ Pengaturan tersimpan & langsung berlaku buat semua pengguna.");
+      });
+      $("bcSave").addEventListener("click", function(){
+        if(serverMode && adminToken){ doServerBroadcast($("bcText").value.trim()); return; }
+        G.broadcast = $("bcText").value.trim();
+        renderAdmin();
+        toast(G.broadcast ? "📣 Pengumuman ditayangkan di beranda semua pengguna." : "Pengumuman kosong — tidak ada yang ditayangkan.");
+      });
+      $("bcClear").addEventListener("click", function(){
+        if(serverMode && adminToken){ $("bcText").value = ""; doServerBroadcast(""); return; }
+        G.broadcast = "";
+        $("bcText").value = "";
+        toast("Pengumuman dihapus dari beranda pengguna.");
+      });
+
+      /* ---------------- panel admin (mode server) ---------------- */
+      function normWdStatus(st){
+        if(st === "pending" || st === "menunggu") return "pending";
+        if(st === "lunas" || st === "approved" || st === "approve" || st === "selesai") return "lunas";
+        return "ditolak";
+      }
+      function fmtTs(ts){
+        if(ts === null || ts === undefined || ts === "") return "";
+        var d = (typeof ts === "number") ? new Date(ts) : new Date(ts);
+        if(!isNaN(d.getTime())) return d.toLocaleDateString("id-ID", {day:"numeric", month:"short"}) + " · " + d.toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"}).replace(":", ".") + " WIB";
+        return String(ts);
+      }
+      function enterAdminServer(){
+        $("authView").classList.add("hidden");
+        $("appView").classList.add("hidden");
+        $("bannedView").classList.add("hidden");
+        $("adminView").classList.remove("hidden");
+        window.scrollTo(0,0);
+        toast("👋 Selamat datang di Panel Admin Cuanmu.");
+        loadAdminOverview();
+      }
+      function loadAdminOverview(){
+        apiCall("GET", "/admin/overview", null, adminToken).then(function(res){
+          if(res && res.ok !== false && res.stats){
+            adminOverview = res;
+            renderAdminServer();
+          } else {
+            toast((res && res.error) ? res.error : "Gagal memuat data admin dari server.");
+          }
+        });
+      }
+      function swdRowHTML(w, actions){
+        var st = normWdStatus(w.status);
+        var pill = st === "pending" ? '<span class="pill pending">Menunggu</span>' : (st === "lunas" ? '<span class="pill lunas">Lunas</span>' : '<span class="pill ditolak">Ditolak</span>');
+        var html = '<div class="queue-item"><div class="qi-top"><div>' +
+          '<div class="qi-name">' + esc(w.name || "") + '</div>' +
+          '<div class="qi-sub">DANA •••' + esc(String(w.dana || "").slice(-4)) + (w.danaName ? ' · a.n. ' + esc(w.danaName) : "") + (w.ts ? ' · ' + fmtTs(w.ts) : "") + '</div></div>' +
+          '<div style="text-align:right;"><div class="qi-amt">Rp' + fmt(w.poin || 0) + '</div><div style="margin-top:5px;">' + pill + '</div></div></div>';
+        if(actions && st === "pending"){
+          html += '<div class="qi-actions"><button class="btn-approve" data-swd-act="approve" data-swid="' + w.id + '" type="button">✓ Setujui · Lunas</button>' +
+            '<button class="btn-reject" data-swd-act="reject" data-swid="' + w.id + '" type="button">✕ Tolak · Refund</button></div>';
+        }
+        return html + "</div>";
+      }
+      function renderAdminServer(){
+        var ov = adminOverview;
+        if(!ov) return;
+        var stats = ov.stats || {};
+        var wds = ov.wds || [];
+        var users = ov.users || [];
+        var lunasCount = wds.filter(function(w){ return normWdStatus(w.status) === "lunas"; }).length;
+        var pending = wds.filter(function(w){ return normWdStatus(w.status) === "pending"; });
+        var done = wds.filter(function(w){ return normWdStatus(w.status) !== "pending"; });
+        $("stUsers").textContent = stats.users !== undefined ? stats.users : users.length;
+        $("stPoints").textContent = "Rp" + fmt(stats.circulation || 0);
+        $("stWdTotal").textContent = "Rp" + fmt(stats.totalWd || 0);
+        $("stWdCount").textContent = lunasCount + " penarikan lunas";
+        $("stWdPending").textContent = stats.pendingWd !== undefined ? stats.pendingWd : pending.length;
+        $("adminWdBadge").textContent = pending.length ? " · " + pending.length : "";
+        $("adminRecentWd").innerHTML = wds.length
+          ? wds.slice(0,3).map(function(w){ return swdRowHTML(w, false); }).join("")
+          : '<div class="empty">Belum ada penarikan.</div>';
+        $("adminWdQueue").innerHTML = pending.length
+          ? pending.map(function(w){ return swdRowHTML(w, true); }).join("")
+          : '<div class="empty">Antrean kosong — semua penarikan sudah ditinjau. 🎉</div>';
+        $("adminWdDone").innerHTML = done.length
+          ? done.map(function(w){ return swdRowHTML(w, false); }).join("")
+          : '<div class="empty">Belum ada penarikan yang selesai diproses.</div>';
+        $("adminUserList").innerHTML = users.length ? users.map(function(u){
+          return '<div class="user-item"><div class="qi-top"><div>' +
+            '<div class="qi-name">' + esc(u.name || "") + '</div>' +
+            '<div class="qi-sub">' + esc(u.contact || "") + ' · Check-in ' + (u.checkins || 0) + ' hari · ' + (u.invited || 0) + ' teman</div></div>' +
+            (u.banned ? '<span class="pill banned">Diblokir</span>' : '<span class="pill aktif">Aktif</span>') + '</div>' +
+            '<div class="qi-sub" style="margin-top:9px;">Saldo bebas <b style="color:var(--ink);">Rp' + fmt(u.poin || 0) + '</b> · Terkunci <b style="color:var(--ink);">Rp' + fmt(u.locked || 0) + '</b></div>' +
+            '<div class="pts-row"><input type="tel" inputmode="numeric" placeholder="Jumlah poin" id="spts-' + u.id + '" />' +
+            '<button class="btn-plus" data-spts="plus" data-suid="' + u.id + '" type="button">+ Tambah</button>' +
+            '<button class="btn-minus" data-spts="minus" data-suid="' + u.id + '" type="button">− Kurangi</button></div>' +
+            '<button class="btn-ban' + (u.banned ? " unban" : "") + '" data-sban="' + u.id + '" data-sbanned="' + (u.banned ? "1" : "0") + '" type="button">' + (u.banned ? "Buka Blokir Pengguna" : "Blokir Pengguna") + '</button></div>';
+        }).join("") : '<div class="empty">Belum ada pengguna terdaftar.</div>';
+        $("adminLog").innerHTML = wds.length ? wds.map(function(w){
+          var st = normWdStatus(w.status);
+          var label = st === "pending" ? "Diproses" : (st === "lunas" ? "Lunas" : "Ditolak");
+          return '<div class="hist-item"><span class="hist-ic ic-em">' +
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS.wallet + "</svg></span>" +
+            '<div class="hist-main"><div class="hist-title">Penarikan ke DANA •••' + esc(String(w.dana || "").slice(-4)) + '<span class="status-chip">' + label + '</span></div>' +
+            '<div class="hist-sub">' + esc(w.name || "") + (w.ts ? ' · ' + fmtTs(w.ts) : "") + '</div></div>' +
+            '<div class="hist-amt minus">−Rp' + fmt(w.poin || 0) + "</div></div>";
+        }).join("") : '<div class="empty">Belum ada aktivitas penarikan dari server.</div>';
+        var stg = ov.settings || {};
+        if(stg.signupBonus !== undefined) $("setBonus").value = stg.signupBonus;
+        if(stg.unlockPerCheckin !== undefined) $("setUnlock").value = stg.unlockPerCheckin;
+        if(stg.checkinReward !== undefined) $("setCheckin").value = stg.checkinReward;
+        if(stg.referralReward !== undefined) $("setRef").value = stg.referralReward;
+        if(stg.milestoneTarget !== undefined) $("setMsTarget").value = stg.milestoneTarget;
+        if(stg.milestoneBonus !== undefined) $("setMsBonus").value = stg.milestoneBonus;
+        if(stg.minWithdraw !== undefined) $("setMinWd").value = stg.minWithdraw;
+        if(stg.spinDaily !== undefined) $("setSpin").value = stg.spinDaily;
+        if(stg.miningRate !== undefined) $("setMiningRate").value = stg.miningRate;
+        if(stg.miningHours !== undefined) $("setMiningHours").value = stg.miningHours;
+        $("bcText").value = ov.broadcast || "";
+      }
+      $("adminWdQueue").addEventListener("click", function(e){
+        var b = e.target.closest("[data-swd-act]");
+        if(!b || !adminToken) return;
+        var act = b.getAttribute("data-swd-act");
+        apiCall("POST", "/admin/wd", { id: b.getAttribute("data-swid"), action: act }, adminToken).then(function(res){
+          if(res && res.ok !== false){
+            toast(act === "approve" ? "✅ Penarikan disetujui — status Lunas." : "Penarikan ditolak — poin dikembalikan ke pengguna.");
+            loadAdminOverview();
+          } else {
+            toast((res && res.error) ? res.error : "Aksi gagal — coba lagi ya.");
+          }
+        });
+      });
+      $("adminUserList").addEventListener("click", function(e){
+        if(!adminToken) return;
+        var pb = e.target.closest("[data-spts]");
+        var bb = e.target.closest("[data-sban]");
+        if(pb){
+          var uid = pb.getAttribute("data-suid");
+          var inp = $("spts-" + uid);
+          var amt = parseInt(((inp && inp.value) || "").replace(/\D/g, ""), 10) || 0;
+          if(amt <= 0){ toast("Isi dulu jumlah poinnya ya."); return; }
+          var delta = pb.getAttribute("data-spts") === "plus" ? amt : -amt;
+          apiCall("POST", "/admin/user", { uid: uid, action: "adjust", delta: delta }, adminToken).then(function(res){
+            if(res && res.ok !== false){ toast("✅ Saldo pengguna diperbarui (" + (delta > 0 ? "+" : "−") + "Rp" + fmt(Math.abs(delta)) + ")."); loadAdminOverview(); }
+            else toast((res && res.error) ? res.error : "Gagal mengubah saldo — coba lagi ya.");
+          });
+          return;
+        }
+        if(bb){
+          var uid2 = bb.getAttribute("data-sban");
+          var act2 = bb.getAttribute("data-sbanned") === "1" ? "unban" : "ban";
+          apiCall("POST", "/admin/user", { uid: uid2, action: act2 }, adminToken).then(function(res){
+            if(res && res.ok !== false){ toast(act2 === "ban" ? "🚫 Pengguna diblokir." : "✅ Blokir pengguna dibuka."); loadAdminOverview(); }
+            else toast((res && res.error) ? res.error : "Aksi gagal — coba lagi ya.");
+          });
+        }
+      });
+      function doServerSaveSettings(){
+        var st = G.settings;
+        var settings = {
+          signupBonus: readSet("setBonus", st.signupBonus, 0),
+          unlockPerCheckin: readSet("setUnlock", st.unlockPerCheckin, 0),
+          checkinReward: readSet("setCheckin", st.checkinReward, 0),
+          referralReward: readSet("setRef", st.referralReward, 0),
+          milestoneTarget: readSet("setMsTarget", st.milestoneTarget, 1),
+          milestoneBonus: readSet("setMsBonus", st.milestoneBonus, 0),
+          minWithdraw: readSet("setMinWd", st.minWd, 1),
+          spinDaily: readSet("setSpin", st.spinQuota, 0),
+          miningRate: readSet("setMiningRate", st.miningRate, 0),
+          miningHours: readSet("setMiningHours", st.miningHours, 1)
+        };
+        apiCall("POST", "/admin/settings", { settings: settings }, adminToken).then(function(res){
+          if(res && res.ok !== false){
+            st.signupBonus = settings.signupBonus; st.unlockPerCheckin = settings.unlockPerCheckin;
+            st.checkinReward = settings.checkinReward; st.referralReward = settings.referralReward;
+            st.milestoneTarget = settings.milestoneTarget; st.milestoneBonus = settings.milestoneBonus;
+            st.minWd = settings.minWithdraw; st.spinQuota = settings.spinDaily;
+            st.miningRate = settings.miningRate; st.miningHours = settings.miningHours;
+            applySettingsUI();
+            toast("⚙️ Pengaturan tersimpan di server & langsung berlaku buat semua pengguna.");
+            loadAdminOverview();
+          } else {
+            toast((res && res.error) ? res.error : "Gagal menyimpan pengaturan — coba lagi ya.");
+          }
+        });
+      }
+      function doServerBroadcast(text){
+        apiCall("POST", "/admin/broadcast", { text: text }, adminToken).then(function(res){
+          if(res && res.ok !== false){
+            G.broadcast = text;
+            toast(text ? "📣 Pengumuman ditayangkan di beranda semua pengguna." : "Pengumuman dihapus dari beranda pengguna.");
+            loadAdminOverview();
+          } else {
+            toast((res && res.error) ? res.error : "Gagal menyimpan pengumuman — coba lagi ya.");
+          }
+        });
+      }
+
+      seedData();
+      applySettingsUI();
+      renderHistory();
+
+      /* ---------------- deteksi server ---------------- */
+      apiCall("GET", "/ping", null, null).then(function(res){
+        if(res && res.ok){
+          serverMode = true;
+          var sim = $("simInvite");
+          if(sim) sim.classList.add("hidden");
+          var srn = $("serverRefNote");
+          if(srn) srn.classList.remove("hidden");
+          if(refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
+        }
+      });
+    </script>
+  </body>
+</html>
