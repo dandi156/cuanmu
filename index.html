@@ -14,19 +14,21 @@
     </style>
     <style>
       :root{
-        --bg:#eaf2ec; --surface:#ffffff; --surface-2:#f1f7f2; --ink:#0a2115; --ink-2:#42594a; --ink-3:#6f8778;
-        --line:#dce9de; --emerald:#059669; --emerald-deep:#065f46; --emerald-dark:#04301f;
-        --gold:#edb93c; --gold-deep:#bd8807; --gold-soft:#fdf3d3;
+        --bg:#e9f4ed; --surface:#ffffff; --surface-2:#eef7f1; --ink:#082116; --ink-2:#3d5546; --ink-3:#68826f;
+        --line:#d7e7db; --emerald:#059669; --emerald-hi:#10c184; --emerald-deep:#065f46; --emerald-dark:#032e1f;
+        --gold:#f2c230; --gold-hi:#ffe084; --gold-deep:#b8860b; --gold-soft:#fdf3d3;
         --red:#d92d20; --red-soft:#fdecea;
-        --shadow:0 14px 34px rgba(4,48,31,.12); --shadow-sm:0 3px 12px rgba(4,48,31,.07);
+        --shadow:0 20px 44px rgba(3,44,28,.16); --shadow-sm:0 4px 16px rgba(3,44,28,.08);
+        --card-hi:rgba(255,255,255,.65);
         --radius:24px;
         color-scheme: light dark;
       }
       @media (prefers-color-scheme: dark){
         :root{
-          --bg:#050f0a; --surface:#0c1f14; --surface-2:#11291b; --ink:#eaf5ee; --ink-2:#a9c4b2; --ink-3:#74907f;
-          --line:#1c3527; --gold-soft:#2c2410; --red-soft:#33161a;
-          --shadow:0 14px 34px rgba(0,0,0,.5); --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+          --bg:#04120b; --surface:#0b2013; --surface-2:#10291a; --ink:#eaf5ee; --ink-2:#a9c4b2; --ink-3:#74907f;
+          --line:#1d3a28; --gold-soft:#2c2410; --red-soft:#33161a;
+          --shadow:0 20px 44px rgba(0,0,0,.55); --shadow-sm:0 4px 16px rgba(0,0,0,.4);
+          --card-hi:rgba(255,255,255,.07);
         }
       }
       *{ box-sizing:border-box; }
@@ -34,8 +36,9 @@
       body{
         font-family:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
         background:
-          radial-gradient(900px 500px at 15% -5%, rgba(5,150,105,.16), transparent 60%),
-          radial-gradient(800px 480px at 95% 10%, rgba(237,185,60,.10), transparent 55%),
+          radial-gradient(900px 520px at 12% -6%, rgba(16,193,132,.22), transparent 60%),
+          radial-gradient(760px 460px at 98% 6%, rgba(242,194,48,.16), transparent 55%),
+          radial-gradient(700px 620px at 50% 115%, rgba(5,150,105,.12), transparent 60%),
           var(--bg);
         color:var(--ink); min-height:100vh;
         -webkit-font-smoothing:antialiased;
@@ -54,9 +57,9 @@
 
       /* ---------- generic ---------- */
       .btn-gold{
-        background:linear-gradient(180deg,#f8d264,#eaa90c); color:#3a2a00; font-weight:800;
-        border-radius:16px; padding:14px 20px; font-size:15px; width:100%;
-        box-shadow:0 10px 22px rgba(189,136,7,.32), inset 0 1px 0 rgba(255,255,255,.65);
+        background:linear-gradient(180deg,#ffe27d 0%,#f7c948 48%,#eda208 100%); color:#3a2a00; font-weight:800;
+        border-radius:16px; padding:14px 20px; font-size:15px; width:100%; letter-spacing:.2px;
+        box-shadow:0 12px 24px rgba(189,136,7,.36), inset 0 1px 0 rgba(255,255,255,.75), inset 0 -2px 0 rgba(146,96,0,.22);
         transition:transform .12s ease, box-shadow .2s ease, opacity .2s, filter .2s ease;
       }
       .btn-gold:active{ transform:scale(.97); }
@@ -67,10 +70,10 @@
       }
       .btn-ghost:active{ transform:scale(.97); }
       .btn-emerald{
-        background:linear-gradient(180deg,#0cb07c,#047857); color:#fff; font-weight:800;
-        border-radius:16px; padding:14px 20px; font-size:15px; width:100%;
-        box-shadow:0 10px 22px rgba(4,120,87,.30), inset 0 1px 0 rgba(255,255,255,.28);
-        transition:transform .12s ease, filter .2s ease;
+        background:linear-gradient(180deg,#12c186 0%,#059669 55%,#047857 100%); color:#fff; font-weight:800;
+        border-radius:16px; padding:14px 20px; font-size:15px; width:100%; letter-spacing:.2px;
+        box-shadow:0 12px 24px rgba(4,120,87,.32), inset 0 1px 0 rgba(255,255,255,.35), inset 0 -2px 0 rgba(2,44,30,.28);
+        transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
       }
       @media (hover:hover){
         .btn-gold:hover{ filter:brightness(1.05); }
@@ -93,21 +96,29 @@
       .field.invalid input{ border-color:var(--red); }
       .field.invalid .err{ display:block; }
       .card{
-        background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow-sm);
+        background:var(--surface); border-radius:var(--radius);
+        box-shadow:var(--shadow-sm), inset 0 1px 0 var(--card-hi);
         border:1px solid var(--line); padding:18px;
+        transition:box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+      }
+      @media (hover:hover){
+        .card:hover{ box-shadow:0 14px 30px rgba(3,44,28,.13), inset 0 1px 0 var(--card-hi); }
       }
 
       /* ---------- auth ---------- */
       #authView{ flex:1; display:flex; flex-direction:column; }
       .auth-hero{
-        background:linear-gradient(155deg,#03291a 0%,#065f46 42%,#07875f 78%,#0a9d6e 100%);
+        background:linear-gradient(155deg,#021f13 0%,#04402a 34%,#065f46 58%,#0a8a5f 82%,#0cb07c 100%);
         padding:44px 24px 64px; color:#fff; position:relative; overflow:hidden;
         border-radius:0 0 32px 32px;
       }
       .auth-hero::after{
         content:""; position:absolute; right:-70px; top:-70px; width:240px; height:240px; border-radius:50%;
-        background:radial-gradient(circle, rgba(248,210,100,.42), transparent 65%);
+        background:radial-gradient(circle, rgba(255,224,138,.5), transparent 65%);
+        animation:glowFloat 9s ease-in-out infinite alternate;
       }
+      @keyframes glowFloat{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-26px,22px) scale(1.13); } }
+      @media (prefers-reduced-motion: reduce){ .auth-hero::after, .hero::after{ animation:none; } }
       .auth-hero::before{
         content:""; position:absolute; inset:0;
         background-image:radial-gradient(rgba(255,255,255,.13) 1.2px, transparent 1.4px);
@@ -140,18 +151,22 @@
       @media (prefers-reduced-motion: reduce){ .auth-card{ animation:none; } }
       #checkinBtn:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
       @keyframes btnPulse{
-        0%,100%{ box-shadow:0 10px 22px rgba(189,136,7,.32), inset 0 1px 0 rgba(255,255,255,.65); }
-        50%{ box-shadow:0 10px 26px rgba(189,136,7,.45), 0 0 0 7px rgba(237,185,60,.16), inset 0 1px 0 rgba(255,255,255,.65); }
+        0%,100%{ box-shadow:0 12px 24px rgba(189,136,7,.36), inset 0 1px 0 rgba(255,255,255,.75), inset 0 -2px 0 rgba(146,96,0,.22); }
+        50%{ box-shadow:0 12px 28px rgba(189,136,7,.5), 0 0 0 8px rgba(242,194,48,.18), inset 0 1px 0 rgba(255,255,255,.75), inset 0 -2px 0 rgba(146,96,0,.22); }
       }
       @media (prefers-reduced-motion: reduce){ #checkinBtn:not(:disabled){ animation:none; } }
       .seg{
         display:flex; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px;
+        box-shadow:inset 0 1px 3px rgba(3,44,28,.07);
       }
       .seg button{
         flex:1; padding:10px; border-radius:11px; font-weight:700; font-size:14px; color:var(--ink-2);
         transition:background .18s, color .18s, box-shadow .18s; min-height:2.75rem;
       }
-      .seg button.on{ background:var(--surface); color:var(--ink); box-shadow:0 3px 10px rgba(6,60,40,.12); }
+      .seg button.on{
+        background:linear-gradient(180deg,#12c186,#047857); color:#fff;
+        box-shadow:0 6px 14px rgba(4,120,87,.32), inset 0 1px 0 rgba(255,255,255,.35);
+      }
       .seg.small button{ font-size:13.5px; padding:9px; }
       .auth-note{ font-size:12.5px; color:var(--ink-3); text-align:center; line-height:1.6; margin-top:16px; }
       .otp-row{ display:flex; gap:8px; justify-content:space-between; margin:18px 0 6px; }
@@ -167,6 +182,8 @@
 
       /* ---------- app shell ---------- */
       #appView{ flex:1; display:flex; flex-direction:column; }
+      #appView:not(.hidden), #adminView:not(.hidden), #bannedView:not(.hidden){ animation:viewIn .38s cubic-bezier(.22,.8,.28,1) both; }
+      @media (prefers-reduced-motion: reduce){ #appView:not(.hidden), #adminView:not(.hidden), #bannedView:not(.hidden){ animation:none; } }
       .view{ display:none; flex:1; flex-direction:column; animation:viewIn .38s cubic-bezier(.22,.8,.28,1) both; }
       .view.active{ display:flex; }
       @keyframes viewIn{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:none;} }
@@ -188,13 +205,14 @@
       }
 
       .hero{
-        background:linear-gradient(158deg,#03291a 0%,#065f46 40%,#07875f 76%,#0aa873 100%);
+        background:linear-gradient(158deg,#021f13 0%,#04402a 36%,#065f46 60%,#0a8a5f 84%,#0cb07c 100%);
         color:#fff; padding:22px 18px 74px; position:relative; overflow:hidden;
         border-radius:0 0 30px 30px;
       }
       .hero::after{
         content:""; position:absolute; right:-60px; top:-80px; width:230px; height:230px; border-radius:50%;
-        background:radial-gradient(circle, rgba(248,210,100,.4), transparent 65%);
+        background:radial-gradient(circle, rgba(255,224,138,.48), transparent 65%);
+        animation:glowFloat 10s ease-in-out infinite alternate;
       }
       .hero::before{
         content:""; position:absolute; inset:0;
@@ -215,13 +233,13 @@
       .content.plain{ margin-top:0; padding-top:20px; }
 
       .balance-card{
-        background:linear-gradient(140deg,#082418,#103c27 55%,#1a5c3c); color:#fff;
-        border-radius:26px; padding:20px; box-shadow:0 20px 38px rgba(3,35,22,.38);
-        border:1px solid rgba(248,210,100,.4); position:relative; overflow:hidden;
+        background:linear-gradient(135deg,#052716 0%,#0a3d24 42%,#14663f 78%,#1d7a4a 100%); color:#fff;
+        border-radius:28px; padding:22px 20px; box-shadow:0 24px 44px rgba(3,35,22,.42), inset 0 1px 0 rgba(255,255,255,.14);
+        border:1px solid rgba(255,224,138,.55); position:relative; overflow:hidden;
       }
       .balance-card::after{
-        content:""; position:absolute; right:-46px; bottom:-60px; width:170px; height:170px; border-radius:50%;
-        background:radial-gradient(circle, rgba(248,210,100,.35), transparent 65%);
+        content:""; position:absolute; right:-46px; bottom:-60px; width:180px; height:180px; border-radius:50%;
+        background:radial-gradient(circle, rgba(255,224,138,.42), transparent 65%);
       }
       .balance-card::before{
         content:""; position:absolute; top:0; bottom:0; width:90px; left:-120px; z-index:1;
@@ -231,7 +249,7 @@
       @keyframes cardShine{ from{ left:-120px; } to{ left:130%; } }
       @media (prefers-reduced-motion: reduce){ .balance-card::before{ animation:none; display:none; } }
       .bal-lbl{ font-size:12.5px; font-weight:600; opacity:.8; letter-spacing:.4px; text-transform:uppercase; }
-      .bal-amt{ font-size:34px; font-weight:800; letter-spacing:-.5px; margin:4px 0 2px; }
+      .bal-amt{ font-size:36px; font-weight:800; letter-spacing:-.5px; margin:4px 0 2px; font-variant-numeric:tabular-nums; text-shadow:0 2px 10px rgba(0,0,0,.25); }
       .bal-sub{ font-size:12.5px; opacity:.75; }
       .bal-actions{ display:flex; gap:10px; margin-top:16px; position:relative; z-index:1; }
       .bal-actions button{
@@ -239,7 +257,7 @@
         display:flex; align-items:center; justify-content:center; gap:7px; transition:transform .12s;
       }
       .bal-actions button:active{ transform:scale(.96); }
-      .ba-gold{ background:linear-gradient(180deg,#f8d264,#eaa90c); color:#3a2a00; box-shadow:0 6px 14px rgba(189,136,7,.35); }
+      .ba-gold{ background:linear-gradient(180deg,#ffe27d,#f7c948 55%,#eda208); color:#3a2a00; box-shadow:0 8px 16px rgba(189,136,7,.4), inset 0 1px 0 rgba(255,255,255,.7); }
       .ba-glass{ background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.3); color:#fff; }
 
       .section-title{ font-size:16.5px; font-weight:800; margin:26px 2px 12px; display:flex; align-items:center; justify-content:space-between; }
@@ -254,12 +272,14 @@
       .shortcut:active{ transform:scale(.94); }
       .shortcut .ic{
         width:46px; height:46px; border-radius:15px; display:grid; place-items:center;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 10px rgba(3,44,28,.08);
       }
       .shortcut span{ font-size:12px; font-weight:700; color:var(--ink); text-align:center; line-height:1.3; }
-      .ic-em{ background:#e2f4ec; color:#057a55; } .ic-gold{ background:var(--gold-soft); color:#a87b04; }
-      .ic-sky{ background:#e3f0fb; color:#1d6fb8; } .ic-rose{ background:#fde8ef; color:#c2345f; }
+      .ic-em{ background:linear-gradient(150deg,#d9f6e8,#a9e8c8); color:#046c4e; } .ic-gold{ background:linear-gradient(150deg,#fdf0c2,#f9dc7d); color:#8a6400; }
+      .ic-sky{ background:linear-gradient(150deg,#dcf0fd,#aed9f6); color:#0f5f96; } .ic-rose{ background:linear-gradient(150deg,#ffe0ea,#ffc2d6); color:#b02a52; }
       @media (prefers-color-scheme: dark){
-        .ic-em{ background:#123626; } .ic-sky{ background:#122c42; } .ic-rose{ background:#3a1622; }
+        .ic-em{ background:linear-gradient(150deg,#17452e,#0f3120); color:#5fd6a8; } .ic-gold{ background:linear-gradient(150deg,#4a3a10,#33270a); color:#ffd968; }
+        .ic-sky{ background:linear-gradient(150deg,#173a56,#0f283e); color:#7cc2f2; } .ic-rose{ background:linear-gradient(150deg,#4d1a2c,#38121f); color:#ff9dbd; }
       }
 
       /* promo carousel */
@@ -272,6 +292,7 @@
       .promo-slide{
         flex:0 0 100%; scroll-snap-align:center; border-radius:22px; padding:18px; color:#fff;
         min-height:118px; display:flex; flex-direction:column; justify-content:center; position:relative; overflow:hidden;
+        box-shadow:0 16px 30px rgba(3,44,28,.2), inset 0 1px 0 rgba(255,255,255,.22);
       }
       .promo-slide h3{ font-size:17px; font-weight:800; line-height:1.3; max-width:250px; }
       .promo-slide p{ font-size:12.5px; opacity:.9; margin-top:5px; max-width:250px; line-height:1.5; }
@@ -306,6 +327,8 @@
       @media (prefers-color-scheme: dark){ .done-badge{ background:#123626; } }
 
       /* ---------- mining ---------- */
+      .mining-card.on{ border-color:rgba(5,150,105,.5); box-shadow:0 14px 30px rgba(5,122,85,.18), inset 0 1px 0 var(--card-hi); }
+      #miningBar{ background:linear-gradient(90deg,#059669,#10c184 60%,#34d399); }
       .mining-top{ display:flex; align-items:center; gap:12px; }
       .mining-top > div{ min-width:0; }
       .mining-ic{
@@ -330,7 +353,7 @@
       .hist-main{ flex:1; min-width:0; }
       .hist-title{ font-size:13.5px; font-weight:700; line-height:1.4; }
       .hist-sub{ font-size:12px; color:var(--ink-3); margin-top:2px; }
-      .hist-amt{ font-size:13.5px; font-weight:800; flex:none; }
+      .hist-amt{ font-size:13.5px; font-weight:800; flex:none; font-variant-numeric:tabular-nums; }
       .hist-amt.plus{ color:var(--emerald); } .hist-amt.minus{ color:var(--ink); }
       .status-chip{ font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:99px; background:var(--gold-soft); color:#a87b04; margin-left:6px; vertical-align:1px; }
       .empty{ text-align:center; padding:28px 10px; color:var(--ink-3); font-size:13.5px; line-height:1.6; }
@@ -366,17 +389,22 @@
 
       /* game */
       .slot-machine{
-        background:linear-gradient(160deg,#082418,#17573a 70%,#1d6b47); border-radius:26px; padding:22px 18px;
-        color:#fff; text-align:center; box-shadow:0 20px 38px rgba(3,35,22,.38); border:1px solid rgba(248,210,100,.4);
+        background:linear-gradient(160deg,#052716,#0d4a2e 55%,#14663f 85%,#1d7a4a); border-radius:28px; padding:22px 18px;
+        color:#fff; text-align:center; box-shadow:0 24px 44px rgba(3,35,22,.42), inset 0 1px 0 rgba(255,255,255,.14); border:1px solid rgba(255,224,138,.55);
       }
       .slot-machine h3{ font-size:17px; font-weight:800; }
       .slot-machine .hint{ font-size:12.5px; opacity:.8; margin-top:4px; }
       .reels{ display:flex; gap:10px; justify-content:center; margin:20px 0 6px; }
       .reel{
-        width:84px; height:96px; background:#fff; border-radius:18px; display:grid; place-items:center;
-        font-size:46px; box-shadow:inset 0 -8px 0 rgba(0,0,0,.07), 0 8px 16px rgba(0,0,0,.25);
+        width:84px; height:96px; background:linear-gradient(180deg,#ffffff,#eef4ef); border-radius:18px; display:grid; place-items:center;
+        font-size:46px; box-shadow:inset 0 -8px 0 rgba(0,0,0,.07), inset 0 2px 0 rgba(255,255,255,.9), 0 10px 20px rgba(0,0,0,.28);
         transition:filter .15s ease;
       }
+      .reel.win{ animation:reelWin .55s cubic-bezier(.2,.9,.3,1.35) both; box-shadow:inset 0 -8px 0 rgba(0,0,0,.07), 0 0 0 3px var(--gold-hi), 0 12px 24px rgba(0,0,0,.32); }
+      @keyframes reelWin{ 0%{ transform:scale(1); } 40%{ transform:scale(1.1) rotate(-2deg); } 100%{ transform:scale(1); } }
+      @media (prefers-reduced-motion: reduce){ .reel.win{ animation:none; } }
+      #spinBtn:not(:disabled){ animation:btnPulse 2.8s ease-in-out infinite; }
+      @media (prefers-reduced-motion: reduce){ #spinBtn:not(:disabled){ animation:none; } }
       .reel.spinning{ animation:reelShake .1s linear infinite; filter:blur(2px) saturate(1.25); }
       @keyframes reelShake{ 0%{ transform:translateY(-4px);} 50%{ transform:translateY(4px);} 100%{ transform:translateY(-4px);} }
       @media (prefers-reduced-motion: reduce){ .reel.spinning{ animation:none; filter:none; } }
@@ -406,9 +434,24 @@
       .dest-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
       .dest-grid.two{ grid-template-columns:repeat(2,1fr); }
       .dest-opt{
-        background:var(--surface); border:1.5px solid var(--line); border-radius:16px; padding:14px 6px;
+        background:var(--surface); border:1.5px solid var(--line); border-radius:16px; padding:14px 6px 12px;
         font-weight:800; font-size:14px; text-align:center; transition:all .15s; min-height:3.4rem;
+        display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+        box-shadow:var(--shadow-sm);
       }
+      .brand-badge{
+        width:42px; height:42px; border-radius:13px; display:grid; place-items:center; color:#fff; flex:none;
+        font-weight:800; font-size:10px; letter-spacing:.3px; line-height:1.05; text-align:center; padding:2px;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.18), 0 5px 12px rgba(3,44,28,.2);
+        transition:transform .18s ease;
+      }
+      .brand-badge.sm{ width:26px; height:26px; border-radius:8px; font-size:7.5px; display:inline-grid; vertical-align:-8px; margin-right:7px; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.18); }
+      .dest-opt.sel .brand-badge{ transform:scale(1.09); }
+      .wd-dest{
+        display:flex; gap:12px; align-items:center; border-radius:16px; padding:12px 14px; margin-bottom:16px;
+        background:linear-gradient(135deg,#eef7ff,#dceefc); border:1px solid #bcd9f5;
+      }
+      @media (prefers-color-scheme: dark){ .wd-dest{ background:linear-gradient(135deg,#0d2a40,#0a2233); border-color:#1d4258; } }
       .dest-opt small{ display:block; font-size:11px; font-weight:600; color:var(--ink-3); margin-top:2px; }
       .dest-opt.sel{ border-color:var(--emerald); background:#e9f7f1; color:#04503a; box-shadow:0 0 0 3px rgba(5,150,105,.14); }
       @media (prefers-color-scheme: dark){ .dest-opt.sel{ background:#123626; color:#7fe3bb; } }
@@ -450,26 +493,29 @@
       /* bottom nav */
       .tabbar{
         position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; z-index:20;
-        background:var(--surface); border-top:1px solid var(--line); display:flex;
+        background:rgba(255,255,255,.88); backdrop-filter:blur(16px) saturate(1.5); -webkit-backdrop-filter:blur(16px) saturate(1.5);
+        border-top:1px solid var(--line); display:flex;
         padding:8px 10px calc(10px + env(safe-area-inset-bottom));
-        box-shadow:0 -8px 24px rgba(6,60,40,.07);
+        box-shadow:0 -10px 28px rgba(6,60,40,.1);
       }
+      @media (prefers-color-scheme: dark){ .tabbar{ background:rgba(7,24,15,.88); } }
       .tabbar button{
         flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 2px;
         font-size:11.5px; font-weight:700; color:var(--ink-3); border-radius:14px;
         transition:color .2s, background .25s, transform .12s;
       }
-      .tabbar button.on{ color:var(--emerald-deep); background:#e4f4ec; }
+      .tabbar button.on{ color:#04503a; background:linear-gradient(180deg,#d9f6e8,#b9eccf); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); }
       .tabbar button.on svg{ animation:tabPop .32s cubic-bezier(.2,.9,.3,1.4) both; }
       @keyframes tabPop{ 0%{ transform:scale(.75);} 60%{ transform:scale(1.12);} 100%{ transform:scale(1);} }
-      @media (prefers-color-scheme: dark){ .tabbar button.on{ color:#5fd6a8; background:#123626; } }
+      @media (prefers-color-scheme: dark){ .tabbar button.on{ color:#5fd6a8; background:linear-gradient(180deg,#17452e,#0f3120); } }
       @media (prefers-reduced-motion: reduce){ .tabbar button.on svg{ animation:none; } }
       .tabbar button:active{ transform:scale(.95); }
 
       /* toast */
       #toast{
         position:fixed; left:50%; bottom:104px; transform:translate(-50%, 16px) scale(.96); z-index:60;
-        background:#0a2a1c; color:#fff; font-size:13.5px; font-weight:700; padding:13px 18px; border-radius:14px;
+        background:linear-gradient(160deg,#0d3d27,#07271a); color:#fff; font-size:13.5px; font-weight:700; padding:13px 18px; border-radius:14px;
+        border:1px solid rgba(255,224,138,.35);
         box-shadow:0 16px 34px rgba(0,0,0,.32); opacity:0; pointer-events:none;
         transition:opacity .28s ease, transform .34s cubic-bezier(.22,.9,.3,1.2);
         max-width:88vw; text-align:center; line-height:1.45;
@@ -487,8 +533,12 @@
 
       /* ---------- admin ---------- */
       #adminView{ flex:1; display:flex; flex-direction:column; }
-      .admin-head{ background:linear-gradient(155deg,#03291a,#065f46 55%,#07875f); color:#fff; padding:20px 18px 22px; border-radius:0 0 26px 26px; }
-      .admin-head .row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+      .admin-head{ background:linear-gradient(155deg,#021f13 0%,#04402a 40%,#065f46 72%,#0a8a5f 100%); color:#fff; padding:20px 18px 22px; border-radius:0 0 26px 26px; position:relative; overflow:hidden; }
+      .admin-head::after{
+        content:""; position:absolute; right:-50px; top:-70px; width:190px; height:190px; border-radius:50%;
+        background:radial-gradient(circle, rgba(255,224,138,.45), transparent 65%);
+      }
+      .admin-head .row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; position:relative; z-index:1; }
       .admin-badge{ display:inline-block; background:linear-gradient(180deg,#f6cd55,#e3a812); color:#3a2a00; font-size:11px; font-weight:800; padding:4px 10px; border-radius:99px; letter-spacing:.5px; }
       .admin-tabs{ display:flex; gap:8px; overflow-x:auto; padding:16px 18px 4px; scrollbar-width:none; }
       .admin-tabs::-webkit-scrollbar{ display:none; }
@@ -496,15 +546,17 @@
       .admin-tabs button.on{ background:var(--emerald); border-color:var(--emerald); color:#fff; }
       .admin-body{ padding:14px 18px 44px; }
       .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-      .stat-card{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow-sm); }
+      .stat-card{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow-sm), inset 0 1px 0 var(--card-hi); position:relative; overflow:hidden; }
+      .stat-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--emerald),var(--emerald-hi) 45%,var(--gold)); }
       .stat-card .lbl{ font-size:12px; font-weight:700; color:var(--ink-2); }
-      .stat-card .val{ font-size:23px; font-weight:800; margin-top:4px; letter-spacing:-.3px; }
+      .stat-card .val{ font-size:23px; font-weight:800; margin-top:4px; letter-spacing:-.3px; font-variant-numeric:tabular-nums; }
       .stat-card .sub{ font-size:11.5px; color:var(--ink-3); margin-top:2px; }
-      .queue-item, .user-item{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow-sm); margin-bottom:12px; }
+      .queue-item, .user-item{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:16px; box-shadow:var(--shadow-sm), inset 0 1px 0 var(--card-hi); margin-bottom:12px; transition:box-shadow .25s ease; }
+      @media (hover:hover){ .queue-item:hover, .user-item:hover{ box-shadow:0 12px 26px rgba(3,44,28,.12), inset 0 1px 0 var(--card-hi); } }
       .qi-top{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
       .qi-name{ font-size:15px; font-weight:800; }
       .qi-sub{ font-size:12.5px; color:var(--ink-2); margin-top:2px; line-height:1.55; }
-      .qi-amt{ font-size:16px; font-weight:800; color:var(--emerald); flex:none; }
+      .qi-amt{ font-size:16px; font-weight:800; color:var(--emerald); flex:none; font-variant-numeric:tabular-nums; }
       .qi-actions{ display:flex; gap:9px; margin-top:13px; }
       .qi-actions button{ flex:1; padding:11px; border-radius:12px; font-weight:800; font-size:13.5px; }
       .qi-actions button:active{ transform:scale(.97); }
@@ -512,6 +564,13 @@
       .btn-reject{ background:var(--red-soft); color:var(--red); border:1.5px solid rgba(220,38,38,.3); }
       .pill{ font-size:11px; font-weight:800; padding:4px 10px; border-radius:99px; flex:none; }
       .pill.pending{ background:var(--gold-soft); color:#a87b04; }
+      .pill.held{ background:#fdeeda; color:#b25e09; border:1px solid rgba(217,119,6,.45); }
+      @media (prefers-color-scheme: dark){ .pill.held{ background:#3a2708; color:#ffb84d; } }
+      .qi-flag{
+        margin-top:9px; font-size:12px; font-weight:700; line-height:1.5; border-radius:10px; padding:8px 11px;
+        background:#fdeeda; color:#8a4b06; border:1px solid rgba(217,119,6,.4);
+      }
+      @media (prefers-color-scheme: dark){ .qi-flag{ background:#3a2708; color:#ffb84d; } }
       .pill.lunas, .pill.aktif{ background:#e2f4ec; color:#057a55; }
       .pill.ditolak, .pill.banned{ background:var(--red-soft); color:var(--red); }
       @media (prefers-color-scheme: dark){ .pill.lunas, .pill.aktif{ background:#123626; } }
@@ -653,7 +712,7 @@
               <input id="loginPass" type="password" placeholder="Password kamu" autocomplete="current-password" />
               <div class="err">Password wajib diisi.</div>
             </div>
-            <button class="btn-emerald" type="submit">Masuk ke Dompet</button>
+            <button class="btn-emerald" type="submit" id="loginBtn">Masuk ke Dompet</button>
           </form>
 
           <p class="auth-note">Dengan mendaftar, kamu menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi Cuanmu.</p>
@@ -973,6 +1032,13 @@
           </div>
           <div class="flow-body">
             <div id="wdStep1">
+              <div class="wd-dest">
+                <span class="brand-badge" style="background:linear-gradient(135deg,#1299f2,#0b6fd6);">DANA</span>
+                <div>
+                  <b style="font-size:14.5px;">Tarik ke DANA</b>
+                  <p style="font-size:12.5px; color:var(--ink-2); margin-top:1px; line-height:1.45;">Saldo dikirim ke akun DANA kamu — biasanya masuk di hari yang sama.</p>
+                </div>
+              </div>
               <div class="field" id="fWdNum">
                 <label for="wdNum">Nomor DANA</label>
                 <input id="wdNum" type="tel" inputmode="numeric" placeholder="08xxxxxxxxxx" />
@@ -1174,6 +1240,52 @@
         return fetch(API_BASE + path, opts).then(function(r){ return r.json(); })
           .catch(function(){ return { ok:false, error:"Tidak bisa terhubung ke server. Coba lagi ya." }; });
       }
+
+      /* ---------------- sesi persisten ----------------
+         Token sesi disimpan di penyimpanan perangkat supaya refresh /
+         tutup-buka aplikasi (termasuk dari bot Telegram) tidak mengusir
+         pengguna. Sesi di server sendiri berlaku 7 hari. */
+      var SES_KEY = "cuanmu_sess_v1";
+      function sessSave(){
+        try {
+          if(adminToken) localStorage.setItem(SES_KEY, JSON.stringify({ a: adminToken }));
+          else if(authToken) localStorage.setItem(SES_KEY, JSON.stringify({ u: authToken }));
+        } catch(e) {}
+      }
+      function sessLoad(){
+        try { return JSON.parse(localStorage.getItem(SES_KEY) || "null"); } catch(e) { return null; }
+      }
+      function sessClear(){
+        try { localStorage.removeItem(SES_KEY); } catch(e) {}
+      }
+
+      /* ---------------- deteksi server (probe) ----------------
+         Handler auth menunggu hasil /ping dulu sebelum memilih mode
+         server/lokal — dulu daftar bisa "nyangkut" jadi akun lokal
+         kalau tombol ditekan sebelum ping selesai. */
+      var probeSettled = false;
+      var probeWaiters = [];
+      function waitServer(cb){
+        if(probeSettled){ cb(); return; }
+        var done = false;
+        var run = function(){ if(!done){ done = true; cb(); } };
+        probeWaiters.push(run);
+        setTimeout(run, 7000);
+      }
+
+      /* ---------------- kunci anti dobel-submit ---------------- */
+      var authBusy = false;
+      function setBtnBusy(btn, busy, busyText){
+        if(!btn) return;
+        if(busy){
+          if(btn._lbl === undefined) btn._lbl = btn.textContent;
+          btn.disabled = true;
+          if(busyText) btn.textContent = busyText;
+        } else {
+          btn.disabled = false;
+          if(btn._lbl !== undefined){ btn.textContent = btn._lbl; btn._lbl = undefined; }
+        }
+      }
       function fmtHistTime(t){
         if(t === null || t === undefined || t === "") return nowTime();
         var d = null;
@@ -1236,12 +1348,18 @@
         enterApp();
         if(welcomeBack) toast("Selamat datang kembali, " + S.name + "!");
       }
-      function doServerRegister(name, contact, pass){
+      function doServerRegister(name, contact, pass, btn){
         var body = { name: name, contact: contact, password: pass };
         if(refParam) body.ref = refParam;
         apiCall("POST", "/register", body, null).then(function(res){
+          authBusy = false;
+          setBtnBusy(btn, false);
+          setBtnBusy($("regSubmitBtn"), false);
+          setBtnBusy($("otpVerify"), false);
           if(res && res.ok && res.token){
             authToken = res.token;
+            sessSave();
+            pendingReg = null;
             enterServerApp(res.state, false);
             toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin terkunci sudah masuk.");
           } else {
@@ -1513,6 +1631,7 @@
       }
       $("logoutBtn").addEventListener("click", function(){
         authToken = null; serverState = null;
+        sessClear();
         $("appView").classList.add("hidden");
         $("adminView").classList.add("hidden");
         $("bannedView").classList.add("hidden");
@@ -1522,6 +1641,7 @@
 
       $("regEmailForm").addEventListener("submit", function(e){
         e.preventDefault();
+        if(authBusy) return;
         var name = $("regNameE").value.trim();
         var email = $("regEmail").value.trim();
         var pass = $("regPassE").value;
@@ -1530,9 +1650,16 @@
         ok = setFieldInvalid("fRegEmail", !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
         ok = setFieldInvalid("fRegPassE", pass.length < 6) && ok;
         if(!ok) return;
-        if(serverMode){ doServerRegister(name, email, pass); return; }
-        if(findUser(email)){ toast("Email ini sudah terdaftar — silakan masuk pakai akun itu ya."); showAuthPane("login"); return; }
-        createAccount(name, email, pass);
+        var btn = $("regSubmitBtn");
+        authBusy = true;
+        setBtnBusy(btn, true, "Memproses…");
+        waitServer(function(){
+          if(serverMode){ doServerRegister(name, email, pass, btn); return; }
+          authBusy = false;
+          setBtnBusy(btn, false);
+          if(findUser(email)){ toast("Email ini sudah terdaftar — silakan masuk pakai akun itu ya."); showAuthPane("login"); return; }
+          createAccount(name, email, pass);
+        });
       });
 
       var phoneOK = function(v){ return /^08\d{8,12}$/.test(v.replace(/[\s-]/g, "")); };
@@ -1590,69 +1717,87 @@
       });
       $("otpBack").addEventListener("click", function(){ clearInterval(otpTimerInt); showAuthPane("reg"); });
       $("otpVerify").addEventListener("click", function(){
-        if(otpValue().length !== 6 || !pendingReg) return;
+        if(otpValue().length !== 6 || !pendingReg || authBusy) return;
         clearInterval(otpTimerInt);
-        if(serverMode){
-          doServerRegister(pendingReg.name, pendingReg.phone, pendingReg.pass);
+        var reg = pendingReg;
+        var btn = $("otpVerify");
+        authBusy = true;
+        setBtnBusy(btn, true, "Memproses…");
+        waitServer(function(){
+          if(serverMode){ doServerRegister(reg.name, reg.phone, reg.pass, btn); return; }
+          authBusy = false;
+          setBtnBusy(btn, false);
           pendingReg = null;
-          return;
-        }
-        createAccount(pendingReg.name, pendingReg.phone, pendingReg.pass);
-        pendingReg = null;
+          createAccount(reg.name, reg.phone, reg.pass);
+        });
       });
 
       $("loginForm").addEventListener("submit", function(e){
         e.preventDefault();
+        if(authBusy) return;
         var id = $("loginId").value.trim();
         var pass = $("loginPass").value;
         var ok = true;
         ok = setFieldInvalid("fLoginId", id.length < 3) && ok;
         ok = setFieldInvalid("fLoginPass", pass.length < 1) && ok;
         if(!ok) return;
-        if(serverMode){
-          if(id.toLowerCase() === ADMIN_ID){
-            apiCall("POST", "/admin/login", { contact: id, password: pass }, null).then(function(res){
+        var lbtn = $("loginBtn");
+        authBusy = true;
+        setBtnBusy(lbtn, true, "Memproses…");
+        waitServer(function(){
+          if(serverMode){
+            if(id.toLowerCase() === ADMIN_ID){
+              apiCall("POST", "/admin/login", { contact: id, password: pass }, null).then(function(res){
+                authBusy = false;
+                setBtnBusy(lbtn, false);
+                if(res && res.ok && res.token){
+                  adminToken = res.token;
+                  sessSave();
+                  enterAdminServer();
+                } else {
+                  setFieldInvalid("fLoginPass", true);
+                  toast((res && res.error) ? res.error : "Login admin gagal — periksa lagi email & password-nya ya.");
+                }
+              });
+              return;
+            }
+            apiCall("POST", "/login", { contact: id, password: pass }, null).then(function(res){
+              authBusy = false;
+              setBtnBusy(lbtn, false);
               if(res && res.ok && res.token){
-                adminToken = res.token;
-                enterAdminServer();
+                authToken = res.token;
+                sessSave();
+                enterServerApp(res.state, true);
               } else {
                 setFieldInvalid("fLoginPass", true);
-                toast((res && res.error) ? res.error : "Login admin gagal — periksa lagi email & password-nya ya.");
+                toast((res && res.error) ? res.error : "Login gagal — periksa lagi email/HP & password kamu ya.");
               }
             });
             return;
           }
-          apiCall("POST", "/login", { contact: id, password: pass }, null).then(function(res){
-            if(res && res.ok && res.token){
-              authToken = res.token;
-              enterServerApp(res.state, true);
-            } else {
-              setFieldInvalid("fLoginPass", true);
-              toast((res && res.error) ? res.error : "Login gagal — periksa lagi email/HP & password kamu ya.");
-            }
-          });
-          return;
-        }
-        if(id.toLowerCase() === ADMIN_ID){
-          toast("Panel admin hanya bisa dibuka saat server Cuanmu terhubung — koneksi server sedang tidak terjangkau, coba lagi sebentar ya.");
-          return;
-        }
-        var user = findUser(id);
-        if(user){
-          if(user.pass !== hashPw(pass)){ setFieldInvalid("fLoginPass", true); toast("Password salah — coba lagi ya."); return; }
-          if(user.banned){ showBanned(user); return; }
-          S = user;
+          authBusy = false;
+          setBtnBusy(lbtn, false);
+          if(id.toLowerCase() === ADMIN_ID){
+            toast("Panel admin hanya bisa dibuka saat server Cuanmu terhubung — koneksi server sedang tidak terjangkau, coba lagi sebentar ya.");
+            return;
+          }
+          var user = findUser(id);
+          if(user){
+            if(user.pass !== hashPw(pass)){ setFieldInvalid("fLoginPass", true); toast("Password salah — coba lagi ya."); return; }
+            if(user.banned){ showBanned(user); return; }
+            S = user;
+            enterApp();
+            toast("Selamat datang kembali, " + S.name + "!");
+            return;
+          }
+          var nm = id.indexOf("@") > 0 ? id.split("@")[0] : "Pengguna Cuanmu";
+          nm = nm.replace(/[._-]/g, " ").replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+          var rec = mkUser(nm, id, pass, {});
+          G.users.push(rec);
+          S = rec;
           enterApp();
           toast("Selamat datang kembali, " + S.name + "!");
-          return;
-        }
-        var nm = id.indexOf("@") > 0 ? id.split("@")[0] : "Pengguna Cuanmu";
-        nm = nm.replace(/[._-]/g, " ").replace(/\b\w/g, function(c){ return c.toUpperCase(); });
-        var rec = mkUser(nm, id, pass, {});
-        G.users.push(rec);
-        S = rec;
-        enterApp();
-        toast("Selamat datang kembali, " + S.name + "!");
+        });
       });
 
       /* ---------------- check-in ---------------- */
@@ -1845,7 +1990,7 @@
         $("spinBtn").disabled = true;
         $("slotMsg").textContent = "Berputar…";
         var reels = [$("reel0"), $("reel1"), $("reel2")];
-        reels.forEach(function(r){ r.classList.add("spinning"); });
+        reels.forEach(function(r){ r.classList.remove("win"); r.classList.add("spinning"); });
         var serverRes = null;
         apiCall("POST", "/spin", {}, authToken).then(function(res){ serverRes = res; });
         var ticks = 0;
@@ -1859,6 +2004,7 @@
               reels.forEach(function(r, i){ r.classList.remove("spinning"); r.textContent = serverRes.roll[i]; });
               var res2 = spinResult(serverRes.roll[0], serverRes.roll[1], serverRes.roll[2]);
               $("slotMsg").textContent = serverRes.prize > 0 ? res2.msg : "Belum beruntung, coba lagi!";
+              if(serverRes.prize > 0) reels.forEach(function(r){ r.classList.add("win"); });
               if(serverRes.state) applyServerState(serverRes.state);
             } else {
               reels.forEach(function(r){ r.classList.remove("spinning"); });
@@ -1883,7 +2029,7 @@
         $("spinBtn").disabled = true;
         $("slotMsg").textContent = "Berputar…";
         var reels = [$("reel0"), $("reel1"), $("reel2")];
-        reels.forEach(function(r){ r.classList.add("spinning"); });
+        reels.forEach(function(r){ r.classList.remove("win"); r.classList.add("spinning"); });
         var final = [0,1,2].map(function(){ return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; });
         var ticks = 0;
         var iv = setInterval(function(){
@@ -1895,6 +2041,7 @@
             var res = spinResult(final[0], final[1], final[2]);
             $("slotMsg").textContent = res.msg;
             if(res.prize > 0){
+              reels.forEach(function(r){ r.classList.add("win"); });
               S.free += res.prize;
               addHistory("game", res.prize >= 10000 ? "Jackpot Spin 777" : "Menang Spin Harian", res.prize);
             }
@@ -1947,12 +2094,30 @@
       /* ---------------- transfer ---------------- */
       var BANKS = ["BCA","BRI","BNI","Mandiri","BSI","CIMB Niaga"];
       var EWALLETS = ["DANA","OVO","GoPay","ShopeePay"];
+      /* Badge merek buatan sendiri: kotak rounded warna khas + nama merek (bukan file logo resmi). */
+      var BRANDS = {
+        "DANA":      { bg:"linear-gradient(135deg,#1299f2,#0b6fd6)", label:"DANA" },
+        "GoPay":     { bg:"linear-gradient(135deg,#00c2e8,#0081a8)", label:"GoPay" },
+        "OVO":       { bg:"linear-gradient(135deg,#7b4bc4,#4c1d95)", label:"OVO" },
+        "ShopeePay": { bg:"linear-gradient(135deg,#ff7a45,#ee4d2d)", label:"SPay" },
+        "BCA":       { bg:"linear-gradient(135deg,#2066b8,#123f7b)", label:"BCA" },
+        "BRI":       { bg:"linear-gradient(135deg,#2e7cd6,#0d4f9e)", label:"BRI" },
+        "BNI":       { bg:"linear-gradient(135deg,#f47b3a,#d14a0d)", label:"BNI" },
+        "Mandiri":   { bg:"linear-gradient(135deg,#3a7cc4,#173f77)", label:"MDR" },
+        "BSI":       { bg:"linear-gradient(135deg,#00b3a4,#00736e)", label:"BSI" },
+        "CIMB Niaga":{ bg:"linear-gradient(135deg,#e0333d,#a3121b)", label:"CIMB" }
+      };
+      function brandBadge(name, sm){
+        var b = BRANDS[name];
+        if(!b) return "";
+        return '<span class="brand-badge' + (sm ? " sm" : "") + '" style="background:' + b.bg + '">' + b.label + "</span>";
+      }
       var tf = { type:"bank", dest:"", num:"", name:"", amt:0 };
       function renderDestGrid(){
         var list = tf.type === "bank" ? BANKS : EWALLETS;
         $("tfDestGrid").className = "dest-grid" + (tf.type === "bank" ? "" : " two");
         $("tfDestGrid").innerHTML = list.map(function(d){
-          return '<button type="button" class="dest-opt' + (tf.dest === d ? " sel" : "") + '" data-dest="' + d + '">' + d + "</button>";
+          return '<button type="button" class="dest-opt' + (tf.dest === d ? " sel" : "") + '" data-dest="' + d + '">' + brandBadge(d) + "<span>" + d + "</span></button>";
         }).join("");
         $("tfDestGrid").querySelectorAll("[data-dest]").forEach(function(b){
           b.addEventListener("click", function(){
@@ -2005,7 +2170,7 @@
         if(!ok) return;
         tf.num = num; tf.name = name; tf.amt = amt;
         $("tfSummary").innerHTML =
-          '<div class="row"><span>Tujuan</span><b>' + tf.dest + " · " + maskNum(num) + "</b></div>" +
+          '<div class="row"><span>Tujuan</span><b>' + brandBadge(tf.dest, true) + tf.dest + " · " + maskNum(num) + "</b></div>" +
           '<div class="row"><span>Nama Penerima</span><b>' + esc(name) + "</b></div>" +
           '<div class="row"><span>Jumlah Transfer</span><b>Rp' + fmt(amt) + "</b></div>" +
           '<div class="row"><span>Biaya Admin</span><b style="color:var(--emerald);">Rp0</b></div>' +
@@ -2106,7 +2271,7 @@
         err.style.display = "none";
         if(!ok) return;
         $("wdSummary").innerHTML =
-          '<div class="row"><span>Tujuan</span><b>DANA · ' + maskNum(num) + "</b></div>" +
+          '<div class="row"><span>Tujuan</span><b>' + brandBadge("DANA", true) + "DANA · " + maskNum(num) + "</b></div>" +
           '<div class="row"><span>Nama Pemilik</span><b>' + esc(name) + "</b></div>" +
           '<div class="row"><span>Jumlah Penarikan</span><b>Rp' + fmt(wdAmt) + "</b></div>" +
           '<div class="row"><span>Biaya Admin</span><b style="color:var(--emerald);">Rp0</b></div>' +
@@ -2130,7 +2295,13 @@
             wbtn.disabled = false;
             if(res && res.ok){
               if(res.state) applyServerState(res.state);
-              $("wdSuccessText").innerHTML = "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang diproses. Saldo akan masuk di hari yang sama.";
+              var held = !!(res.wd && res.wd.status === "held");
+              if(S.history.length && S.history[0].amount === -amt && S.history[0].title.indexOf("Penarikan") === 0){
+                S.history[0].status = held ? "🔍 Ditinjau" : "⏳ Diproses";
+              }
+              $("wdSuccessText").innerHTML = held
+                ? "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang <b>ditinjau admin</b> karena nomor DANA ini juga dipakai akun lain. Poinmu sudah terpotong selama peninjauan — kalau disetujui, saldo masuk ke DANA; kalau ditolak, poin kembali utuh."
+                : "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang diproses. Saldo akan masuk di hari yang sama.";
               $("wdStep2").classList.add("hidden"); $("wdStep3").classList.remove("hidden");
               setSteps("wd", 3);
               renderWallet();
@@ -2150,9 +2321,12 @@
         if(amt >= 500) S.wdBigReady = false; else S.wdSmallUsed = true;
         S.free -= amt;
         var wdId = "wd-" + (++G.seq);
-        G.withdrawals.unshift({ id:wdId, userId:S.id, name:S.name, num:num, amt:amt, status:"pending", time:nowTime() });
-        addHistory("wallet", "Penarikan ke DANA " + maskNum(num), -amt, "Diproses", wdId);
-        $("wdSuccessText").innerHTML = "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang diproses. Saldo akan masuk di hari yang sama.";
+        var heldLocal = G.withdrawals.some(function(w){ return w.userId !== S.id && w.status !== "ditolak" && w.num === num; });
+        G.withdrawals.unshift({ id:wdId, userId:S.id, name:S.name, num:num, amt:amt, status: heldLocal ? "held" : "pending", flag: heldLocal ? "Nomor DANA dipakai akun lain" : "", time:nowTime() });
+        addHistory("wallet", "Penarikan ke DANA " + maskNum(num), -amt, heldLocal ? "🔍 Ditinjau" : "Diproses", wdId);
+        $("wdSuccessText").innerHTML = heldLocal
+          ? "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang <b>ditinjau admin</b> karena nomor DANA ini juga dipakai akun lain. Poinmu sudah terpotong selama peninjauan — kalau disetujui, saldo masuk ke DANA; kalau ditolak, poin kembali utuh."
+          : "Penarikan <b>Rp" + fmt(amt) + "</b> ke DANA " + maskNum(num) + " sedang diproses. Saldo akan masuk di hari yang sama.";
         $("wdStep2").classList.add("hidden"); $("wdStep3").classList.remove("hidden");
         setSteps("wd", 3);
         renderWallet();
@@ -2162,6 +2336,7 @@
       /* ---------------- panel admin ---------------- */
       $("adminLogout").addEventListener("click", function(){
         adminToken = null; adminOverview = null;
+        sessClear();
         $("adminView").classList.add("hidden");
         $("authView").classList.remove("hidden");
         showAuthPane("login");
@@ -2177,6 +2352,7 @@
       });
       function wdPill(st){
         if(st === "pending") return '<span class="pill pending">Menunggu</span>';
+        if(st === "held") return '<span class="pill held">🔍 Ditinjau</span>';
         if(st === "lunas") return '<span class="pill lunas">Lunas</span>';
         return '<span class="pill ditolak">Ditolak</span>';
       }
@@ -2184,8 +2360,9 @@
         var html = '<div class="queue-item"><div class="qi-top"><div>' +
           '<div class="qi-name">' + esc(w.name) + '</div>' +
           '<div class="qi-sub">DANA •••' + esc(String(w.num).slice(-4)) + ' · Hari ini ' + w.time + ' WIB</div></div>' +
-          '<div style="text-align:right;"><div class="qi-amt">Rp' + fmt(w.amt) + '</div><div style="margin-top:5px;">' + wdPill(w.status) + '</div></div></div>';
-        if(actions && w.status === "pending"){
+          '<div style="text-align:right;"><div class="qi-amt">Rp' + fmt(w.amt) + '</div><div style="margin-top:5px;">' + wdPill(w.status) + '</div></div></div>' +
+          (w.flag ? '<div class="qi-flag">⚠️ ' + esc(w.flag) + " — penarikan ditahan untuk ditinjau admin. Poin pengguna sudah terpotong selama ditahan.</div>" : "");
+        if(actions && (w.status === "pending" || w.status === "held")){
           html += '<div class="qi-actions"><button class="btn-approve" data-wd-act="approve" data-wid="' + w.id + '" type="button">✓ Setujui · Lunas</button>' +
             '<button class="btn-reject" data-wd-act="reject" data-wid="' + w.id + '" type="button">✕ Tolak · Refund</button></div>';
         }
@@ -2197,7 +2374,7 @@
         var wdLunas = 0, wdLunasCount = 0, pending = 0;
         G.withdrawals.forEach(function(w){
           if(w.status === "lunas"){ wdLunas += w.amt; wdLunasCount++; }
-          if(w.status === "pending") pending++;
+          if(w.status === "pending" || w.status === "held") pending++;
         });
         $("stUsers").textContent = G.users.length;
         $("stPoints").textContent = "Rp" + fmt(totalPoints);
@@ -2208,8 +2385,8 @@
         $("adminRecentWd").innerHTML = G.withdrawals.length
           ? G.withdrawals.slice(0,3).map(function(w){ return wdRowHTML(w, false); }).join("")
           : '<div class="empty">Belum ada penarikan.</div>';
-        var queue = G.withdrawals.filter(function(w){ return w.status === "pending"; });
-        var done = G.withdrawals.filter(function(w){ return w.status !== "pending"; });
+        var queue = G.withdrawals.filter(function(w){ return w.status === "pending" || w.status === "held"; });
+        var done = G.withdrawals.filter(function(w){ return w.status !== "pending" && w.status !== "held"; });
         $("adminWdQueue").innerHTML = queue.length
           ? queue.map(function(w){ return wdRowHTML(w, true); }).join("")
           : '<div class="empty">Antrean kosong — semua penarikan sudah ditinjau. 🎉</div>';
@@ -2253,7 +2430,7 @@
         if(!b) return;
         var w = null;
         G.withdrawals.forEach(function(x){ if(x.id === b.getAttribute("data-wid")) w = x; });
-        if(!w || w.status !== "pending") return;
+        if(!w || (w.status !== "pending" && w.status !== "held")) return;
         if(b.getAttribute("data-wd-act") === "approve"){
           w.status = "lunas";
           setWdStatusEverywhere(w, "Lunas");
@@ -2333,7 +2510,8 @@
       /* ---------------- panel admin (mode server) ---------------- */
       function normWdStatus(st){
         if(st === "pending" || st === "menunggu") return "pending";
-        if(st === "lunas" || st === "approved" || st === "approve" || st === "selesai") return "lunas";
+        if(st === "held" || st === "ditahan" || st === "review") return "held";
+        if(st === "lunas" || st === "approved" || st === "approve" || st === "selesai" || st === "paid") return "lunas";
         return "ditolak";
       }
       function fmtTs(ts){
@@ -2342,13 +2520,14 @@
         if(!isNaN(d.getTime())) return d.toLocaleDateString("id-ID", {day:"numeric", month:"short"}) + " · " + d.toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"}).replace(":", ".") + " WIB";
         return String(ts);
       }
-      function enterAdminServer(){
+      function enterAdminServer(fromRestore){
         $("authView").classList.add("hidden");
         $("appView").classList.add("hidden");
         $("bannedView").classList.add("hidden");
         $("adminView").classList.remove("hidden");
         window.scrollTo(0,0);
         toast("👋 Selamat datang di Panel Admin Cuanmu.");
+        if(fromRestore && adminOverview){ renderAdminServer(); return; }
         loadAdminOverview();
       }
       function loadAdminOverview(){
@@ -2363,12 +2542,13 @@
       }
       function swdRowHTML(w, actions){
         var st = normWdStatus(w.status);
-        var pill = st === "pending" ? '<span class="pill pending">Menunggu</span>' : (st === "lunas" ? '<span class="pill lunas">Lunas</span>' : '<span class="pill ditolak">Ditolak</span>');
+        var pill = st === "pending" ? '<span class="pill pending">Menunggu</span>' : (st === "held" ? '<span class="pill held">🔍 Ditinjau</span>' : (st === "lunas" ? '<span class="pill lunas">Lunas</span>' : '<span class="pill ditolak">Ditolak</span>'));
         var html = '<div class="queue-item"><div class="qi-top"><div>' +
           '<div class="qi-name">' + esc(w.name || "") + '</div>' +
           '<div class="qi-sub">DANA •••' + esc(String(w.dana || "").slice(-4)) + (w.danaName ? ' · a.n. ' + esc(w.danaName) : "") + (w.ts ? ' · ' + fmtTs(w.ts) : "") + '</div></div>' +
-          '<div style="text-align:right;"><div class="qi-amt">Rp' + fmt(w.poin || 0) + '</div><div style="margin-top:5px;">' + pill + '</div></div></div>';
-        if(actions && st === "pending"){
+          '<div style="text-align:right;"><div class="qi-amt">Rp' + fmt(w.poin || 0) + '</div><div style="margin-top:5px;">' + pill + '</div></div></div>' +
+          (w.flag ? '<div class="qi-flag">⚠️ ' + esc(w.flag) + " — penarikan ditahan untuk ditinjau admin. Poin pengguna sudah terpotong selama ditahan.</div>" : "");
+        if(actions && (st === "pending" || st === "held")){
           html += '<div class="qi-actions"><button class="btn-approve" data-swd-act="approve" data-swid="' + w.id + '" type="button">✓ Setujui · Lunas</button>' +
             '<button class="btn-reject" data-swd-act="reject" data-swid="' + w.id + '" type="button">✕ Tolak · Refund</button></div>';
         }
@@ -2381,8 +2561,8 @@
         var wds = ov.wds || [];
         var users = ov.users || [];
         var lunasCount = wds.filter(function(w){ return normWdStatus(w.status) === "lunas"; }).length;
-        var pending = wds.filter(function(w){ return normWdStatus(w.status) === "pending"; });
-        var done = wds.filter(function(w){ return normWdStatus(w.status) !== "pending"; });
+        var pending = wds.filter(function(w){ var s = normWdStatus(w.status); return s === "pending" || s === "held"; });
+        var done = wds.filter(function(w){ var s = normWdStatus(w.status); return s !== "pending" && s !== "held"; });
         $("stUsers").textContent = stats.users !== undefined ? stats.users : users.length;
         $("stPoints").textContent = "Rp" + fmt(stats.circulation || 0);
         $("stWdTotal").textContent = "Rp" + fmt(stats.totalWd || 0);
@@ -2411,7 +2591,7 @@
         }).join("") : '<div class="empty">Belum ada pengguna terdaftar.</div>';
         $("adminLog").innerHTML = wds.length ? wds.map(function(w){
           var st = normWdStatus(w.status);
-          var label = st === "pending" ? "Diproses" : (st === "lunas" ? "Lunas" : "Ditolak");
+          var label = st === "pending" ? "Diproses" : (st === "held" ? "Ditinjau" : (st === "lunas" ? "Lunas" : "Ditolak"));
           return '<div class="hist-item"><span class="hist-ic ic-em">' +
             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS.wallet + "</svg></span>" +
             '<div class="hist-main"><div class="hist-title">Penarikan ke DANA •••' + esc(String(w.dana || "").slice(-4)) + '<span class="status-chip">' + label + '</span></div>' +
@@ -2514,6 +2694,38 @@
       applySettingsUI();
       renderHistory();
 
+      /* ---------------- pulihkan sesi tersimpan ---------------- */
+      function restoreSession(){
+        var s = sessLoad();
+        if(!s) return false;
+        if(s.a){
+          adminToken = s.a;
+          apiCall("GET", "/admin/overview", null, adminToken).then(function(res){
+            if(res && res.ok !== false && res.stats){
+              adminOverview = res;
+              enterAdminServer(true);
+            } else {
+              adminToken = null;
+              sessClear();
+            }
+          });
+          return true;
+        }
+        if(s.u){
+          authToken = s.u;
+          apiCall("GET", "/me", null, authToken).then(function(res){
+            if(res && res.ok && res.state){
+              enterServerApp(res.state, true);
+            } else {
+              authToken = null;
+              sessClear();
+            }
+          });
+          return true;
+        }
+        return false;
+      }
+
       /* ---------------- deteksi server ---------------- */
       apiCall("GET", "/ping", null, null).then(function(res){
         if(res && res.ok){
@@ -2522,8 +2734,11 @@
           if(sim) sim.classList.add("hidden");
           var srn = $("serverRefNote");
           if(srn) srn.classList.remove("hidden");
-          if(refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
+          if(!restoreSession() && refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
         }
+        probeSettled = true;
+        var waiters = probeWaiters.splice(0);
+        waiters.forEach(function(f){ f(); });
       });
     </script>
   </body>
