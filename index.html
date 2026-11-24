@@ -650,6 +650,36 @@
       #bannedView{ flex:1; display:flex; flex-direction:column; }
       .banned-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:48px 28px; }
       .banned-ic{ width:84px; height:84px; border-radius:26px; background:var(--red-soft); color:var(--red); display:grid; place-items:center; margin-bottom:20px; }
+      /* ---------- maintenance ---------- */
+      #maintenanceView{ flex:1; display:flex; flex-direction:column; }
+      #maintenanceView:not(.hidden){ animation:viewIn .38s cubic-bezier(.22,.8,.28,1) both; }
+      .maint-hero{
+        background:linear-gradient(155deg,#021f13 0%,#04402a 34%,#065f46 58%,#0a8a5f 82%,#0cb07c 100%);
+        padding:36px 24px 58px; color:#fff; position:relative; overflow:hidden; border-radius:0 0 32px 32px; text-align:center;
+      }
+      .maint-hero::after{ content:""; position:absolute; right:-70px; top:-70px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(255,224,138,.5), transparent 65%); }
+      .maint-hero::before{ content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.13) 1.2px, transparent 1.4px); background-size:22px 22px; -webkit-mask-image:linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent); mask-image:linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent); }
+      .maint-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 22px 36px; margin-top:-40px; position:relative; z-index:2; }
+      .maint-ic{
+        width:92px; height:92px; border-radius:28px; display:grid; place-items:center; color:#43300a;
+        background:linear-gradient(160deg,#f8d264,#dda106); border:1px solid rgba(255,224,138,.7);
+        box-shadow:0 18px 34px rgba(3,44,28,.28), inset 0 1px 0 rgba(255,255,255,.75);
+      }
+      .maint-ic svg{ animation:maintWrench 2.6s ease-in-out infinite; transform-origin:70% 70%; }
+      @keyframes maintWrench{ 0%,100%{ transform:rotate(0deg);} 18%{ transform:rotate(-14deg);} 36%{ transform:rotate(10deg);} 54%{ transform:rotate(-6deg);} 72%{ transform:rotate(0deg);} }
+      @media (prefers-reduced-motion: reduce){ .maint-ic svg{ animation:none; } #maintenanceView:not(.hidden){ animation:none; } }
+      .maint-badge{ display:inline-block; margin-top:18px; background:var(--gold-soft); color:#8a6400; border:1px solid rgba(201,147,10,.4); font-size:11px; font-weight:800; letter-spacing:1.2px; padding:6px 12px; border-radius:99px; }
+      @media (prefers-color-scheme: dark){ .maint-badge{ color:#ffe08a; } }
+      .maint-wrap h2{ font-size:26px; font-weight:800; letter-spacing:-.4px; margin-top:14px; line-height:1.2; }
+      .maint-desc{ font-size:14px; color:var(--ink-2); line-height:1.65; margin-top:10px; max-width:340px; }
+      .maint-reason{ width:100%; max-width:360px; margin-top:20px; background:var(--surface); border:1px solid rgba(201,147,10,.45); border-radius:20px; padding:16px 18px; box-shadow:var(--shadow-sm), inset 0 1px 0 var(--card-hi); text-align:left; display:flex; gap:12px; align-items:flex-start; }
+      .maint-reason .dot{ width:10px; height:10px; border-radius:50%; background:var(--gold); flex:none; margin-top:6px; box-shadow:0 0 0 5px var(--gold-soft); }
+      .maint-reason span{ display:block; font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-3); }
+      .maint-reason p{ font-size:15.5px; font-weight:800; line-height:1.45; margin-top:3px; }
+      .maint-note{ font-size:12.5px; color:var(--ink-3); line-height:1.65; margin-top:16px; max-width:340px; }
+      .maint-actions{ width:100%; max-width:360px; margin-top:20px; }
+      .maint-admin-link{ margin-top:22px; font-size:12.5px; font-weight:600; color:var(--ink-3); text-decoration:underline; text-underline-offset:3px; padding:10px 14px; }
+      .maint-admin-link:active{ transform:scale(.97); }
       .page-head{ padding:22px 18px 0; }
       .page-head h2{ font-size:20px; font-weight:800; }
       .page-head p{ font-size:13px; color:var(--ink-2); margin-top:4px; line-height:1.55; }
@@ -1189,6 +1219,35 @@
         </div>
       </div>
 
+      <!-- ================= MAINTENANCE ================= -->
+      <div id="maintenanceView" class="hidden">
+        <div class="maint-hero">
+          <div class="brand" style="justify-content:center;">
+            <div>
+              <div class="brand-name">Cuanmu</div>
+              <div class="brand-tag">Dompet poin serba bisa</div>
+            </div>
+          </div>
+        </div>
+        <div class="maint-wrap">
+          <span class="maint-ic" aria-hidden="true">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z"/></svg>
+          </span>
+          <span class="maint-badge">Maintenance</span>
+          <h2>Sedang Maintenance</h2>
+          <p class="maint-desc">Aplikasi lagi kami perbaiki dulu biar makin aman &amp; nyaman. Saldo dan poin kamu aman — nggak hilang, cuma lagi nggak bisa dibuka sebentar.</p>
+          <div class="maint-reason">
+            <span class="dot" aria-hidden="true"></span>
+            <div><span>Alasan</span><p id="maintReason">Perbaikan penarikan</p></div>
+          </div>
+          <p class="maint-note">Fitur penarikan lagi diperbaiki. Penarikan yang sudah masuk tetap tercatat dan akan diproses setelah maintenance selesai. Silakan coba buka lagi nanti ya.</p>
+          <div class="maint-actions">
+            <button class="btn-gold" id="maintRetry" type="button">Cek Lagi</button>
+          </div>
+          <button class="maint-admin-link" id="maintAdminLink" type="button">Login Admin</button>
+        </div>
+      </div>
+
       <!-- ================= PANEL ADMIN ================= -->
       <div id="adminView" class="hidden">
         <div class="admin-head">
@@ -1297,6 +1356,8 @@
       var API_BASE = "https://cuanmu-api.dandikurniawan152.workers.dev";
       var REF_BASE = "https://t.me/CuanmuAppBot?start=ref_";
       var serverMode = false;
+      var maintenanceMode = false;
+      var maintenanceReason = "";
       var authToken = null;   // token sesi pengguna (di memori saja)
       var adminToken = null;  // token sesi admin (di memori saja)
       var serverState = null; // state terakhir dari server
@@ -1328,6 +1389,32 @@
       }
       function sessClear(){
         try { localStorage.removeItem(SES_KEY); } catch(e) {}
+      }
+
+      /* ---------------- maintenance ----------------
+         Server memberi tahu lewat GET /ping: {maintenance:true, reason}.
+         Selama maintenance, user biasa ditahan di layar maintenance;
+         admin dikecualikan server-side, jadi token admin & login admin
+         tetap dilayani dan bisa menembus ke panel. Sesi user biasa
+         TIDAK dihapus — cukup tidak dipulihkan selama maintenance. */
+      function maintReasonText(){
+        return maintenanceReason || "Perbaikan penarikan";
+      }
+      function showMaintenance(reason){
+        maintenanceMode = true;
+        if(reason) maintenanceReason = String(reason);
+        var r = $("maintReason");
+        if(r) r.textContent = maintReasonText();
+        $("authView").classList.add("hidden");
+        $("appView").classList.add("hidden");
+        $("adminView").classList.add("hidden");
+        $("bannedView").classList.add("hidden");
+        $("maintenanceView").classList.remove("hidden");
+        window.scrollTo(0,0);
+      }
+      function hideMaintenanceView(){
+        var mv = $("maintenanceView");
+        if(mv) mv.classList.add("hidden");
       }
 
       /* ---------------- deteksi server (probe) ----------------
@@ -1428,6 +1515,11 @@
           setBtnBusy(btn, false);
           setBtnBusy($("regSubmitBtn"), false);
           setBtnBusy($("otpVerify"), false);
+          if(res && res.maintenance){
+            showMaintenance(res.reason || maintenanceReason);
+            toast("🛠️ Sedang maintenance: " + maintReasonText());
+            return;
+          }
           if(res && res.ok && res.token){
             authToken = res.token;
             sessSave();
@@ -1675,20 +1767,55 @@
         $("authView").classList.add("hidden");
         $("appView").classList.add("hidden");
         $("adminView").classList.add("hidden");
+        hideMaintenanceView();
         $("bannedText").textContent = "Halo " + user.name + ", akun kamu (" + user.idLabel + ") sedang diblokir oleh admin sehingga tidak bisa masuk. Kalau ini keliru, hubungi tim Cuanmu ya.";
         $("bannedView").classList.remove("hidden");
         window.scrollTo(0,0);
       }
       $("bannedBack").addEventListener("click", function(){
         $("bannedView").classList.add("hidden");
+        if(maintenanceMode){ showMaintenance(maintenanceReason); return; }
         $("authView").classList.remove("hidden");
         showAuthPane("login");
       });
+      /* Jalur admin dari layar maintenance: tombol kecil di bawah
+         membuka form Masuk normal; hanya login admin yang bisa tembus. */
+      $("maintAdminLink").addEventListener("click", function(){
+        hideMaintenanceView();
+        $("authView").classList.remove("hidden");
+        showAuthPane("login");
+        var li = $("loginId"); if(li) li.focus();
+      });
+      $("maintRetry").addEventListener("click", function(){
+        var btn = $("maintRetry");
+        setBtnBusy(btn, true, "Memeriksa…");
+        apiCall("GET", "/ping", null, null).then(function(res){
+          setBtnBusy(btn, false);
+          if(res && res.maintenance){
+            if(res.reason) maintenanceReason = String(res.reason);
+            var r = $("maintReason"); if(r) r.textContent = maintReasonText();
+            toast("🛠️ Masih maintenance: " + maintReasonText());
+            return;
+          }
+          if(res && res.ok){
+            maintenanceMode = false; maintenanceReason = "";
+            hideMaintenanceView();
+            $("authView").classList.remove("hidden");
+            showAuthPane("login");
+            toast("✅ Maintenance selesai — aplikasi sudah bisa dipakai lagi.");
+            restoreSession();
+            return;
+          }
+          toast("Belum bisa terhubung ke server — coba lagi sebentar ya.");
+        });
+      });
       function enterApp(){
         if(S.banned){ showBanned(S); return; }
+        if(maintenanceMode && !adminToken){ showMaintenance(maintenanceReason); return; }
         $("authView").classList.add("hidden");
         $("bannedView").classList.add("hidden");
         $("adminView").classList.add("hidden");
+        hideMaintenanceView();
         $("appView").classList.remove("hidden");
         $("helloName").textContent = S.name;
         if(serverMode && serverState){
@@ -1708,6 +1835,8 @@
         $("appView").classList.add("hidden");
         $("adminView").classList.add("hidden");
         $("bannedView").classList.add("hidden");
+        hideMaintenanceView();
+        if(maintenanceMode){ showMaintenance(maintenanceReason); return; }
         $("authView").classList.remove("hidden");
         showAuthPane("login");
       });
@@ -1715,6 +1844,7 @@
       $("regEmailForm").addEventListener("submit", function(e){
         e.preventDefault();
         if(authBusy) return;
+        if(maintenanceMode){ toast("🛠️ Sedang maintenance: " + maintReasonText()); showMaintenance(maintenanceReason); return; }
         var name = $("regNameE").value.trim();
         var email = $("regEmail").value.trim();
         var pass = $("regPassE").value;
@@ -1738,6 +1868,7 @@
       var phoneOK = function(v){ return /^08\d{8,12}$/.test(v.replace(/[\s-]/g, "")); };
       $("regHpForm").addEventListener("submit", function(e){
         e.preventDefault();
+        if(maintenanceMode){ toast("🛠️ Sedang maintenance: " + maintReasonText()); showMaintenance(maintenanceReason); return; }
         var name = $("regNameH").value.trim();
         var hp = $("regHp").value.trim();
         var pass = $("regPassH").value;
@@ -1790,6 +1921,7 @@
       });
       $("otpBack").addEventListener("click", function(){ clearInterval(otpTimerInt); showAuthPane("reg"); });
       $("otpVerify").addEventListener("click", function(){
+        if(maintenanceMode){ toast("🛠️ Sedang maintenance: " + maintReasonText()); showMaintenance(maintenanceReason); return; }
         if(otpValue().length !== 6 || !pendingReg || authBusy) return;
         clearInterval(otpTimerInt);
         var reg = pendingReg;
@@ -1818,6 +1950,13 @@
         authBusy = true;
         setBtnBusy(lbtn, true, "Memproses…");
         waitServer(function(){
+          if(maintenanceMode && id.toLowerCase() !== ADMIN_ID){
+            authBusy = false;
+            setBtnBusy(lbtn, false);
+            toast("🛠️ Sedang maintenance: " + maintReasonText());
+            showMaintenance(maintenanceReason);
+            return;
+          }
           if(serverMode){
             if(id.toLowerCase() === ADMIN_ID){
               apiCall("POST", "/admin/login", { contact: id, password: pass }, null).then(function(res){
@@ -1837,6 +1976,12 @@
             apiCall("POST", "/login", { contact: id, password: pass }, null).then(function(res){
               authBusy = false;
               setBtnBusy(lbtn, false);
+              if(res && res.maintenance){
+                var mr = res.reason || (res.error ? String(res.error).replace(/^🛠️\s*Sedang maintenance:\s*/i, "") : "");
+                showMaintenance(mr || maintenanceReason);
+                toast("🛠️ Sedang maintenance: " + maintReasonText());
+                return;
+              }
               if(res && res.ok && res.token){
                 authToken = res.token;
                 sessSave();
@@ -2565,6 +2710,7 @@
         adminToken = null; adminOverview = null;
         sessClear();
         $("adminView").classList.add("hidden");
+        if(maintenanceMode){ showMaintenance(maintenanceReason); return; }
         $("authView").classList.remove("hidden");
         showAuthPane("login");
       });
@@ -2751,6 +2897,7 @@
         $("authView").classList.add("hidden");
         $("appView").classList.add("hidden");
         $("bannedView").classList.add("hidden");
+        hideMaintenanceView();
         $("adminView").classList.remove("hidden");
         window.scrollTo(0,0);
         toast("👋 Selamat datang di Panel Admin Cuanmu.");
@@ -2933,14 +3080,26 @@
               enterAdminServer(true);
             } else {
               adminToken = null;
-              sessClear();
+              /* Selama maintenance token admin yang gagal jangan
+                 menghapus sesi user yang mungkin ikut tersimpan. */
+              if(maintenanceMode){ showMaintenance(maintenanceReason); }
+              else sessClear();
             }
           });
           return true;
         }
         if(s.u){
+          /* Sesi user biasa TIDAK dipulihkan selama maintenance:
+             tetap di layar maintenance, sesi dibiarkan utuh di
+             perangkat supaya bisa lanjut lagi setelah maintenance. */
+          if(maintenanceMode){ showMaintenance(maintenanceReason); return true; }
           authToken = s.u;
           apiCall("GET", "/me", null, authToken).then(function(res){
+            if(res && res.maintenance){
+              authToken = null;
+              showMaintenance(res.reason || maintenanceReason);
+              return;
+            }
             if(res && res.ok && res.state){
               enterServerApp(res.state, true);
             } else {
@@ -2955,13 +3114,29 @@
 
       /* ---------------- deteksi server ---------------- */
       apiCall("GET", "/ping", null, null).then(function(res){
-        if(res && res.ok){
+        if(res && (res.ok || res.maintenance)){
           serverMode = true;
           var sim = $("simInvite");
           if(sim) sim.classList.add("hidden");
           var srn = $("serverRefNote");
           if(srn) srn.classList.remove("hidden");
-          if(!restoreSession() && refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
+          if(res.maintenance){
+            maintenanceMode = true;
+            maintenanceReason = res.reason ? String(res.reason) : "Perbaikan penarikan";
+            var saved = sessLoad();
+            if(saved && saved.a){
+              /* Admin tersimpan: coba tembus dulu, jangan kedip
+                 layar maintenance kalau tokennya masih valid. */
+              restoreSession();
+            } else {
+              showMaintenance(maintenanceReason);
+            }
+          } else {
+            maintenanceMode = false;
+            maintenanceReason = "";
+            hideMaintenanceView();
+            if(!restoreSession() && refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
+          }
         }
         probeSettled = true;
         var waiters = probeWaiters.splice(0);
