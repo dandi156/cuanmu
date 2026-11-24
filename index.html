@@ -1017,10 +1017,38 @@
 
       /* --- gerak masuk: lebih tenang --- */
       .view,.view.active .content > *,.view.active .flow-body > *,#adminView .admin-body > *{ animation-duration:.25s; }
+
+      /* --- tirai pemulihan sesi (refresh tidak memamerkan form login) --- */
+      #bootVeil{
+        position:fixed; inset:0; z-index:90; background:var(--bg);
+        display:flex; align-items:center; justify-content:center; padding:24px;
+      }
+      .boot-card{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px; max-width:300px; }
+      .boot-spinner{
+        width:38px; height:38px; border-radius:50%;
+        border:3px solid var(--surface-2); border-top-color:var(--emerald);
+        animation:bootSpin .8s linear infinite;
+      }
+      @keyframes bootSpin{ to{ transform:rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce){ .boot-spinner{ animation:none; } }
+      #bootVeilText{ font-size:14px; color:var(--ink-2); line-height:1.55; }
+      #bootRetryBtn{
+        border:none; cursor:pointer; font:inherit; font-weight:700; font-size:14px;
+        color:#fff; background:var(--emerald); padding:11px 22px; border-radius:12px;
+      }
     </style>
   </head>
   <body>
     <div class="phone">
+
+      <!-- ============ TIRAI PEMULIHAN SESI ============ -->
+      <div id="bootVeil" class="hidden">
+        <div class="boot-card">
+          <div id="bootSpinner" class="boot-spinner"></div>
+          <p id="bootVeilText">Memulihkan sesi kamu…</p>
+          <button id="bootRetryBtn" class="hidden" type="button">Coba Lagi</button>
+        </div>
+      </div>
 
       <!-- ================= AUTH ================= -->
       <div id="authView">
@@ -1761,8 +1789,17 @@
         var opts = { method: method, headers: { "Content-Type": "application/json" } };
         if(token) opts.headers["Authorization"] = "Bearer " + token;
         if(body) opts.body = JSON.stringify(body);
-        return fetch(API_BASE + path, opts).then(function(r){ return r.json(); })
-          .catch(function(){ return { ok:false, error:"Tidak bisa terhubung ke server. Coba lagi ya." }; });
+        return fetch(API_BASE + path, opts).then(function(r){
+          return r.json().then(function(j){
+            if(j && typeof j === "object") j._status = r.status;
+            return j;
+          });
+        }).catch(function(){
+          /* _net menandai kegagalan JARINGAN (server tidak menjawab sama
+             sekali) — beda dengan penolakan server. Pemulihan sesi memakai
+             tanda ini supaya koneksi putus sesaat tidak menghapus sesi. */
+          return { ok:false, _net:true, error:"Tidak bisa terhubung ke server. Coba lagi ya." };
+        });
       }
 
       /* ---------------- sesi persisten ----------------
@@ -1794,6 +1831,7 @@
       }
       function showMaintenance(reason){
         maintenanceMode = true;
+        hideBootVeil();
         if(reason) maintenanceReason = String(reason);
         var r = $("maintReason");
         if(r) r.textContent = maintReasonText();
@@ -2280,6 +2318,7 @@
         toast("🎉 Selamat datang, " + name + "! Bonus pendaftaran " + fmt(G.settings.signupBonus) + " poin langsung masuk ke saldo kamu.");
       }
       function showBanned(user){
+        hideBootVeil();
         $("authView").classList.add("hidden");
         $("appView").classList.add("hidden");
         $("adminView").classList.add("hidden");
@@ -2339,6 +2378,7 @@
         });
       });
       function enterApp(){
+        hideBootVeil();
         if(S.banned){ showBanned(S); return; }
         if(maintenanceMode && !adminToken){ showMaintenance(maintenanceReason); return; }
         $("authView").classList.add("hidden");
@@ -3506,6 +3546,7 @@
         return String(ts);
       }
       function enterAdminServer(fromRestore){
+        hideBootVeil();
         $("authView").classList.add("hidden");
         $("appView").classList.add("hidden");
         $("bannedView").classList.add("hidden");
@@ -3680,80 +3721,172 @@
       applySettingsUI();
       renderHistory();
 
-      /* ---------------- pulihkan sesi tersimpan ---------------- */
+      /* ---------------- tirai pemulihan sesi ----------------
+         Selama sesi tersimpan sedang divalidasi ke server, tampilkan
+         tirai ini — bukan form login — supaya refresh tidak terlihat
+         seperti "terlempar keluar". */
+      function showBootVeil(){
+        var v = $("bootVeil");
+        if(v) v.classList.remove("hidden");
+      }
+      function hideBootVeil(){
+        var v = $("bootVeil");
+        if(v) v.classList.add("hidden");
+      }
+      function showBootRetry(){
+        showBootVeil();
+        var sp = $("bootSpinner");
+        if(sp) sp.classList.add("hidden");
+        var t = $("bootVeilText");
+        if(t) t.textContent = "Koneksi ke server terputus — sesi kamu tetap tersimpan di perangkat ini, tidak perlu login ulang.";
+        var b = $("bootRetryBtn");
+        if(b) b.classList.remove("hidden");
+      }
+      function resetBootVeil(){
+        var sp = $("bootSpinner");
+        if(sp) sp.classList.remove("hidden");
+        var t = $("bootVeilText");
+        if(t) t.textContent = "Memulihkan sesi kamu…";
+        var b = $("bootRetryBtn");
+        if(b) b.classList.add("hidden");
+      }
+
+      /* ---------------- pulihkan sesi tersimpan ----------------
+         Aturan penting: sesi hanya dihapus kalau SERVER yang menolak
+         tokennya (jawaban ok:false dari server). Kegagalan jaringan
+         (_net) dicoba ulang beberapa kali dan TIDAK PERNAH menghapus
+         sesi — koneksi putus sesaat bukan berarti sesi habis. Dulu
+         kegagalan apa pun langsung menghapus sesi, jadi sekali refresh
+         pas sinyal jelek = wajib login ulang (terutama terasa di admin
+         karena /admin/overview memuat banyak data & lebih lambat). */
       function restoreSession(){
         var s = sessLoad();
-        if(!s) return false;
+        if(!s){ hideBootVeil(); return false; }
         if(s.a){
-          adminToken = s.a;
-          apiCall("GET", "/admin/overview", null, adminToken).then(function(res){
-            if(res && res.ok !== false && res.stats){
-              adminOverview = res;
-              enterAdminServer(true);
-            } else {
-              adminToken = null;
-              /* Selama maintenance token admin yang gagal jangan
-                 menghapus sesi user yang mungkin ikut tersimpan. */
-              if(maintenanceMode){ showMaintenance(maintenanceReason); }
-              else sessClear();
-            }
-          });
+          tryRestoreAdmin(0);
           return true;
         }
         if(s.u){
           /* Sesi user biasa TIDAK dipulihkan selama maintenance:
              tetap di layar maintenance, sesi dibiarkan utuh di
              perangkat supaya bisa lanjut lagi setelah maintenance. */
-          if(maintenanceMode){ showMaintenance(maintenanceReason); return true; }
-          authToken = s.u;
-          apiCall("GET", "/me", null, authToken).then(function(res){
-            if(res && res.maintenance){
-              authToken = null;
-              showMaintenance(res.reason || maintenanceReason);
-              return;
-            }
-            if(res && res.ok && res.state){
-              enterServerApp(res.state, true);
-            } else {
-              authToken = null;
-              sessClear();
-            }
-          });
+          if(maintenanceMode){ hideBootVeil(); showMaintenance(maintenanceReason); return true; }
+          tryRestoreUser(s.u, 0);
           return true;
         }
+        hideBootVeil();
         return false;
       }
-
-      /* ---------------- deteksi server ---------------- */
-      apiCall("GET", "/ping", null, null).then(function(res){
-        if(res && (res.ok || res.maintenance)){
-          serverMode = true;
-          var sim = $("simInvite");
-          if(sim) sim.classList.add("hidden");
-          var srn = $("serverRefNote");
-          if(srn) srn.classList.remove("hidden");
-          if(res.maintenance){
-            maintenanceMode = true;
-            maintenanceReason = res.reason ? String(res.reason) : "Perbaikan penarikan";
-            var saved = sessLoad();
-            if(saved && saved.a){
-              /* Admin tersimpan: coba tembus dulu, jangan kedip
-                 layar maintenance kalau tokennya masih valid. */
-              restoreSession();
+      function tryRestoreAdmin(attempt){
+        var s = sessLoad();
+        if(!s || !s.a){ hideBootVeil(); return; }
+        adminToken = s.a;
+        apiCall("GET", "/admin/overview", null, adminToken).then(function(res){
+          if(res && !res._net && res.ok !== false && res.stats){
+            adminOverview = res;
+            hideBootVeil();
+            enterAdminServer(true);
+          } else if(res && res._net){
+            if(attempt < 3){
+              setTimeout(function(){ tryRestoreAdmin(attempt + 1); }, 1200);
             } else {
-              showMaintenance(maintenanceReason);
+              /* Menyerah untuk sekarang, tapi sesi DIBIARKAN tersimpan:
+                 tombol Coba Lagi / refresh berikutnya bisa lanjut. */
+              adminToken = null;
+              showBootRetry();
             }
           } else {
-            maintenanceMode = false;
-            maintenanceReason = "";
-            hideMaintenanceView();
-            if(!restoreSession() && refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
+            adminToken = null;
+            hideBootVeil();
+            /* Selama maintenance token admin yang gagal jangan
+               menghapus sesi user yang mungkin ikut tersimpan. */
+            if(maintenanceMode){ showMaintenance(maintenanceReason); }
+            else sessClear();
           }
-        }
-        probeSettled = true;
-        var waiters = probeWaiters.splice(0);
-        waiters.forEach(function(f){ f(); });
+        });
+      }
+      function tryRestoreUser(tok, attempt){
+        authToken = tok;
+        apiCall("GET", "/me", null, authToken).then(function(res){
+          if(res && res.maintenance){
+            authToken = null;
+            hideBootVeil();
+            showMaintenance(res.reason || maintenanceReason);
+            return;
+          }
+          if(res && !res._net && res.ok && res.state){
+            hideBootVeil();
+            enterServerApp(res.state, true);
+          } else if(res && res._net){
+            if(attempt < 3){
+              setTimeout(function(){ tryRestoreUser(tok, attempt + 1); }, 1200);
+            } else {
+              authToken = null;
+              showBootRetry();
+            }
+          } else {
+            authToken = null;
+            hideBootVeil();
+            sessClear();
+          }
+        });
+      }
+
+      /* ---------------- deteksi server ----------------
+         /ping yang gagal karena jaringan dicoba ulang dulu; kalau tetap
+         gagal tapi ada sesi tersimpan, pemulihan sesi tetap dicoba —
+         endpoint validasinya sendiri yang menentukan sesi masih sah. */
+      var bootTries = 0;
+      function bootProbe(){
+        apiCall("GET", "/ping", null, null).then(function(res){
+          if(res && res._net && bootTries < 2){
+            bootTries++;
+            setTimeout(bootProbe, 1200);
+            return;
+          }
+          if(res && (res.ok || res.maintenance)){
+            serverMode = true;
+            var sim = $("simInvite");
+            if(sim) sim.classList.add("hidden");
+            var srn = $("serverRefNote");
+            if(srn) srn.classList.remove("hidden");
+            if(res.maintenance){
+              maintenanceMode = true;
+              maintenanceReason = res.reason ? String(res.reason) : "Perbaikan penarikan";
+              var saved = sessLoad();
+              if(saved && saved.a){
+                /* Admin tersimpan: coba tembus dulu, jangan kedip
+                   layar maintenance kalau tokennya masih valid. */
+                restoreSession();
+              } else {
+                showMaintenance(maintenanceReason);
+              }
+            } else {
+              maintenanceMode = false;
+              maintenanceReason = "";
+              hideMaintenanceView();
+              if(!restoreSession() && refParam) toast("🔗 Kamu membuka link undangan teman — daftar sekarang, temanmu dapat poinnya!");
+            }
+          } else if(res && res._net && sessLoad()){
+            serverMode = true;
+            restoreSession();
+          } else {
+            hideBootVeil();
+          }
+          probeSettled = true;
+          var waiters = probeWaiters.splice(0);
+          waiters.forEach(function(f){ f(); });
+        });
+      }
+      $("bootRetryBtn").addEventListener("click", function(){
+        bootTries = 0;
+        resetBootVeil();
+        bootProbe();
       });
+      /* Ada sesi tersimpan? Tirai naik dari awal supaya refresh tidak
+         memamerkan form login selama sesi divalidasi. */
+      if(sessLoad()) showBootVeil();
+      bootProbe();
     </script>
   </body>
 </html>
