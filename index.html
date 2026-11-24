@@ -15,8 +15,8 @@
     </style>
     <style>
       :root{
-        --bg:#F6F7F6; --surface:#ffffff; --surface-2:#F0F3F0; --ink:#17251D; --ink-2:#55645A; --ink-3:#6B7A70;
-        --line:#E3E8E3; --emerald:#0E9F6E; --emerald-hi:#0E9F6E; --emerald-deep:#0B7A55; --emerald-dark:#17251D;
+        --bg:#E8EDE8; --surface:#FAFBF9; --surface-2:#DFE7DF; --ink:#17251D; --ink-2:#55645A; --ink-3:#6B7A70;
+        --line:#C9D4C9; --emerald:#0B8A5F; --emerald-hi:#0B8A5F; --emerald-deep:#07714C; --emerald-dark:#17251D;
         --gold:#D97706; --gold-hi:#F59E0B; --gold-deep:#B45309; --gold-soft:#FBF3DC;
         --red:#D92D20; --red-soft:#FDECEA;
         --shadow:0 1px 3px rgba(23,37,29,.05); --shadow-sm:0 1px 2px rgba(23,37,29,.04);
@@ -26,8 +26,8 @@
       }
       @media (prefers-color-scheme: dark){
         :root{
-          --bg:#F6F7F6; --surface:#ffffff; --surface-2:#F0F3F0; --ink:#17251D; --ink-2:#55645A; --ink-3:#6B7A70;
-          --line:#E3E8E3; --gold-soft:#FBF3DC; --red-soft:#FDECEA;
+          --bg:#E8EDE8; --surface:#FAFBF9; --surface-2:#DFE7DF; --ink:#17251D; --ink-2:#55645A; --ink-3:#6B7A70;
+          --line:#C9D4C9; --gold-soft:#FBF3DC; --red-soft:#FDECEA;
           --shadow:0 1px 3px rgba(23,37,29,.05); --shadow-sm:0 1px 2px rgba(23,37,29,.04);
           --card-hi:transparent;
         }
@@ -660,36 +660,30 @@
       #view-home .content > .card{ margin-top:14px; }
       .section-title.compact{ margin:18px 2px 10px; }
 
-      /* ---------- akordeon kartu sekunder ---------- */
-      .acc{
-        background:var(--surface); border:1px solid var(--line); border-radius:20px;
-        box-shadow:var(--shadow-sm), inset 0 1px 0 var(--card-hi);
-        margin-top:12px; overflow:hidden;
+      /* ---------- menu fitur: grid 2 kolom + satu panel konten di bawahnya ---------- */
+      .menu-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+      .menu-tile{
+        background:var(--surface); border:1px solid var(--line); border-radius:14px;
+        box-shadow:var(--shadow-sm); width:100%;
+        padding:14px 12px 12px; text-align:left;
+        display:flex; flex-direction:column; align-items:flex-start; gap:9px;
+        transition:border-color .18s ease, background .18s ease, transform .12s ease;
       }
-      .acc-head{
-        width:100%; display:flex; align-items:center; gap:11px; padding:12px 15px;
-        text-align:left; min-height:3.4rem;
+      .menu-tile:active{ transform:scale(.97); }
+      .menu-tile .mt-ic{ width:40px; height:40px; border-radius:12px; display:grid; place-items:center; flex:none; }
+      .menu-tile b{ display:block; font-size:13.5px; font-weight:700; line-height:1.25; }
+      .menu-tile .mt-sub{
+        display:block; font-size:11px; color:var(--ink-3); font-weight:500; line-height:1.35; margin-top:2px;
       }
-      .acc-head:active{ background:var(--surface-2); }
-      .acc-ic{
-        width:38px; height:38px; border-radius:12px; display:grid; place-items:center; flex:none;
-        box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 10px rgba(3,44,28,.08);
+      .menu-tile.on{ border-color:var(--emerald); background:#E1EDE4; box-shadow:0 0 0 1px var(--emerald); }
+      .menu-panel{
+        margin-top:12px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
+        box-shadow:var(--shadow-sm); padding:16px;
+        animation:viewIn .3s cubic-bezier(.22,.8,.28,1) both;
       }
-      .acc-tt{ flex:1; min-width:0; }
-      .acc-tt b{ display:block; font-size:14.5px; font-weight:800; line-height:1.25; }
-      .acc-tt span{
-        display:block; font-size:11.5px; color:var(--ink-3); font-weight:600; margin-top:1px;
-        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      }
-      .acc-chev{ flex:none; color:var(--ink-3); transition:transform .3s ease; }
-      .acc.open .acc-chev{ transform:rotate(180deg); }
-      .acc-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s cubic-bezier(.22,.8,.28,1); }
-      .acc.open .acc-body{ grid-template-rows:1fr; }
-      .acc-inner{ overflow:hidden; min-height:0; }
-      .acc-pad{ padding:2px 15px 15px; }
-      .acc-inner .card{ border:none; box-shadow:none; background:transparent; padding:2px 0 0; border-radius:0; }
-      .acc-inner .promo{ margin-top:2px; }
-      @media (prefers-reduced-motion: reduce){ .acc-body, .acc-chev{ transition:none; } }
+      .menu-pane .card{ border:none; box-shadow:none; background:transparent; padding:0; border-radius:0; }
+      .menu-pane .promo{ margin-top:0; }
+      @media (prefers-reduced-motion: reduce){ .menu-panel{ animation:none; } .menu-tile{ transition:none; } }
 
       /* leaderboard */
       .lb-row{ display:flex; align-items:center; gap:11px; padding:10px 2px; border-bottom:1px solid var(--line); }
@@ -841,17 +835,15 @@
 
       /* --- kartu umum --- */
       .card{ border-radius:14px; box-shadow:var(--shadow-sm); padding:16px; }
-      .acc{ border-radius:14px; box-shadow:var(--shadow-sm); margin-top:12px; }
-      .acc-head{ padding:13px 14px; }
-      .acc-ic{ border-radius:10px; box-shadow:none; }
-      .ic-em,.ic-gold,.ic-sky,.ic-rose{ background:#E9F5EF; color:var(--emerald-deep); }
+      .menu-tile .mt-ic{ border-radius:10px; box-shadow:none; }
+      .ic-em,.ic-gold,.ic-sky,.ic-rose{ background:#E1EDE4; color:var(--emerald-deep); }
       .shortcut{ border-radius:14px; box-shadow:var(--shadow-sm); }
       .shortcut .ic{ border-radius:12px; box-shadow:none; }
       .section-title{ font-size:16px; font-weight:700; }
 
       /* --- hero / header: putih bersih --- */
       .hero,.auth-hero,.admin-head,.maint-hero{
-        background:#fff; color:var(--ink); border-bottom:1px solid var(--line); border-radius:0;
+        background:var(--surface); color:var(--ink); border-bottom:1px solid var(--line); border-radius:0;
       }
       .hero{ padding:18px 18px 14px; }
       .hero::before,.hero::after,.auth-hero::before,.auth-hero::after,
@@ -863,7 +855,7 @@
       .maint-wrap{ margin-top:0; padding-top:8px; }
       .hello{ color:var(--ink-3); opacity:1; font-weight:500; }
       .uname{ font-weight:700; }
-      .icon-btn{ background:#fff; border:1px solid var(--line); color:var(--ink-2); border-radius:12px; }
+      .icon-btn{ background:var(--surface); border:1px solid var(--line); color:var(--ink-2); border-radius:12px; }
       .content{ margin-top:0; padding:14px 16px 104px; }
       .content.plain{ padding-top:14px; }
       .brand-mark{ background:var(--emerald); color:#fff; border-radius:12px; box-shadow:none; }
@@ -871,15 +863,15 @@
       .brand-tag{ color:var(--ink-3); opacity:1; }
       .auth-hero h1{ font-weight:700; }
       .auth-hero .sub{ color:var(--ink-2); opacity:1; }
-      .bonus-strip{ background:#E9F5EF; border:1px solid #CDE8DA; border-radius:12px; backdrop-filter:none; }
+      .bonus-strip{ background:#E1EDE4; border:1px solid #BCD8C6; border-radius:12px; backdrop-filter:none; }
       .bonus-strip .amt{ color:var(--emerald-deep); }
       .bonus-strip .lbl{ color:var(--ink-2); opacity:1; }
-      .admin-badge{ background:#E9F5EF; color:var(--emerald-deep); }
+      .admin-badge{ background:#E1EDE4; color:var(--emerald-deep); }
       .admin-head [style*="opacity:.85"]{ opacity:1 !important; color:var(--ink-3); }
 
       /* --- kartu saldo: putih, angka gelap besar --- */
       .balance-card{
-        background:#fff; color:var(--ink); border:1px solid var(--line); border-top:3px solid var(--emerald);
+        background:var(--surface); color:var(--ink); border:1px solid var(--line); border-top:3px solid var(--emerald);
         border-radius:14px; box-shadow:var(--shadow-sm); padding:18px;
       }
       .balance-card::before,.balance-card::after{ display:none; }
@@ -887,7 +879,7 @@
       .bal-amt{ font-size:34px; font-weight:700; text-shadow:none; color:var(--ink); }
       .bal-sub{ color:var(--ink-3); opacity:1; }
       .ba-gold{ background:var(--emerald); color:#fff; box-shadow:none; border-radius:12px; }
-      .ba-glass{ background:#fff; border:1px solid var(--line); color:var(--ink); border-radius:12px; }
+      .ba-glass{ background:var(--surface); border:1px solid var(--line); color:var(--ink); border-radius:12px; }
 
       /* --- strip pengumuman --- */
       .bc-strip{ background:#FBF3DC; border:1px solid #EFE0B4; color:#7C5A06; border-radius:12px; box-shadow:none; }
@@ -896,17 +888,17 @@
       .progress{ height:8px; background:var(--surface-2); border:none; }
       .progress i,#miningBar{ background:var(--emerald); }
       .progress i::after{ display:none; }
-      .done-badge{ background:#E9F5EF; color:var(--emerald-deep); font-weight:600; }
+      .done-badge{ background:#E1EDE4; color:var(--emerald-deep); font-weight:600; }
       .reward-badge{ background:#FBF3DC; color:#92400E; border:1px solid #EFE0B4; font-weight:600; }
       .status-chip{ background:#FBF3DC; color:#92400E; font-weight:600; }
 
       /* --- bonus terkunci --- */
-      .lock-ic{ background:#E9F5EF; color:var(--emerald-deep); border-radius:12px; }
+      .lock-ic{ background:#E1EDE4; color:var(--emerald-deep); border-radius:12px; }
       .locked-amt .a{ color:#B45309; }
       .locked-head h3,.mining-top h3,.gift-info h3,.ad-info h3{ font-weight:700; }
 
       /* --- kotak hadiah: flat, animasi buka tetap --- */
-      .gift-card{ background:#fff; border-color:var(--line); }
+      .gift-card{ background:var(--surface); border-color:var(--line); }
       .gift-bodybox{ background:var(--emerald); box-shadow:none; }
       .gift-bodybox::after{ background:#F5C445; }
       .gift-lid{ background:var(--emerald-deep); box-shadow:none; }
@@ -920,7 +912,7 @@
 
       /* --- iklan berhadiah --- */
       .ad-card{ border-color:var(--line); }
-      .ad-screen{ background:#E9F5EF; box-shadow:none; border-radius:12px; }
+      .ad-screen{ background:#E1EDE4; box-shadow:none; border-radius:12px; }
       .ad-screen::after{ background:#F5C445; color:#5F4300; }
       .ad-play{ background:var(--emerald); color:#fff; box-shadow:none; }
       .ad-card.ready .ad-play{ animation:none; }
@@ -950,7 +942,7 @@
       .ref-box button{ background:var(--emerald); font-weight:600; }
 
       /* --- game / slot: kabinet flat putih --- */
-      .slot-machine{ background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); }
+      .slot-machine{ background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); }
       .slot-machine .hint{ color:var(--ink-3); opacity:1; }
       .reel{ background:var(--surface-2); border:1px solid var(--line); border-radius:14px; box-shadow:none; }
       .reel.win{ box-shadow:0 0 0 3px #F5C445; }
@@ -961,9 +953,9 @@
       .seg button{ font-weight:600; }
       .seg button.on{ background:var(--emerald); box-shadow:none; }
       .chip{ font-weight:600; }
-      .chip.sel{ border-color:var(--emerald); background:#E9F5EF; color:var(--emerald-deep); }
+      .chip.sel{ border-color:var(--emerald); background:#E1EDE4; color:var(--emerald-deep); }
       .dest-opt{ border-radius:14px; box-shadow:var(--shadow-sm); font-weight:600; }
-      .dest-opt.sel{ border-color:var(--emerald); background:#E9F5EF; color:var(--emerald-deep); box-shadow:0 0 0 3px rgba(14,159,110,.14); }
+      .dest-opt.sel{ border-color:var(--emerald); background:#E1EDE4; color:var(--emerald-deep); box-shadow:0 0 0 3px rgba(11,138,95,.16); }
       .brand-badge{ box-shadow:none; border-radius:10px; }
       .wd-dest{ background:var(--surface-2); border:1px solid var(--line); border-radius:14px; }
       .step.on .dot,.step.done .dot{ background:var(--emerald); border-color:var(--emerald); }
@@ -972,21 +964,21 @@
 
       /* --- tarik saldo: panel kunci --- */
       .wd-lock{ background:#FBF3DC; border:1px solid #EFE0B4; border-radius:14px; }
-      .wd-lock.open{ background:#E9F5EF; border-color:#CDE8DA; }
+      .wd-lock.open{ background:#E1EDE4; border-color:#BCD8C6; }
       .wd-rules{ border-radius:14px; }
       .summary{ border-radius:14px; }
       .summary .row.total b{ color:var(--emerald-deep); }
 
       /* --- riwayat & leaderboard --- */
       .lb-row:first-child .lb-rank{ background:#F5C445; color:#5F4300; border-color:#EFE0B4; }
-      .lb-you{ background:#E9F5EF; color:var(--emerald-deep); font-weight:600; }
+      .lb-you{ background:#E1EDE4; color:var(--emerald-deep); font-weight:600; }
       .lb-pts{ color:var(--emerald-deep); }
       .hist-amt.plus{ color:var(--emerald-deep); }
 
       /* --- tab bar bawah --- */
-      .tabbar{ background:rgba(255,255,255,.92); box-shadow:0 -1px 0 var(--line); }
+      .tabbar{ background:rgba(250,251,249,.94); box-shadow:0 -1px 0 var(--line); }
       .tabbar button{ font-weight:500; border-radius:12px; }
-      .tabbar button.on{ color:var(--emerald-deep); background:#E9F5EF; box-shadow:none; font-weight:600; }
+      .tabbar button.on{ color:var(--emerald-deep); background:#E1EDE4; box-shadow:none; font-weight:600; }
       .tabbar button.on svg{ animation:none; }
 
       /* --- toast --- */
@@ -1002,16 +994,16 @@
       .dana-num{ border:1px dashed #BFE3D2; color:var(--emerald-deep); }
       .pill.pending{ background:#FBF3DC; color:#92400E; }
       .pill.held,.qi-flag{ background:#FDF0E2; color:#8A4B06; border-color:#F0D9B5; }
-      .pill.lunas,.pill.aktif{ background:#E9F5EF; color:var(--emerald-deep); }
-      .btn-plus{ background:#E9F5EF; color:var(--emerald-deep); }
+      .pill.lunas,.pill.aktif{ background:#E1EDE4; color:var(--emerald-deep); }
+      .btn-plus{ background:#E1EDE4; color:var(--emerald-deep); }
       .btn-minus{ background:#FBF3DC; color:#92400E; }
 
       /* --- maintenance & banned --- */
       .maint-ic{ background:#FBF3DC; color:#92400E; border:1px solid #EFE0B4; border-radius:20px; box-shadow:none; }
       .maint-ic svg{ animation:none; }
-      .maint-badge{ background:#E9F5EF; color:var(--emerald-deep); border:1px solid #CDE8DA; }
+      .maint-badge{ background:#E1EDE4; color:var(--emerald-deep); border:1px solid #BCD8C6; }
       .maint-reason{ border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); }
-      .maint-reason .dot{ background:var(--emerald); box-shadow:0 0 0 5px #E9F5EF; }
+      .maint-reason .dot{ background:var(--emerald); box-shadow:0 0 0 5px #E1EDE4; }
       .banned-ic{ border-radius:20px; }
 
       /* --- form --- */
@@ -1236,14 +1228,35 @@
               <button class="btn-gold" id="checkinBtn" type="button" style="margin-top:14px;">Check-in Hari Ini · +20 Poin</button>
             </div>
 
-            <!-- ===== Kartu sekunder: akordeon, tertutup secara default ===== -->
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-rose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
-                <span class="acc-tt"><b>Misi Undang Teman</b><span>+500 poin tiap teman yang daftar</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            <!-- ===== Menu fitur: grid 2 kolom, kontennya tampil di satu panel di bawah grid ===== -->
+            <div class="menu-grid">
+              <button class="menu-tile" type="button" data-pane="misi" aria-expanded="false">
+                <span class="mt-ic ic-rose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
+                <span><b>Misi Undang Teman</b><span class="mt-sub">+500 poin tiap teman yang daftar</span></span>
               </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+              <button class="menu-tile" type="button" data-pane="mining" aria-expanded="false">
+                <span class="mt-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/></svg></span>
+                <span><b>Mining Poin</b><span class="mt-sub">Poin ngalir otomatis, klaim manual</span></span>
+              </button>
+              <button class="menu-tile" type="button" data-pane="leaderboard" aria-expanded="false">
+                <span class="mt-ic ic-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
+                <span><b>Leaderboard</b><span class="mt-sub">Pengumpul poin terbanyak</span></span>
+              </button>
+              <button class="menu-tile" type="button" data-pane="cara" aria-expanded="false">
+                <span class="mt-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></span>
+                <span><b>Cara Dapat Poin</b><span class="mt-sub">Semua jalan ngumpulin poin di Cuanmu</span></span>
+              </button>
+              <button class="menu-tile" type="button" data-pane="promo" aria-expanded="false">
+                <span class="mt-ic ic-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>
+                <span><b>Promo &amp; Bonus</b><span class="mt-sub">Info bonus dan promo yang lagi jalan</span></span>
+              </button>
+              <button class="menu-tile" type="button" data-pane="aktivitas" aria-expanded="false">
+                <span class="mt-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8"/><path d="M8 12h8"/></svg></span>
+                <span><b>Aktivitas Terakhir</b><span class="mt-sub">Riwayat poin dan saldo kamu</span></span>
+              </button>
+            </div>
+            <div class="menu-panel hidden" id="menuPanel">
+              <div class="menu-pane hidden" id="pane-misi">
                 <div class="card misi-card">
                   <div class="misi-top">
                     <span class="misi-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg></span>
@@ -1259,16 +1272,8 @@
                   </div>
                 </div>
                 <button class="btn-ghost" data-go="misi" type="button" style="margin-top:12px;">Lihat Semua Misi &amp; Link Undangan</button>
-              </div></div></div>
-            </div>
-
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 12.5 5 22"/><path d="M21 3c-4.8.7-9.2 3.1-12.2 6.7l3.4 3.4C15.2 9.7 18.6 6.5 21 3Z"/><path d="M3.6 5.2c1 2.9 2.7 5.4 5 7.4"/></svg></span>
-                <span class="acc-tt"><b>Mining Poin</b><span>Poin ngalir otomatis, klaim manual</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+              </div>
+              <div class="menu-pane hidden" id="pane-mining">
                 <div class="card mining-card" id="miningCard">
                   <div class="mining-top">
                     <span class="mining-ic">
@@ -1290,28 +1295,12 @@
                   <button class="btn-gold hidden" id="miningClaimBtn" type="button" style="margin-top:14px;" disabled>Klaim Poin</button>
                   <p style="font-size:12.5px; color:var(--ink-3); margin-top:11px; line-height:1.55;">Poin ngalir otomatis selama mining jalan. Kamu yang pencet Klaim sendiri — hasil klaim langsung masuk ke saldo bebas.</p>
                 </div>
-              </div></div></div>
-            </div>
-
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
-                <span class="acc-tt"><b>Leaderboard</b><span>Pengumpul poin terbanyak</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+              </div>
+              <div class="menu-pane hidden" id="pane-leaderboard">
                 <div id="leaderboardList"></div>
                 <p style="font-size:12px; color:var(--ink-3); line-height:1.55; margin-top:10px;">Peringkat dihitung dari total poin yang sudah terkumpul (saldo bebas + bonus terbuka).</p>
-              </div></div></div>
-            </div>
-
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></span>
-                <span class="acc-tt"><b>Cara Dapat Poin</b><span>Semua jalan ngumpulin poin di Cuanmu</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+              </div>
+              <div class="menu-pane hidden" id="pane-cara">
                 <div class="earn-row">
                   <div>
                     <h4>Check-in Harian</h4>
@@ -1355,19 +1344,11 @@
                   </div>
                 </div>
                 <button class="btn-ghost" data-go="game" type="button" style="margin-top:12px;">Main Spin Sekarang</button>
-              </div></div></div>
-            </div>
-
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>
-                <span class="acc-tt"><b>Promo &amp; Bonus</b><span>Info bonus dan promo yang lagi jalan</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+              </div>
+              <div class="menu-pane hidden" id="pane-promo">
                 <div class="promo">
                   <div class="promo-track" id="promoTrack">
-                    <div class="promo-slide" style="background:#E9F5EF;">
+                    <div class="promo-slide" style="background:#E1EDE4;">
                       <h3>Bonus Daftar 5.000 Poin</h3>
                       <p>Check-in tiap hari, bonus terkunci terbuka 2.000 per hari. 3 hari langsung lunas!</p>
                       <span class="big">5rb</span>
@@ -1385,19 +1366,11 @@
                   </div>
                   <div class="promo-dots" id="promoDots"><i class="on"></i><i></i><i></i></div>
                 </div>
-              </div></div></div>
-            </div>
-
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-em"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8"/><path d="M8 12h8"/></svg></span>
-                <span class="acc-tt"><b>Aktivitas Terakhir</b><span>Riwayat poin dan saldo kamu</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
+              </div>
+              <div class="menu-pane hidden" id="pane-aktivitas">
                 <div class="card" id="homeHistory"></div>
                 <button class="btn-ghost" data-go="riwayat" type="button" style="margin-top:12px;">Lihat Semua Riwayat</button>
-              </div></div></div>
+              </div>
             </div>
 
             <div class="shortcut-grid">
@@ -1466,7 +1439,7 @@
 
             <div class="card" style="margin-top:16px;">
               <div class="misi-top">
-                <span class="misi-ic" style="background:#E9F5EF; color:#0B7A55; box-shadow:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
+                <span class="misi-ic" style="background:#E1EDE4; color:#0B7A55; box-shadow:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
                 <div>
                   <h3>Main Spin Harian</h3>
                   <p>3x spin gratis tiap hari di tab Game. Jackpot 777 senilai 10.000 poin.</p>
@@ -2265,12 +2238,26 @@
       document.querySelectorAll("[data-go]").forEach(function(b){
         b.addEventListener("click", function(){ showView(b.getAttribute("data-go")); });
       });
-      /* akordeon kartu sekunder di beranda — tiap kartu independen */
-      document.querySelectorAll(".acc-head").forEach(function(h){
-        h.addEventListener("click", function(){
-          var acc = h.parentElement;
-          var open = acc.classList.toggle("open");
-          h.setAttribute("aria-expanded", open ? "true" : "false");
+      /* menu fitur beranda: grid 2 kolom + satu panel — ketuk tile buat ganti isi panel, ketuk lagi buat tutup */
+      var menuPanel = $("menuPanel");
+      var menuTiles = document.querySelectorAll(".menu-tile");
+      var menuOpenKey = null;
+      function setMenuPanel(key){
+        menuOpenKey = key;
+        menuTiles.forEach(function(t){
+          var on = key !== null && t.getAttribute("data-pane") === key;
+          t.classList.toggle("on", on);
+          t.setAttribute("aria-expanded", on ? "true" : "false");
+        });
+        document.querySelectorAll(".menu-pane").forEach(function(p){
+          p.classList.toggle("hidden", key === null || p.id !== "pane-" + key);
+        });
+        if(menuPanel) menuPanel.classList.toggle("hidden", key === null);
+      }
+      menuTiles.forEach(function(t){
+        t.addEventListener("click", function(){
+          var key = t.getAttribute("data-pane");
+          setMenuPanel(menuOpenKey === key ? null : key);
         });
       });
       /* strip pengumuman: ketuk buat expand / tutup */
