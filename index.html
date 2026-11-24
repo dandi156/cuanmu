@@ -507,7 +507,7 @@
       .paytable{ font-size:12.5px; color:var(--ink-2); line-height:2; }
       .paytable b{ color:var(--ink); }
 
-      /* flows (transfer / tarik) */
+      /* flows (tarik saldo) */
       .flow-head{ display:flex; align-items:center; gap:12px; padding:20px 18px 4px; }
       .back-btn{ width:42px; height:42px; border-radius:13px; background:var(--surface); border:1px solid var(--line); display:grid; place-items:center; box-shadow:var(--shadow-sm); flex:none; }
       .back-btn:active{ transform:scale(.94); }
@@ -1169,13 +1169,9 @@
             <div class="balance-card">
               <div class="bal-lbl">Saldo Poin Bebas</div>
               <div class="bal-amt">Rp <span id="balAmt">0</span></div>
-              <div class="bal-sub">1 poin = Rp1 · bisa ditransfer &amp; ditarik ke DANA</div>
+              <div class="bal-sub">1 poin = Rp1 · bisa ditarik ke DANA</div>
               <div class="bal-actions">
-                <button class="ba-gold" id="goTransfer" type="button">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
-                  Transfer
-                </button>
-                <button class="ba-glass" id="goWithdraw" type="button">
+                <button class="ba-gold" id="goWithdraw" type="button">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
                   Tarik Saldo
                 </button>
@@ -1498,65 +1494,6 @@
           </div>
           <div class="content plain">
             <div class="card" id="fullHistory"></div>
-          </div>
-        </section>
-
-        <!-- TRANSFER -->
-        <section class="view" id="view-transfer">
-          <div class="flow-head">
-            <button class="back-btn" data-back="home" type="button" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-            <div><h2>Transfer</h2><p>Kirim saldo ke bank atau e-wallet, biaya admin Rp0.</p></div>
-          </div>
-          <div class="steps" id="tfSteps">
-            <div class="step on" data-s="1"><div class="dot">1</div><span>Tujuan</span></div>
-            <div class="step-line"></div>
-            <div class="step" data-s="2"><div class="dot">2</div><span>Konfirmasi</span></div>
-            <div class="step-line"></div>
-            <div class="step" data-s="3"><div class="dot">3</div><span>Selesai</span></div>
-          </div>
-          <div class="flow-body">
-            <div id="tfStep1">
-              <div class="seg" style="margin-bottom:16px;">
-                <button id="tfTypeBank" class="on" type="button">Bank</button>
-                <button id="tfTypeEw" type="button">E-Wallet</button>
-              </div>
-              <div class="field">
-                <label id="tfDestLabel">Pilih Bank Tujuan</label>
-                <div class="dest-grid" id="tfDestGrid"></div>
-              </div>
-              <div class="field" id="fTfNum" style="margin-top:16px;">
-                <label for="tfNum" id="tfNumLabel">Nomor Rekening</label>
-                <input id="tfNum" type="tel" inputmode="numeric" placeholder="Masukkan nomor rekening" />
-                <div class="err">Nomor tujuan wajib diisi (minimal 8 digit).</div>
-              </div>
-              <div class="field" id="fTfName">
-                <label for="tfName">Nama Penerima</label>
-                <input id="tfName" type="text" placeholder="Nama pemilik rekening" />
-                <div class="err">Nama penerima wajib diisi.</div>
-              </div>
-              <div class="field" id="fTfAmt">
-                <label for="tfAmt">Jumlah Transfer (poin)</label>
-                <input id="tfAmt" type="tel" inputmode="numeric" placeholder="Minimal 100" />
-                <div class="err" id="tfAmtErr">Minimal transfer 100 poin.</div>
-              </div>
-              <p style="font-size:12.5px; color:var(--ink-3); margin-bottom:14px;">Saldo bebas kamu: <b style="color:var(--ink);">Rp <span class="balMirror">0</span></b> · Biaya admin <b style="color:var(--emerald);">Rp0</b></p>
-              <button class="btn-emerald" id="tfNext" type="button">Lanjut ke Konfirmasi</button>
-            </div>
-
-            <div id="tfStep2" class="hidden">
-              <div class="summary" id="tfSummary"></div>
-              <button class="btn-gold" id="tfConfirm" type="button" style="margin-top:18px;">Konfirmasi &amp; Kirim</button>
-              <button class="btn-ghost" id="tfBack" type="button" style="margin-top:10px;">Ubah Detail</button>
-            </div>
-
-            <div id="tfStep3" class="hidden">
-              <div class="success-wrap">
-                <svg class="check-anim" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><path d="M32 51.5 44 63l24-27"/></svg>
-                <h3>Transfer Terkirim!</h3>
-                <p id="tfSuccessText"></p>
-              </div>
-              <button class="btn-emerald" data-back="home" type="button" style="margin-top:18px;">Kembali ke Beranda</button>
-            </div>
           </div>
         </section>
 
@@ -2301,10 +2238,7 @@
       document.querySelectorAll("[data-back]").forEach(function(b){
         b.addEventListener("click", function(){ showView(b.getAttribute("data-back")); });
       });
-      $("goTransfer").addEventListener("click", function(){ resetTransfer(); showView("transfer"); });
       $("goWithdraw").addEventListener("click", function(){ resetWithdraw(); showView("withdraw"); });
-      var goTfBtn = document.querySelector('[data-go="transfer"]');
-      if(goTfBtn) goTfBtn.addEventListener("click", function(){ resetTransfer(); });
 
       /* ---------------- auth ---------------- */
       function setFieldInvalid(id, bad){ $(id).classList.toggle("invalid", bad); return !bad; }
@@ -3214,52 +3148,16 @@
         if(i !== promoIdx){ promoIdx = i; for(var k = 0; k < promoDots.length; k++) promoDots[k].classList.toggle("on", k === i); }
       });
 
-      /* ---------------- transfer ---------------- */
-      var BANKS = ["BCA","BRI","BNI","Mandiri","BSI","CIMB Niaga"];
-      var EWALLETS = ["DANA","OVO","GoPay","ShopeePay"];
+      /* ---------------- badge & langkah (tarik saldo) ---------------- */
       /* Badge merek buatan sendiri: kotak rounded warna khas + nama merek (bukan file logo resmi). */
       var BRANDS = {
-        "DANA":      { bg:"#108EE9", label:"DANA" },
-        "GoPay":     { bg:"#00AED6", label:"GoPay" },
-        "OVO":       { bg:"#4C1D95", label:"OVO" },
-        "ShopeePay": { bg:"#EE4D2D", label:"SPay" },
-        "BCA":       { bg:"#1A4D8F", label:"BCA" },
-        "BRI":       { bg:"#0D4F9E", label:"BRI" },
-        "BNI":       { bg:"#E85D1F", label:"BNI" },
-        "Mandiri":   { bg:"#173F77", label:"MDR" },
-        "BSI":       { bg:"#00736E", label:"BSI" },
-        "CIMB Niaga":{ bg:"#A3121B", label:"CIMB" }
+        "DANA":      { bg:"#108EE9", label:"DANA" }
       };
       function brandBadge(name, sm){
         var b = BRANDS[name];
         if(!b) return "";
         return '<span class="brand-badge' + (sm ? " sm" : "") + '" style="background:' + b.bg + '">' + b.label + "</span>";
       }
-      var tf = { type:"bank", dest:"", num:"", name:"", amt:0 };
-      function renderDestGrid(){
-        var list = tf.type === "bank" ? BANKS : EWALLETS;
-        $("tfDestGrid").className = "dest-grid" + (tf.type === "bank" ? "" : " two");
-        $("tfDestGrid").innerHTML = list.map(function(d){
-          return '<button type="button" class="dest-opt' + (tf.dest === d ? " sel" : "") + '" data-dest="' + d + '">' + brandBadge(d) + "<span>" + d + "</span></button>";
-        }).join("");
-        $("tfDestGrid").querySelectorAll("[data-dest]").forEach(function(b){
-          b.addEventListener("click", function(){
-            tf.dest = b.getAttribute("data-dest");
-            renderDestGrid();
-          });
-        });
-        $("tfDestLabel").textContent = tf.type === "bank" ? "Pilih Bank Tujuan" : "Pilih E-Wallet Tujuan";
-        $("tfNumLabel").textContent = tf.type === "bank" ? "Nomor Rekening" : "Nomor HP E-Wallet";
-        $("tfNum").placeholder = tf.type === "bank" ? "Masukkan nomor rekening" : "08xxxxxxxxxx";
-      }
-      function setTfType(t){
-        tf.type = t; tf.dest = "";
-        $("tfTypeBank").classList.toggle("on", t === "bank");
-        $("tfTypeEw").classList.toggle("on", t === "ewallet");
-        renderDestGrid();
-      }
-      $("tfTypeBank").addEventListener("click", function(){ setTfType("bank"); });
-      $("tfTypeEw").addEventListener("click", function(){ setTfType("ewallet"); });
       function setSteps(prefix, n){
         var wrap = $(prefix + "Steps");
         wrap.querySelectorAll(".step").forEach(function(s){
@@ -3270,70 +3168,7 @@
         });
         wrap.querySelectorAll(".step-line").forEach(function(l, i){ l.classList.toggle("done", i < n - 1); });
       }
-      function resetTransfer(){
-        tf = { type:"bank", dest:"", num:"", name:"", amt:0 };
-        $("tfNum").value = ""; $("tfName").value = ""; $("tfAmt").value = "";
-        ["fTfNum","fTfName","fTfAmt"].forEach(function(id){ $(id).classList.remove("invalid"); });
-        setTfType("bank");
-        $("tfStep1").classList.remove("hidden"); $("tfStep2").classList.add("hidden"); $("tfStep3").classList.add("hidden");
-        setSteps("tf", 1);
-      }
       function maskNum(num){ return "•••" + num.slice(-4); }
-      $("tfNext").addEventListener("click", function(){
-        var num = $("tfNum").value.replace(/\D/g, "");
-        var name = $("tfName").value.trim();
-        var amt = parseInt($("tfAmt").value.replace(/\D/g, ""), 10) || 0;
-        if(!tf.dest){ toast("Pilih dulu tujuan transfernya ya."); return; }
-        var ok = true;
-        ok = setFieldInvalid("fTfNum", num.length < 8) && ok;
-        ok = setFieldInvalid("fTfName", name.length < 2) && ok;
-        var amtBad = amt < 100 || amt > S.free;
-        $("tfAmtErr").textContent = amt < 100 ? "Minimal transfer 100 poin." : "Saldo bebas kamu tidak cukup.";
-        ok = setFieldInvalid("fTfAmt", amtBad) && ok;
-        if(!ok) return;
-        tf.num = num; tf.name = name; tf.amt = amt;
-        $("tfSummary").innerHTML =
-          '<div class="row"><span>Tujuan</span><b>' + brandBadge(tf.dest, true) + tf.dest + " · " + maskNum(num) + "</b></div>" +
-          '<div class="row"><span>Nama Penerima</span><b>' + esc(name) + "</b></div>" +
-          '<div class="row"><span>Jumlah Transfer</span><b>Rp' + fmt(amt) + "</b></div>" +
-          '<div class="row"><span>Biaya Admin</span><b style="color:var(--emerald);">Rp0</b></div>' +
-          '<div class="row total"><span>Total Dibayar</span><b>Rp' + fmt(amt) + "</b></div>";
-        $("tfStep1").classList.add("hidden"); $("tfStep2").classList.remove("hidden");
-        setSteps("tf", 2);
-        window.scrollTo(0,0);
-      });
-      $("tfBack").addEventListener("click", function(){
-        $("tfStep2").classList.add("hidden"); $("tfStep1").classList.remove("hidden");
-        setSteps("tf", 1);
-      });
-      $("tfConfirm").addEventListener("click", function(){
-        if(serverMode){
-          var btn = $("tfConfirm");
-          btn.disabled = true;
-          apiCall("POST", "/transfer", { kind: tf.type, dest: tf.dest, number: tf.num, name: tf.name, amount: tf.amt }, authToken).then(function(res){
-            btn.disabled = false;
-            if(res && res.ok){
-              if(res.state) applyServerState(res.state);
-              $("tfSuccessText").innerHTML = "Rp" + fmt(tf.amt) + " sedang dikirim ke <b>" + tf.dest + " " + maskNum(tf.num) + "</b> atas nama <b>" + esc(tf.name) + "</b>. Biaya admin Rp0.";
-              $("tfStep2").classList.add("hidden"); $("tfStep3").classList.remove("hidden");
-              setSteps("tf", 3);
-              renderWallet();
-              window.scrollTo(0,0);
-            } else {
-              toast((res && res.error) ? res.error : "Transfer gagal — coba lagi ya.");
-            }
-          });
-          return;
-        }
-        S.free -= tf.amt;
-        addHistory("send", "Transfer ke " + tf.dest + " " + maskNum(tf.num), -tf.amt, "Diproses");
-        $("tfSuccessText").innerHTML = "Rp" + fmt(tf.amt) + " sedang dikirim ke <b>" + tf.dest + " " + maskNum(tf.num) + "</b> atas nama <b>" + esc(tf.name) + "</b>. Biaya admin Rp0.";
-        $("tfStep2").classList.add("hidden"); $("tfStep3").classList.remove("hidden");
-        setSteps("tf", 3);
-        renderWallet();
-        window.scrollTo(0,0);
-      });
-
       /* ---------------- withdraw ---------------- */
       var wdAmt = 0;
       function updateWdRules(){
