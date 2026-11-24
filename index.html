@@ -3,44 +3,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light" />
     <link rel="icon" href="data:," />
     <title>Cuanmu — Dompet Poin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
       button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
     </style>
     <style>
       :root{
-        --bg:#e9f4ed; --surface:#ffffff; --surface-2:#eef7f1; --ink:#082116; --ink-2:#3d5546; --ink-3:#68826f;
-        --line:#d7e7db; --emerald:#059669; --emerald-hi:#10c184; --emerald-deep:#065f46; --emerald-dark:#032e1f;
-        --gold:#f2c230; --gold-hi:#ffe084; --gold-deep:#b8860b; --gold-soft:#fdf3d3;
-        --red:#d92d20; --red-soft:#fdecea;
-        --shadow:0 20px 44px rgba(3,44,28,.16); --shadow-sm:0 4px 16px rgba(3,44,28,.08);
-        --card-hi:rgba(255,255,255,.65);
-        --radius:24px;
-        color-scheme: light dark;
+        --bg:#F6F7F6; --surface:#ffffff; --surface-2:#F0F3F0; --ink:#17251D; --ink-2:#55645A; --ink-3:#6B7A70;
+        --line:#E3E8E3; --emerald:#0E9F6E; --emerald-hi:#0E9F6E; --emerald-deep:#0B7A55; --emerald-dark:#17251D;
+        --gold:#D97706; --gold-hi:#F59E0B; --gold-deep:#B45309; --gold-soft:#FBF3DC;
+        --red:#D92D20; --red-soft:#FDECEA;
+        --shadow:0 1px 3px rgba(23,37,29,.05); --shadow-sm:0 1px 2px rgba(23,37,29,.04);
+        --card-hi:transparent;
+        --radius:14px;
+        color-scheme: light;
       }
       @media (prefers-color-scheme: dark){
         :root{
-          --bg:#04120b; --surface:#0b2013; --surface-2:#10291a; --ink:#eaf5ee; --ink-2:#a9c4b2; --ink-3:#74907f;
-          --line:#1d3a28; --gold-soft:#2c2410; --red-soft:#33161a;
-          --shadow:0 20px 44px rgba(0,0,0,.55); --shadow-sm:0 4px 16px rgba(0,0,0,.4);
-          --card-hi:rgba(255,255,255,.07);
+          --bg:#F6F7F6; --surface:#ffffff; --surface-2:#F0F3F0; --ink:#17251D; --ink-2:#55645A; --ink-3:#6B7A70;
+          --line:#E3E8E3; --gold-soft:#FBF3DC; --red-soft:#FDECEA;
+          --shadow:0 1px 3px rgba(23,37,29,.05); --shadow-sm:0 1px 2px rgba(23,37,29,.04);
+          --card-hi:transparent;
         }
       }
       *{ box-sizing:border-box; }
       html,body{ margin:0; padding:0; }
       body{
-        font-family:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-        background:
-          radial-gradient(900px 520px at 12% -6%, rgba(16,193,132,.22), transparent 60%),
-          radial-gradient(760px 460px at 98% 6%, rgba(242,194,48,.16), transparent 55%),
-          radial-gradient(700px 620px at 50% 115%, rgba(5,150,105,.12), transparent 60%),
-          var(--bg);
+        font-family:system-ui, "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-weight:400;
+        background:var(--bg);
         color:var(--ink); min-height:100vh;
         -webkit-font-smoothing:antialiased;
       }
@@ -475,6 +472,29 @@
       .milestone .progress{ background:rgba(255,255,255,.55); border:none; margin-top:11px; }
       .milestone.claimed{ background:linear-gradient(140deg,#0aa873,#057a55); color:#fff; border:none; }
 
+      /* tangga milestone undang teman */
+      .ms-row{
+        display:flex; align-items:center; gap:11px; margin-top:9px; padding:11px 12px; border-radius:14px;
+        background:var(--surface); color:var(--ink); border:1px solid var(--line); box-shadow:var(--shadow-sm);
+      }
+      .ms-row .ms-ic{
+        width:34px; height:34px; border-radius:11px; display:grid; place-items:center; flex:none;
+        font-size:14px; font-weight:800; background:linear-gradient(150deg,#f8d264,#dda106); color:#43300a;
+      }
+      .ms-row .ms-main{ flex:1; min-width:0; }
+      .ms-row .ms-main b{ display:block; font-size:13.5px; font-weight:800; }
+      .ms-row .ms-main span{ display:block; font-size:11.5px; color:var(--ink-2); font-weight:600; margin-top:1px; }
+      .ms-row .ms-bonus{ font-size:14.5px; font-weight:800; color:var(--gold-deep); flex:none; font-variant-numeric:tabular-nums; }
+      @media (prefers-color-scheme: dark){ .ms-row .ms-bonus{ color:#ffe08a; } }
+      .ms-row .progress{ background:var(--surface-2); border:none; margin-top:7px; height:7px; }
+      .ms-row.done{ background:linear-gradient(140deg,#0aa873,#057a55); color:#fff; border-color:transparent; }
+      .ms-row.done .ms-main span{ color:rgba(255,255,255,.85); }
+      .ms-row.done .ms-bonus{ color:#ffe08a; }
+      .ms-row.done .ms-ic{ background:rgba(255,255,255,.22); color:#fff; }
+      .ms-row.locked{ opacity:.55; }
+      .ms-wrap{ margin-top:14px; }
+      .ms-wrap-title{ font-size:13px; font-weight:800; color:var(--ink-2); }
+
       /* game */
       .slot-machine{
         background:linear-gradient(160deg,#052716,#0d4a2e 55%,#14663f 85%,#1d7a4a); border-radius:28px; padding:22px 18px;
@@ -797,6 +817,215 @@
       .page-head h2{ font-size:20px; font-weight:800; }
       .page-head p{ font-size:13px; color:var(--ink-2); margin-top:4px; line-height:1.55; }
     </style>
+    <style>
+      /* ================= REDESIGN: tema terang simpel & flat =================
+         Satu aksen emerald solid. Tanpa gradasi, glow, atau animasi ramai.
+         Animasi fungsional (reel spin, buka kotak, koin) tetap jalan. */
+      h1,h2,h3,h4{ font-weight:700; letter-spacing:-.2px; }
+      .phone{ background:var(--bg); box-shadow:none; }
+
+      /* --- tombol: flat solid --- */
+      .btn-gold,.btn-emerald{
+        background:var(--emerald); color:#fff; font-weight:600; border-radius:12px;
+        box-shadow:none; letter-spacing:0; padding:13px 20px; font-size:15px;
+      }
+      .btn-gold:disabled,.btn-emerald:disabled{ background:#C9D4CC; color:#fff; opacity:1; box-shadow:none; }
+      .btn-ghost{ border:1px solid var(--line); border-radius:12px; font-weight:600; box-shadow:none; }
+      #checkinBtn:not(:disabled),#giftBtn:not(:disabled),#spinBtn:not(:disabled){ animation:none; }
+      @media (hover:hover){
+        .btn-gold:hover,.btn-emerald:hover{ filter:none; background:var(--emerald-deep); }
+        .btn-ghost:hover{ border-color:var(--emerald); }
+        .card:hover{ box-shadow:var(--shadow-sm); }
+        .shortcut:hover{ transform:none; box-shadow:var(--shadow-sm); }
+      }
+
+      /* --- kartu umum --- */
+      .card{ border-radius:14px; box-shadow:var(--shadow-sm); padding:16px; }
+      .acc{ border-radius:14px; box-shadow:var(--shadow-sm); margin-top:12px; }
+      .acc-head{ padding:13px 14px; }
+      .acc-ic{ border-radius:10px; box-shadow:none; }
+      .ic-em,.ic-gold,.ic-sky,.ic-rose{ background:#E9F5EF; color:var(--emerald-deep); }
+      .shortcut{ border-radius:14px; box-shadow:var(--shadow-sm); }
+      .shortcut .ic{ border-radius:12px; box-shadow:none; }
+      .section-title{ font-size:16px; font-weight:700; }
+
+      /* --- hero / header: putih bersih --- */
+      .hero,.auth-hero,.admin-head,.maint-hero{
+        background:#fff; color:var(--ink); border-bottom:1px solid var(--line); border-radius:0;
+      }
+      .hero{ padding:18px 18px 14px; }
+      .hero::before,.hero::after,.auth-hero::before,.auth-hero::after,
+      .admin-head::after,.maint-hero::before,.maint-hero::after{ display:none; }
+      .auth-hero{ padding:32px 22px 26px; }
+      .auth-card{ margin:16px 16px 28px; border-radius:14px; box-shadow:var(--shadow-sm); animation:none; }
+      .admin-head{ padding:18px; }
+      .maint-hero{ padding:28px 22px 10px; border-bottom:none; }
+      .maint-wrap{ margin-top:0; padding-top:8px; }
+      .hello{ color:var(--ink-3); opacity:1; font-weight:500; }
+      .uname{ font-weight:700; }
+      .icon-btn{ background:#fff; border:1px solid var(--line); color:var(--ink-2); border-radius:12px; }
+      .content{ margin-top:0; padding:14px 16px 104px; }
+      .content.plain{ padding-top:14px; }
+      .brand-mark{ background:var(--emerald); color:#fff; border-radius:12px; box-shadow:none; }
+      .brand-name{ font-weight:700; }
+      .brand-tag{ color:var(--ink-3); opacity:1; }
+      .auth-hero h1{ font-weight:700; }
+      .auth-hero .sub{ color:var(--ink-2); opacity:1; }
+      .bonus-strip{ background:#E9F5EF; border:1px solid #CDE8DA; border-radius:12px; backdrop-filter:none; }
+      .bonus-strip .amt{ color:var(--emerald-deep); }
+      .bonus-strip .lbl{ color:var(--ink-2); opacity:1; }
+      .admin-badge{ background:#E9F5EF; color:var(--emerald-deep); }
+      .admin-head [style*="opacity:.85"]{ opacity:1 !important; color:var(--ink-3); }
+
+      /* --- kartu saldo: putih, angka gelap besar --- */
+      .balance-card{
+        background:#fff; color:var(--ink); border:1px solid var(--line); border-top:3px solid var(--emerald);
+        border-radius:14px; box-shadow:var(--shadow-sm); padding:18px;
+      }
+      .balance-card::before,.balance-card::after{ display:none; }
+      .bal-lbl{ color:var(--ink-3); opacity:1; text-transform:none; letter-spacing:0; font-size:13px; font-weight:500; }
+      .bal-amt{ font-size:34px; font-weight:700; text-shadow:none; color:var(--ink); }
+      .bal-sub{ color:var(--ink-3); opacity:1; }
+      .ba-gold{ background:var(--emerald); color:#fff; box-shadow:none; border-radius:12px; }
+      .ba-glass{ background:#fff; border:1px solid var(--line); color:var(--ink); border-radius:12px; }
+
+      /* --- strip pengumuman --- */
+      .bc-strip{ background:#FBF3DC; border:1px solid #EFE0B4; color:#7C5A06; border-radius:12px; box-shadow:none; }
+
+      /* --- progress & badge --- */
+      .progress{ height:8px; background:var(--surface-2); border:none; }
+      .progress i,#miningBar{ background:var(--emerald); }
+      .progress i::after{ display:none; }
+      .done-badge{ background:#E9F5EF; color:var(--emerald-deep); font-weight:600; }
+      .reward-badge{ background:#FBF3DC; color:#92400E; border:1px solid #EFE0B4; font-weight:600; }
+      .status-chip{ background:#FBF3DC; color:#92400E; font-weight:600; }
+
+      /* --- bonus terkunci --- */
+      .lock-ic{ background:#E9F5EF; color:var(--emerald-deep); border-radius:12px; }
+      .locked-amt .a{ color:#B45309; }
+      .locked-head h3,.mining-top h3,.gift-info h3,.ad-info h3{ font-weight:700; }
+
+      /* --- kotak hadiah: flat, animasi buka tetap --- */
+      .gift-card{ background:#fff; border-color:var(--line); }
+      .gift-bodybox{ background:var(--emerald); box-shadow:none; }
+      .gift-bodybox::after{ background:#F5C445; }
+      .gift-lid{ background:var(--emerald-deep); box-shadow:none; }
+      .gift-lid::after{ background:#F5C445; }
+      .gift-bow{ background:#F5C445; box-shadow:none; }
+      .gift-bow::before,.gift-bow::after{ border-color:#F5C445; }
+      .gift-box:not(.open){ animation:none; }
+      .gift-box.open .gift-bodybox{ box-shadow:0 0 0 3px rgba(245,196,69,.45); }
+      .gift-prize{ color:#B45309; }
+      .gift-count{ border:1px dashed var(--line); background:var(--surface-2); }
+
+      /* --- iklan berhadiah --- */
+      .ad-card{ border-color:var(--line); }
+      .ad-screen{ background:#E9F5EF; box-shadow:none; border-radius:12px; }
+      .ad-screen::after{ background:#F5C445; color:#5F4300; }
+      .ad-play{ background:var(--emerald); color:#fff; box-shadow:none; }
+      .ad-card.ready .ad-play{ animation:none; }
+      .ad-left{ border:1px dashed var(--line); background:var(--surface-2); }
+
+      /* --- mining --- */
+      .mining-ic{ background:var(--emerald); box-shadow:none; border-radius:12px; }
+      .mining-card.on{ border-color:var(--line); box-shadow:var(--shadow-sm); }
+      .mining-card.on .mining-ic svg{ animation:none; }
+      .mining-full{ background:#FBF3DC; color:#7C5A06; border:1px solid #EFE0B4; }
+
+      /* --- promo carousel: kartu terang flat --- */
+      .promo-slide{ color:var(--ink); border:1px solid var(--line); border-radius:14px; box-shadow:none; min-height:104px; }
+      .promo-slide p{ color:var(--ink-2); opacity:1; }
+      .promo-slide .big{ opacity:.1; color:var(--ink); }
+      .promo-dots i.on{ background:var(--emerald); }
+
+      /* --- misi & milestone --- */
+      .misi-ic{ background:var(--emerald); box-shadow:none; border-radius:12px; }
+      .milestone{ background:var(--surface-2); border:1px solid var(--line); color:var(--ink); border-radius:14px; }
+      .milestone.claimed{ background:var(--emerald); }
+      .ms-row{ border-radius:12px; box-shadow:none; }
+      .ms-row .ms-ic{ background:#FBF3DC; color:#92400E; border-radius:10px; }
+      .ms-row .ms-bonus{ color:#B45309; }
+      .ms-row.done{ background:var(--emerald); }
+      .ref-box{ border:1px dashed var(--line); }
+      .ref-box button{ background:var(--emerald); font-weight:600; }
+
+      /* --- game / slot: kabinet flat putih --- */
+      .slot-machine{ background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); }
+      .slot-machine .hint{ color:var(--ink-3); opacity:1; }
+      .reel{ background:var(--surface-2); border:1px solid var(--line); border-radius:14px; box-shadow:none; }
+      .reel.win{ box-shadow:0 0 0 3px #F5C445; }
+      .slot-msg{ color:#B45309; }
+
+      /* --- segmen, chip, pilihan tujuan --- */
+      .seg{ box-shadow:none; border-radius:12px; }
+      .seg button{ font-weight:600; }
+      .seg button.on{ background:var(--emerald); box-shadow:none; }
+      .chip{ font-weight:600; }
+      .chip.sel{ border-color:var(--emerald); background:#E9F5EF; color:var(--emerald-deep); }
+      .dest-opt{ border-radius:14px; box-shadow:var(--shadow-sm); font-weight:600; }
+      .dest-opt.sel{ border-color:var(--emerald); background:#E9F5EF; color:var(--emerald-deep); box-shadow:0 0 0 3px rgba(14,159,110,.14); }
+      .brand-badge{ box-shadow:none; border-radius:10px; }
+      .wd-dest{ background:var(--surface-2); border:1px solid var(--line); border-radius:14px; }
+      .step.on .dot,.step.done .dot{ background:var(--emerald); border-color:var(--emerald); }
+      .step-line.done{ background:var(--emerald); }
+      .back-btn{ border-radius:12px; box-shadow:none; }
+
+      /* --- tarik saldo: panel kunci --- */
+      .wd-lock{ background:#FBF3DC; border:1px solid #EFE0B4; border-radius:14px; }
+      .wd-lock.open{ background:#E9F5EF; border-color:#CDE8DA; }
+      .wd-rules{ border-radius:14px; }
+      .summary{ border-radius:14px; }
+      .summary .row.total b{ color:var(--emerald-deep); }
+
+      /* --- riwayat & leaderboard --- */
+      .lb-row:first-child .lb-rank{ background:#F5C445; color:#5F4300; border-color:#EFE0B4; }
+      .lb-you{ background:#E9F5EF; color:var(--emerald-deep); font-weight:600; }
+      .lb-pts{ color:var(--emerald-deep); }
+      .hist-amt.plus{ color:var(--emerald-deep); }
+
+      /* --- tab bar bawah --- */
+      .tabbar{ background:rgba(255,255,255,.92); box-shadow:0 -1px 0 var(--line); }
+      .tabbar button{ font-weight:500; border-radius:12px; }
+      .tabbar button.on{ color:var(--emerald-deep); background:#E9F5EF; box-shadow:none; font-weight:600; }
+      .tabbar button.on svg{ animation:none; }
+
+      /* --- toast --- */
+      #toast{ background:#17251D; border:1px solid #2A3B31; box-shadow:0 8px 24px rgba(23,37,29,.25); font-weight:500; border-radius:12px; }
+
+      /* --- admin --- */
+      .stat-card,.queue-item,.user-item{ border-radius:14px; box-shadow:var(--shadow-sm); }
+      .stat-card::before{ background:var(--emerald); height:3px; }
+      .stat-card .val{ font-weight:700; }
+      .admin-tabs button{ font-weight:600; }
+      .admin-tabs button.on{ background:var(--emerald); border-color:var(--emerald); }
+      .qi-amt{ color:var(--emerald-deep); }
+      .dana-num{ border:1px dashed #BFE3D2; color:var(--emerald-deep); }
+      .pill.pending{ background:#FBF3DC; color:#92400E; }
+      .pill.held,.qi-flag{ background:#FDF0E2; color:#8A4B06; border-color:#F0D9B5; }
+      .pill.lunas,.pill.aktif{ background:#E9F5EF; color:var(--emerald-deep); }
+      .btn-plus{ background:#E9F5EF; color:var(--emerald-deep); }
+      .btn-minus{ background:#FBF3DC; color:#92400E; }
+
+      /* --- maintenance & banned --- */
+      .maint-ic{ background:#FBF3DC; color:#92400E; border:1px solid #EFE0B4; border-radius:20px; box-shadow:none; }
+      .maint-ic svg{ animation:none; }
+      .maint-badge{ background:#E9F5EF; color:var(--emerald-deep); border:1px solid #CDE8DA; }
+      .maint-reason{ border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); }
+      .maint-reason .dot{ background:var(--emerald); box-shadow:0 0 0 5px #E9F5EF; }
+      .banned-ic{ border-radius:20px; }
+
+      /* --- form --- */
+      .field label,.set-row label{ font-weight:600; }
+      .field input,.set-row input,.set-row textarea,.pts-row input{ border:1px solid var(--line); border-radius:12px; }
+      .field input:focus,.set-row input:focus,.set-row textarea:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px rgba(14,159,110,.15); }
+      .otp-row input{ border:1px solid var(--line); border-radius:12px; font-weight:700; }
+      .otp-row input:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px rgba(14,159,110,.15); transform:none; }
+      .linklike{ color:var(--emerald-deep); font-weight:600; }
+      .check-anim circle,.check-anim path{ stroke:var(--emerald); }
+
+      /* --- gerak masuk: lebih tenang --- */
+      .view,.view.active .content > *,.view.active .flow-body > *,#adminView .admin-body > *{ animation-duration:.25s; }
+    </style>
   </head>
   <body>
     <div class="phone">
@@ -1024,6 +1253,10 @@
                       <span class="reward-badge js-ref-badge">+500 poin / teman</span>
                     </div>
                   </div>
+                  <div class="ms-wrap">
+                    <div class="ms-wrap-title">🏆 Tangga Bonus Milestone</div>
+                    <div id="msLadderHome"></div>
+                  </div>
                 </div>
                 <button class="btn-ghost" data-go="misi" type="button" style="margin-top:12px;">Lihat Semua Misi &amp; Link Undangan</button>
               </div></div></div>
@@ -1103,7 +1336,7 @@
                 <div class="earn-row">
                   <div>
                     <h4>Undang Teman</h4>
-                    <p>Bagikan link undanganmu — tiap teman yang daftar, kamu dapat poin. Kumpulkan 5 teman buat bonus milestone +10.000.</p>
+                    <p>Bagikan link undanganmu — tiap teman yang daftar, kamu dapat poin. Milestone undang teman: 5 teman → +2.500, 10 teman → +5.000, 15 teman → +10.000.</p>
                     <span class="reward-badge js-ref-badge">+500 poin / teman</span>
                   </div>
                 </div>
@@ -1134,17 +1367,17 @@
               <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
                 <div class="promo">
                   <div class="promo-track" id="promoTrack">
-                    <div class="promo-slide" style="background:linear-gradient(130deg,#04503a,#0aa873 72%,#12bd8a);">
+                    <div class="promo-slide" style="background:#E9F5EF;">
                       <h3>Bonus Daftar 5.000 Poin</h3>
                       <p>Check-in tiap hari, bonus terkunci terbuka 2.000 per hari. 3 hari langsung lunas!</p>
                       <span class="big">5rb</span>
                     </div>
-                    <div class="promo-slide" style="background:linear-gradient(130deg,#7c5800,#c9930a 58%,#eebd3a);">
+                    <div class="promo-slide" style="background:#FBF3DC;">
                       <h3>Undang Teman, Cuan Bareng</h3>
-                      <p>+500 poin tiap teman yang daftar. Kumpulkan 5 teman, bonus ekstra +10.000!</p>
+                      <p>+500 poin tiap teman yang daftar. Milestone: 5 teman +2.500, 10 teman +5.000, 15 teman +10.000!</p>
                       <span class="big">+500</span>
                     </div>
-                    <div class="promo-slide" style="background:linear-gradient(130deg,#083f57,#1273a5 62%,#1d9bc4);">
+                    <div class="promo-slide" style="background:#EDF2F5;">
                       <h3>Spin Harian, Jackpot 10.000</h3>
                       <p>3x spin gratis tiap hari. Dapatkan 777 dan bawa pulang jackpot 10.000 poin.</p>
                       <span class="big">777</span>
@@ -1152,19 +1385,6 @@
                   </div>
                   <div class="promo-dots" id="promoDots"><i class="on"></i><i></i><i></i></div>
                 </div>
-              </div></div></div>
-            </div>
-
-            <div class="acc">
-              <button class="acc-head" type="button" aria-expanded="false">
-                <span class="acc-ic ic-sky"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></span>
-                <span class="acc-tt"><b>CS Admin</b><span>Tanya soal poin, penarikan, atau akun</span></span>
-                <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="acc-body"><div class="acc-inner"><div class="acc-pad">
-                <p style="font-size:13px; color:var(--ink-2); line-height:1.6;">Ada kendala soal poin, penarikan, atau akun kamu? Chat admin lewat bot Telegram resmi Cuanmu — sebutkan nama akun dan kendalanya ya.</p>
-                <a class="btn-emerald" href="https://t.me/CuanmuAppBot" target="_blank" rel="noopener" style="display:block; text-align:center; text-decoration:none; margin-top:12px;">Chat Admin via Telegram</a>
-                <p style="font-size:12px; color:var(--ink-3); line-height:1.55; margin-top:10px;">Penarikan diproses manual, biasanya di hari yang sama. Kalau belum masuk juga, tanya di sini aja.</p>
               </div></div></div>
             </div>
 
@@ -1226,16 +1446,15 @@
               <p class="hidden" id="serverRefNote" style="font-size:12.5px; color:var(--ink-2); line-height:1.6; margin-top:12px;">Bagikan link di atas ke temanmu — poin undangan masuk otomatis begitu dia selesai daftar lewat link itu.</p>
 
               <div class="milestone" id="milestoneBox">
-                <h4 id="milestoneTitle">🎁 Milestone 5 Teman</h4>
-                <p id="milestoneText">Undang 5 teman dan dapatkan bonus sekali klaim sebesar +10.000 poin.</p>
-                <div class="progress"><i id="milestoneBar" style="width:0%"></i></div>
-                <div class="locked-foot" style="color:inherit;"><span>Progress</span><span id="milestoneCount">0/5 teman</span></div>
+                <h4>🏆 Tangga Milestone Undang Teman</h4>
+                <p>Bonus otomatis masuk ke saldo bebas tiap tingkat tercapai — sekali per tingkat.</p>
+                <div id="msLadder"></div>
               </div>
             </div>
 
             <div class="card" style="margin-top:16px;">
               <div class="misi-top">
-                <span class="misi-ic" style="background:linear-gradient(150deg,#e9b83a,#c9930a); box-shadow:0 8px 16px rgba(201,147,10,.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+                <span class="misi-ic" style="background:#FBF3DC; color:#B45309; box-shadow:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
                 <div>
                   <h3>Check-in Harian</h3>
                   <p>Check-in tiap hari dapat +20 poin, sekaligus membuka bonus pendaftaranmu 2.000 per hari.</p>
@@ -1247,7 +1466,7 @@
 
             <div class="card" style="margin-top:16px;">
               <div class="misi-top">
-                <span class="misi-ic" style="background:linear-gradient(150deg,#1d8ab8,#0b4f6c); box-shadow:0 8px 16px rgba(11,79,108,.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
+                <span class="misi-ic" style="background:#E9F5EF; color:#0B7A55; box-shadow:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="15.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/></svg></span>
                 <div>
                   <h3>Main Spin Harian</h3>
                   <p>3x spin gratis tiap hari di tab Game. Jackpot 777 senilai 10.000 poin.</p>
@@ -1382,7 +1601,7 @@
                 <div class="srow" id="wdStreakRow"><span>Check-in beruntun: <b id="wdStreakNow" style="color:var(--ink);">0</b> dari 3 hari</span><span id="wdStreakLeft"></span></div>
               </div>
               <div class="wd-dest">
-                <span class="brand-badge" style="background:linear-gradient(135deg,#1299f2,#0b6fd6);">DANA</span>
+                <span class="brand-badge" style="background:#108EE9;">DANA</span>
                 <div>
                   <b style="font-size:14.5px;">Tarik ke DANA</b>
                   <p style="font-size:12.5px; color:var(--ink-2); margin-top:1px; line-height:1.45;">Saldo dikirim ke akun DANA kamu — biasanya masuk di hari yang sama.</p>
@@ -1591,11 +1810,17 @@
          Mode lokal: dihitung dari streak check-in lokal. */
       function wdStreakReady(){ return !!S.wdStreakReady || !!S.wdReady || (S.ciStreak || 0) >= 3; }
 
+      /* Tangga milestone undang teman: 3 tingkat, bonus otomatis masuk
+         sekali per tingkat saat jumlah undangan tercapai. Mode server:
+         state membawa array milestones [{n, b, done}]. Mode lokal:
+         tangga yang sama, status klaim per tingkat di msDone. */
+      var MS_LADDER = [ { n:5, b:2500 }, { n:10, b:5000 }, { n:15, b:10000 } ];
+
       /* ---------------- state ---------------- */
       var S = {
         registered:false, name:"", idLabel:"",
         free:0, locked:0, unlocked:0, checkins:0,
-        spinsLeft:3, friends:0, milestoneClaimed:false,
+        spinsLeft:3, friends:0, milestones:[], msDone:[],
         wdSmallUsed:false, wdReady:false, wdStreakReady:false, ciStreak:0, lastCiDay:"",
         history:[]
       };
@@ -1726,7 +1951,13 @@
           free: st.poin || 0, locked: st.locked || 0, unlocked: unlockedCalc,
           checkins: st.checkins || 0,
           spinsLeft: (st.spinLeft !== undefined ? st.spinLeft : (st.spinsLeft || 0)),
-          friends: st.invited || 0, milestoneClaimed: !!st.milestoneDone,
+          friends: st.invited || 0,
+          milestones: (function(){
+            var src = (st.milestones && st.milestones.length) ? st.milestones : MS_LADDER;
+            return src.map(function(m, i){
+              return { n: m.n, b: m.b, done: !!(m.done || (st.msDone && st.msDone[i])) };
+            });
+          })(),
           wdSmallUsed: !!st.wd100UsedToday, wdReady: !!st.wdReady, wdStreakReady: (st.wdStreakReady !== undefined ? !!st.wdStreakReady : !!st.wdReady), ciStreak: st.ciStreak || 0,
           banned: !!st.banned, checkedToday: !!st.checkedToday,
           adLeft: (st.adLeft !== undefined && st.adLeft !== null) ? st.adLeft : null,
@@ -1806,7 +2037,7 @@
           id: "u-" + (++G.seq), role: "user", banned: false,
           registered: true, name: name, idLabel: idLabel, pass: pass ? hashPw(pass) : "",
           free: 0, locked: 0, unlocked: 0, checkins: 0,
-          spinsLeft: G.settings.spinQuota, friends: 0, milestoneClaimed: false,
+          spinsLeft: G.settings.spinQuota, friends: 0, msDone: [],
           wdSmallUsed: false, ciStreak: 0, lastCiDay: "", miningStart: 0, giftDay: "", giftPrize: 0, history: []
         };
         if(extra) for(var k in extra) u[k] = extra[k];
@@ -1832,7 +2063,7 @@
         var seedLock = function(){ return "locked-" + Date.now() + "-" + Math.random(); };
         var budi = mkUser("Budi Santoso", "budi.santoso@email.com", seedLock(), { free:12450, locked:1000, unlocked:4000, checkins:3, ciStreak:2, lastCiDay: dayKey(0), friends:2, spinsLeft:1 });
         var sari = mkUser("Sari Wulandari", "sari.wulandari@email.com", seedLock(), { free:3200, locked:3000, unlocked:2000, checkins:1, ciStreak:1, lastCiDay: dayKey(0), friends:0 });
-        var rizky = mkUser("Rizky Pratama", "081234567890", seedLock(), { free:58750, locked:0, unlocked:5000, checkins:5, ciStreak:3, lastCiDay: dayKey(0), friends:6, milestoneClaimed:true });
+        var rizky = mkUser("Rizky Pratama", "081234567890", seedLock(), { free:58750, locked:0, unlocked:5000, checkins:5, ciStreak:3, lastCiDay: dayKey(0), friends:6, msDone:[true, false, false] });
         var dewi = mkUser("Dewi Anggraini", "dewi.anggraini@email.com", seedLock(), { free:850, locked:5000, unlocked:0, checkins:0, friends:1 });
         G.users = [budi, sari, rizky, dewi];
         G.withdrawals = [
@@ -1898,6 +2129,43 @@
         $("fullHistory").innerHTML = histHTML(S.history);
       }
 
+      /* ---------------- tangga milestone undang teman ----------------
+         Sumber tingkat: S.milestones (mode server, dari state) atau
+         MS_LADDER + S.msDone (mode lokal). Tiap baris: target teman,
+         bonus, status — ✅ sudah diklaim, progres "X dari N teman",
+         dan tingkat berikutnya tampil terkunci sampai sebelumnya tercapai. */
+      function currentMilestones(){
+        if(S.milestones && S.milestones.length) return S.milestones;
+        var doneArr = S.msDone || [];
+        return MS_LADDER.map(function(m, i){ return { n:m.n, b:m.b, done: !!doneArr[i] }; });
+      }
+      function msLadderHTML(){
+        var list = currentMilestones();
+        var friends = S.friends || 0;
+        var prevDone = true;
+        return list.map(function(m, i){
+          var done = !!m.done;
+          var locked = !done && !prevDone;
+          prevDone = done;
+          var status, bar = "";
+          if(done){
+            status = "✅ Sudah diklaim";
+          } else {
+            status = Math.min(friends, m.n) + " dari " + m.n + " teman" + (locked ? " · 🔒 Selesaikan tingkat sebelumnya dulu" : "");
+            bar = '<div class="progress"><i style="width:' + Math.min(100, Math.round(friends / m.n * 100)) + '%"></i></div>';
+          }
+          return '<div class="ms-row' + (done ? " done" : "") + (locked ? " locked" : "") + '">' +
+            '<span class="ms-ic">' + (done ? "✓" : (i + 1)) + '</span>' +
+            '<div class="ms-main"><b>Undang ' + m.n + ' teman</b><span>' + status + '</span>' + bar + '</div>' +
+            '<span class="ms-bonus">+' + fmt(m.b) + '</span></div>';
+        }).join("");
+      }
+      function renderMilestones(){
+        var html = msLadderHTML();
+        var a = $("msLadder"); if(a) a.innerHTML = html;
+        var b = $("msLadderHome"); if(b) b.innerHTML = html;
+      }
+
       /* ---------------- render wallet ---------------- */
       var displayedBal = 0, balAnim = null;
       function renderWallet(){
@@ -1921,18 +2189,7 @@
         $("spinBtn").disabled = S.spinsLeft <= 0;
         $("spinBtn").textContent = S.spinsLeft > 0 ? "SPIN" : "Spin Habis — Check-in Besok";
         $("friendCount").textContent = S.friends;
-        var mpct = Math.min(100, S.friends / G.settings.milestoneTarget * 100);
-        $("milestoneBar").style.width = mpct + "%";
-        $("milestoneCount").textContent = Math.min(S.friends, G.settings.milestoneTarget) + "/" + G.settings.milestoneTarget + " teman";
-        if(!S.milestoneClaimed){
-          $("milestoneTitle").textContent = "🎁 Milestone " + G.settings.milestoneTarget + " Teman";
-          $("milestoneText").textContent = "Undang " + G.settings.milestoneTarget + " teman dan dapatkan bonus sekali klaim sebesar +" + fmt(G.settings.milestoneBonus) + " poin.";
-        }
-        if(S.milestoneClaimed){
-          $("milestoneBox").classList.add("claimed");
-          $("milestoneTitle").textContent = "🏆 Milestone Tercapai!";
-          $("milestoneText").textContent = "Bonus +10.000 poin sudah masuk ke saldo bebas kamu. Kerja bagus!";
-        }
+        renderMilestones();
         renderHistory();
         renderBroadcast();
         renderLeaderboard();
@@ -2853,11 +3110,20 @@
         S.friends++;
         S.free += G.settings.referralReward;
         addHistory("users", "Misi Undang Teman", G.settings.referralReward);
-        if(S.friends >= G.settings.milestoneTarget && !S.milestoneClaimed){
-          S.milestoneClaimed = true;
-          S.free += G.settings.milestoneBonus;
-          addHistory("trophy", "Bonus Milestone " + G.settings.milestoneTarget + " Teman", G.settings.milestoneBonus);
-          toast("🏆 Milestone " + G.settings.milestoneTarget + " teman tercapai! +" + fmt(G.settings.referralReward) + " poin undangan & bonus +" + fmt(G.settings.milestoneBonus) + " poin!");
+        /* Tangga milestone lokal: tiap tingkat yang baru tercapai langsung
+           diklaim sekali (tercatat di msDone, tidak dobel). */
+        if(!S.msDone) S.msDone = [];
+        var claimedBonus = 0;
+        MS_LADDER.forEach(function(m, i){
+          if(S.friends >= m.n && !S.msDone[i]){
+            S.msDone[i] = true;
+            S.free += m.b;
+            claimedBonus += m.b;
+            addHistory("trophy", "Bonus Milestone " + m.n + " Teman", m.b);
+          }
+        });
+        if(claimedBonus > 0){
+          toast("🏆 Milestone tercapai! +" + fmt(G.settings.referralReward) + " poin undangan & bonus milestone +" + fmt(claimedBonus) + " poin!");
         } else {
           toast("🎉 Teman baru bergabung! +" + fmt(G.settings.referralReward) + " poin masuk ke saldo kamu.");
         }
@@ -2885,16 +3151,16 @@
       var EWALLETS = ["DANA","OVO","GoPay","ShopeePay"];
       /* Badge merek buatan sendiri: kotak rounded warna khas + nama merek (bukan file logo resmi). */
       var BRANDS = {
-        "DANA":      { bg:"linear-gradient(135deg,#1299f2,#0b6fd6)", label:"DANA" },
-        "GoPay":     { bg:"linear-gradient(135deg,#00c2e8,#0081a8)", label:"GoPay" },
-        "OVO":       { bg:"linear-gradient(135deg,#7b4bc4,#4c1d95)", label:"OVO" },
-        "ShopeePay": { bg:"linear-gradient(135deg,#ff7a45,#ee4d2d)", label:"SPay" },
-        "BCA":       { bg:"linear-gradient(135deg,#2066b8,#123f7b)", label:"BCA" },
-        "BRI":       { bg:"linear-gradient(135deg,#2e7cd6,#0d4f9e)", label:"BRI" },
-        "BNI":       { bg:"linear-gradient(135deg,#f47b3a,#d14a0d)", label:"BNI" },
-        "Mandiri":   { bg:"linear-gradient(135deg,#3a7cc4,#173f77)", label:"MDR" },
-        "BSI":       { bg:"linear-gradient(135deg,#00b3a4,#00736e)", label:"BSI" },
-        "CIMB Niaga":{ bg:"linear-gradient(135deg,#e0333d,#a3121b)", label:"CIMB" }
+        "DANA":      { bg:"#108EE9", label:"DANA" },
+        "GoPay":     { bg:"#00AED6", label:"GoPay" },
+        "OVO":       { bg:"#4C1D95", label:"OVO" },
+        "ShopeePay": { bg:"#EE4D2D", label:"SPay" },
+        "BCA":       { bg:"#1A4D8F", label:"BCA" },
+        "BRI":       { bg:"#0D4F9E", label:"BRI" },
+        "BNI":       { bg:"#E85D1F", label:"BNI" },
+        "Mandiri":   { bg:"#173F77", label:"MDR" },
+        "BSI":       { bg:"#00736E", label:"BSI" },
+        "CIMB Niaga":{ bg:"#A3121B", label:"CIMB" }
       };
       function brandBadge(name, sm){
         var b = BRANDS[name];
